@@ -4,13 +4,9 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
     - moteurs_init: permettant d'initialiser les GPIOs
     - moteurs_clean: permettant d'arreter le moteur et liberer les GPIOs
     - moteurs_avancer:
-    - moteurs_reculer:
     - moteurs_arreter:
     - moteurs_tourner_gauche:
     - moteurs_tourner_droite:
-    - moteur_rotation_90_gauche:
-    - moteur_rotation_90_droite:
-    - moteurs_demi_tour:
 **/
 
 
@@ -22,6 +18,9 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
 
 /** @brief Vitesse moyenne **/
 #define VITESSE_MOYENNE    50
+
+/** @brief Vitesse virage **/
+#define VITESSE_VIRAGE   25
 
 /** @brief Vitesse minimale **/
 #define VITESSE_MIN        0
@@ -45,22 +44,11 @@ typedef enum {
 int moteurs_init(void);
 
 /**
-    @brief Arrête les moteurs et libère les GPIOs
-    @return 0 si succès, -1 si erreur
-**/
-void moteurs_clean(void);
-
-/**
     @brief Faire avancer le robot
     @param vitesse Vitesse en pourcentage (entre 0 et 100)
 **/
-void moteurs_avancer(int vitesse);
+void moteurs_avancer(void);
 
-/**
-    @brief Faire reculer le robot
-    @param vitesse Vitesse en pourcentage (entre 0 et 100)
-**/
-void moteurs_reculer(int vitesse);
 
 /**
     @brief Arrêter tous les moteurs rapidement s'il y a un problème
@@ -69,29 +57,19 @@ void moteurs_arreter(void);
 
 /**
     @brief Faire tourner le robot à gauche = moteur gauche qui recule et moteur droit qui avance
-    @param vitesse Vitesse de rotation (entre 0 et 100)
 **/
-void moteurs_tourner_gauche(int vitesse);
+void moteurs_tourner_gauche(void);
 
 /**
-    @brief Faire tourner le robot à droite = moteur droite qui recule et moteur gauche qui avance
-    @param vitesse Vitesse de rotation (0-100)
+    @brief Faire tourner le robot à droite = moteur droit qui recule et moteur gauche qui avance
 **/
-void moteurs_tourner_droite(int vitesse);
+void moteurs_tourner_droite(void);
 
 /**
-    @brief Tourner à gauche de 90 degrés (on ne roule pas en tournant donc pas de vitesse)
+    @brief Calculer la valeur pour le PWM
+    @param vitesse Vitesse du moteur
 **/
-void moteurs_rotation_90_gauche(void);
+int calcul_PWM(int vitesse)
 
-/**
-    @brief Tourner à droite de 90 degrés (on ne roule pas en tournant donc pas de vitesse)
-**/
-void moteurs_rotation_90_droite(void);
-
-/**
-    @brief Faire un demi tour
-**/
-void moteurs_demi_tour(void);
 
 #endif 
