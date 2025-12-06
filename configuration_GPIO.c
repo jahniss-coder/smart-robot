@@ -14,9 +14,9 @@ void GPIO_configurerModeGpio()
     pwmSetClock(96);
 
     // Capteurs suiveurs lignes
-	pinMode(SUIVEUR, INPUT);
-	pinMode(SUIVEUR, INPUT);
-	pinMode(SUIVEUR, INPUT);
+	pinMode(SUIVEUR_Gauche, INPUT);
+	pinMode(SUIVEUR_Droit, INPUT);
+	pinMode(SUIVEUR_Centre, INPUT);
 	pinMode(SUIVEUR, INPUT);
 
     // Capteur couleur
