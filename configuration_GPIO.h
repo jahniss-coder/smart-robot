@@ -14,21 +14,20 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
 #define MOTEUR_D_PWM 13
 #define MOTEUR_G_IN1 24
 #define MOTEUR_G_IN2 25
-#define MOTEUR_D_IN3 25
+#define MOTEUR_D_IN3 5
 #define MOTEUR_D_IN4 6
 // Capteurs suiveurs lignes
 #define SUIVEUR_Gauche 27
 #define SUIVEUR_Droit 26
 #define SUIVEUR_Centre 16
-#define SUIVEUR_ ?
 // Capteur couleur 
 #define COULEUR_ ?
 #define COULEUR_ ?
 // Buzzeur
 #define BUZZER ?
 // LCD
-#define LCD ?
-#define LCD ?
+#define LCD_DATA 2
+#define LCD_CLOCL 3
 
 /**
     @brief Initialiser le Mode des GPIO (OUTPUT ou INPUT)
