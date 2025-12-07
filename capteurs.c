@@ -105,6 +105,13 @@ void setup_capteur_contraste() {
 
 int capteur_contraste() {
     int sensorValue = digitalRead(A0); // lire la valeur du capteur
-    return sensorValue;
     delay(50);
+    return sensorValue;
+}
+
+// Fermer le file descriptor de l'I2C
+void color_fermer(int file) {
+    if (file >= 0) {
+        close(file);
+    }
 }

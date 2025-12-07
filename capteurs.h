@@ -83,3 +83,9 @@ void setup_capteur_contraste();
 **/
 int capteur_contraste();
 
+/**
+   @brief Fermer le file descriptor de l'I2C
+   @param file sortie de l'initialisation du capteur rgb
+**/
+void color_fermer(int file)
+

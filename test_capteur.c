@@ -2,6 +2,9 @@
 Tests pour les capteurs
 **/
 
+// Pour compiler gcc -o test_capteur test_capteur.c capteurs.c -lwiringPi -lpthread
+#include "capteurs.h"
+
 // Test 1 pour le LCD
 int test_lcd() {
     printf("\n=== TEST 1: ECRAN LCD ===\n");

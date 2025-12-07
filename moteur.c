@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <wiringPi.h>
+#include "moteur.h"
 
 int calcul_PWM(int vitesse) { return (vitesse * 1024) / 100; }
 

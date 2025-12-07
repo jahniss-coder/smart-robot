@@ -2,6 +2,8 @@
 Tests pour le moteur
 **/
 
+#include "moteur.h"
+
 int main() {
     printf("--- DEBUT DES TESTS MOTEURS ---\n");
 

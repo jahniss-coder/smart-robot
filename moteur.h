@@ -17,6 +17,8 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
 #ifndef MOTEURS_H
 #define MOTEURS_H
 
+#include "configuration_GPIO.h"
+
 /** @brief Vitesse maximale (100%) **/
 #define VITESSE_MAX        100
 
@@ -97,6 +99,7 @@ void tourner(int sens);
 /**
     @brief Calculer la valeur pour le PWM
     @param vitesse Vitesse du moteur
+    @return la vitesse PWM
 **/
 int calcul_PWM(int vitesse)
 
