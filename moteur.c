@@ -2,188 +2,116 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 
-#define SPEED_LEFT 12
-#define FORWARD_LEFT 24
-#define BACKWARD_LEFT 25
-
-#define SPEED_RIGHT 13
-#define FORWARD_RIGHT 5
-#define BACKWARD_RIGHT 6
-
-#define VITESSE_MAX 100
-#define VITESSE_MOYENNE 50
-#define VITESSE_TOURNEE 20
-#define VITESSE_MIN 0
-
 int calcul_PWM(int vitesse) { return (vitesse * 1024) / 100; }
 
-int moteurs_init() {
-  if (wiringPiSetupGpio() == -1) {
-    printf("Setup Error");
-  }
+void moteurs_avancer() {
+  int pwmSpeed = calcul_PWM(VITESSE_MOYENNE);
 
-  // Configuration de la vitesse
-  pinMode(SPEED_RIGHT, PWM_OUTPUT);
-  pinMode(SPEED_LEFT, PWM_OUTPUT);
+  pwmWrite(MOTEUR_G_PWM, pwmSpeed);
+  pwmWrite(MOTEUR_D_PWM, pwmSpeed);
 
-  // Configuration des roues
-  pinMode(FORWARD_LEFT, OUTPUT);
-  pinMode(BACKWARD_LEFT, OUTPUT);
+  digitalWrite(MOTEUR_G_IN1, HIGH);
+  digitalWrite(MOTEUR_D_IN3, HIGH);
 
-  pinMode(FORWARD_RIGHT, OUTPUT);
-  pinMode(BACKWARD_RIGHT, OUTPUT);
+  digitalWrite(MOTEUR_G_IN2, LOW);
+  digitalWrite(MOTEUR_D_IN4, LOW);
 }
 
-// void moteurs_clean();
+void moteurs_reculer() {
+  int pwmSpeed = calcul_PWM(VITESSE_MOYENNE);
 
-void moteurs_avancer(int vitesse) {
-  int pwmSpeed = calcul_PWM(vitesse);
+  pwmWrite(MOTEUR_G_PWM, pwmSpeed);
+  pwmWrite(MOTEUR_D_PWM, pwmSpeed);
 
-  pwmWrite(SPEED_LEFT, pwmSpeed);
-  pwmWrite(SPEED_RIGHT, pwmSpeed);
+  digitalWrite(MOTEUR_G_IN1, LOW);
+  digitalWrite(MOTEUR_D_IN3, LOW);
 
-  digitalWrite(FORWARD_LEFT, HIGH);
-  digitalWrite(FORWARD_RIGHT, HIGH);
-
-  digitalWrite(BACKWARD_LEFT, LOW);
-  digitalWrite(BACKWARD_RIGHT, LOW);
-}
-
-void moteurs_reculer(int vitesse) {
-  int pwmSpeed = calcul_PWM(vitesse);
-
-  pwmWrite(SPEED_LEFT, pwmSpeed);
-  pwmWrite(SPEED_RIGHT, pwmSpeed);
-
-  digitalWrite(FORWARD_LEFT, LOW);
-  digitalWrite(FORWARD_RIGHT, LOW);
-
-  digitalWrite(BACKWARD_LEFT, HIGH);
-  digitalWrite(BACKWARD_RIGHT, HIGH);
+  digitalWrite(MOTEUR_G_IN2, HIGH);
+  digitalWrite(MOTEUR_D_IN4, HIGH);
 }
 
 void moteurs_arreter() {
-  // digitalWrite(SPEED_LEFT, LOW);
-  // digitalWrite(SPEED_RIGHT, LOW);
+  digitalWrite(MOTEUR_G_PWM, 0);
+  digitalWrite(MOTEUR_D_PWM, 0);
 
-  digitalWrite(FORWARD_LEFT, LOW);
-  digitalWrite(FORWARD_RIGHT, LOW);
+  digitalWrite(MOTEUR_G_IN1, LOW);
+  digitalWrite(MOTEUR_D_IN3, LOW);
 
-  digitalWrite(BACKWARD_LEFT, LOW);
-  digitalWrite(BACKWARD_RIGHT, LOW);
+  digitalWrite(MOTEUR_G_IN2, LOW);
+  digitalWrite(MOTEUR_D_IN4, LOW);
 }
 
 void tournerGauche() {
-  digitalWrite(FORWARD_LEFT, LOW);
-  digitalWrite(BACKWARD_LEFT, HIGH);
+  digitalWrite(MOTEUR_G_IN1, LOW);
+  digitalWrite(MOTEUR_G_IN2, HIGH);
 
-  digitalWrite(FORWARD_RIGHT, HIGH);
-  digitalWrite(BACKWARD_RIGHT, LOW);
+  digitalWrite(MOTEUR_D_IN3, HIGH);
+  digitalWrite(MOTEUR_D_IN4, LOW);
 
   // Application de la vitesse pour tourner
   int pwmSpeed = calcul_PWM(VITESSE_MOYENNE);
 
-  pwmWrite(SPEED_LEFT, pwmSpeed);
-  pwmWrite(SPEED_RIGHT, pwmSpeed);
+  pwmWrite(MOTEUR_G_PWM, pwmSpeed);
+  pwmWrite(MOTEUR_D_PWM, pwmSpeed);
 }
 
 void tournerDroite() {
-  digitalWrite(FORWARD_LEFT, HIGH);
-  digitalWrite(BACKWARD_LEFT, LOW);
+  digitalWrite(MOTEUR_G_IN1, HIGH);
+  digitalWrite(MOTEUR_G_IN2, LOW);
 
-  digitalWrite(FORWARD_RIGHT, LOW);
-  digitalWrite(BACKWARD_RIGHT, HIGH);
+  digitalWrite(MOTEUR_D_IN3, LOW);
+  digitalWrite(MOTEUR_D_IN4, HIGH);
 
   // Application de la vitesse pour tourner
   int pwmSpeed = calcul_PWM(VITESSE_MOYENNE);
 
-  pwmWrite(SPEED_LEFT, pwmSpeed);
-  pwmWrite(SPEED_RIGHT, pwmSpeed);
+  pwmWrite(MOTEUR_G_PWM, pwmSpeed);
+  pwmWrite(MOTEUR_D_PWM, pwmSpeed);
 }
 
 void tournerGaucheSansArret() {
 
-  digitalWrite(FORWARD_LEFT, HIGH);
-  digitalWrite(BACKWARD_LEFT, LOW);
+  digitalWrite(MOTEUR_G_IN1, HIGH);
+  digitalWrite(MOTEUR_G_IN2, LOW);
 
-  digitalWrite(FORWARD_RIGHT, HIGH);
-  digitalWrite(BACKWARD_RIGHT, LOW);
+  digitalWrite(MOTEUR_D_IN3, HIGH);
+  digitalWrite(MOTEUR_D_IN4, LOW);
 
   // Application de la vitesse pour tourner
-  int pwmSpeedLeft = calcul_PWM(VITESSE_TOURNEE);
+  int pwmSpeedLeft = calcul_PWM(VITESSE_VIRAGE);
   int pwmSpeedRight = calcul_PWM(VITESSE_MAX);
 
-  pwmWrite(SPEED_LEFT, pwmSpeedLeft);
-  pwmWrite(SPEED_RIGHT, pwmSpeedRight);
+  pwmWrite(MOTEUR_G_PWM, pwmSpeedLeft);
+  pwmWrite(MOTEUR_D_PWM, pwmSpeedRight);
 }
 
 void tournerDroiteSansArret() {
 
-  digitalWrite(FORWARD_LEFT, HIGH);
-  digitalWrite(BACKWARD_LEFT, LOW);
+  digitalWrite(MOTEUR_G_IN1, HIGH);
+  digitalWrite(MOTEUR_G_IN2, LOW);
 
-  digitalWrite(FORWARD_RIGHT, HIGH);
-  digitalWrite(BACKWARD_RIGHT, LOW);
+  digitalWrite(MOTEUR_D_IN3, HIGH);
+  digitalWrite(MOTEUR_D_IN4, LOW);
 
   // Application de la vitesse pour tourner
   int pwmSpeedLeft = calcul_PWM(VITESSE_MAX);
-  int pwmSpeedRight = calcul_PWM(VITESSE_TOURNEE);
+  int pwmSpeedRight = calcul_PWM(VITESSE_VIRAGE);
 
-  pwmWrite(SPEED_LEFT, pwmSpeedLeft);
-  pwmWrite(SPEED_RIGHT, pwmSpeedRight);
+  pwmWrite(MOTEUR_G_PWM, pwmSpeedLeft);
+  pwmWrite(MOTEUR_D_PWM, pwmSpeedRight);
 }
 
 void moteurs_demi_tour() {
+  moteurs_arreter();
   tournerGauche();
-  tournerGauche();
+  delay(TEMPS_180_DEGRES);  // Temps pour 180°, à calibrer
+  moteurs_arreter();
 }
 
-int main() {
-  printf("--- DEBUT DES TESTS MOTEURS ---\n");
-
-  if (moteurs_init() == -1) {
-    return 1; // Quitte si erreur
-  }
-
-  // S'assurer que tout est à l'arrêt au début
-  moteurs_arreter();
-  delay(1000);
-
-  // 1. TEST AVANCER
-  // printf("1. Avancer (Vitesse Moyenne) pendant 3s\n");
-  // moteurs_avancer(VITESSE_MOYENNE);
-  // delay(1500);
-  // moteurs_arreter();
-  // delay(1000);
-
-  // 2. TEST RECULER
-  // printf("2. Reculer (Vitesse Max) pendant 3s\n");
-  // moteurs_reculer(VITESSE_MAX);
-  // delay(1500);
-  // moteurs_arreter();
-  // delay(1000);
-
-  // 3. TEST ROTATION GAUCHE
-  printf("3. Tourner Droite pendant 1.5s\n");
-  tournerDroiteSansArret();
-  delay(1500); // Temps nécessaire pour faire 90 degrés (à calibrer IRL)
-  moteurs_arreter();
-  delay(1000);
-
-  // 4. TEST ROTATION DROITE
-  printf("4. Tourner Gauche pendant 1.5s\n");
-  tournerGaucheSansArret();
-  delay(1500);
-  moteurs_arreter();
-  delay(1000);
-
-  // 5. TEST DEMI-TOUR
-  // printf("5. Demi-tour\n");
-  // moteurs_demi_tour();
-  // delay(1000);
-
-  printf("--- FIN DES TESTS ---\n");
-  moteurs_arreter();
-
-  return 0;
+// Quand on aura calibré le temps pour la rotation de 90°
+void tourner(int sens) {
+  // sens: 1=droite, -1=gauche
+  if (sens > 0)tournerDroiteSansArret();
+  else tournerGauche();
+  delay(TEMPS_90_DEGRES);
 }
