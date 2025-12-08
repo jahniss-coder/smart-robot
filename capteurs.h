@@ -40,6 +40,9 @@ static int lcdHandle;
 #define TCS_CDATAL 0x14 // Adresse de départ des données (Clear Data Low)
 
 
+int initialisation_globale();
+
+
 /**
    @brief initialiser l'écran lcd 
    @return 0 si pas d'erreurs -1 sinon
@@ -73,19 +76,16 @@ int color_initialisation();
 int lire_couleur(int file);
 
 /**
-   @brief Initialiser le capteur de contraste
-**/
-void setup_capteur_contraste();
-
-/**
    @brief détecter une ligne
+   @param GPIO_capteur capteur dont on veut lire la valeur
    @return 0 si aucune ligne détéctée, 1 sinon
 **/
-int capteur_contraste();
+int capteur_contraste(int GPIO_capteur);
 
 /**
    @brief Fermer le file descriptor de l'I2C
    @param file sortie de l'initialisation du capteur rgb
 **/
-void color_fermer(int file)
+void color_fermer(int file);
 
+#endif

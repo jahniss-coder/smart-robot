@@ -9,6 +9,8 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
 #ifndef __GPIO__
 #define __GPIO__
 
+// Ne pas utiliser le GPIO 26
+
 // Moteur
 #define MOTEUR_G_PWM 12
 #define MOTEUR_D_PWM 13
@@ -18,12 +20,9 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
 #define MOTEUR_D_IN4 6
 // Capteurs suiveurs lignes
 #define SUIVEUR_Gauche 27
-#define SUIVEUR_Droit 26
+#define SUIVEUR_Droit 22
 #define SUIVEUR_Centre_G 16
 #define SUIVEUR_Centre_D 4
-// Capteur couleur 
-//#define COULEUR_ ?
-//#define COULEUR_ ?
 // Buzzeur
 //#define BUZZER ?
 // LCD

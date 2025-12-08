@@ -1,10 +1,15 @@
 #include "capteurs.h"
+#include <wiringPi.h>
+#include <lcd.h>
+
+int initialisation_globale() {
+    wiringPiSetupGpio() ;
+    return 0;
+}
+
 
 int lcd_initialisation() {
     // Initialisation de wiringPi si ce n'est pas déjà fait ailleurs
-    if (wiringPiSetup() == -1) { //! Peut être changé par un wiringPiSetupGpio mais après faut voir comment le code s'adapte par rapport à ce changement.
-        return -1;
-    }
 
     // Configuration de l'extension PCF8574 à l'adresse 0x27
     pcf8574Setup(AF_BASE, 0x27);
@@ -97,14 +102,9 @@ int lire_couleur(int file) {
     }
 }
 
-void setup_capteur_contraste() {
-    wiringPiSetupGpio();
-    pinMode(A0, INPUT); 
-    pinMode(D0, OUTPUT);
-}
 
-int capteur_contraste() {
-    int sensorValue = digitalRead(A0); // lire la valeur du capteur
+int capteur_contraste(int GPIO_capteur) {
+    int sensorValue = digitalRead(GPIO_capteur); // lire la valeur du capteur
     delay(50);
     return sensorValue;
 }
