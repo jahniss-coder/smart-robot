@@ -74,14 +74,34 @@ void afficherVirage(int type)
     }
 }
 
+void afficherCouleur(int couleur){
+    lcdPosition(lcdHandle, 0, 1);
+    switch (couleur)
+    {
+    case 1:
+        
+        lcdPrintf(lcdHandle,"PASTILLE VERT ");
+        break;
+    case 2:
+        lcdPrintf(lcdHandle,"PASTILLE ROUGE");
+        break;
+    case 3:
+        lcdPrintf(lcdHandle,"PASTILLE BLEU");
+        break;
+    default:
+        break;
+    }
+}
+
 int main(){
     init();
     while (1)
     {
-        lcdPrintf(lcdHandle," virage ");
         // afficherIntersection(2);
         // afficherManoeuvre("TG"); // TG
         // afficherVirage(2); // virage droite
+        afficherCouleur(1);
+        
         delay(500);
     }
     
