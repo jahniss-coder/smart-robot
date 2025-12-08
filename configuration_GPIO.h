@@ -19,7 +19,8 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
 // Capteurs suiveurs lignes
 #define SUIVEUR_Gauche 27
 #define SUIVEUR_Droit 26
-#define SUIVEUR_Centre 16
+#define SUIVEUR_Centre_G 16
+#define SUIVEUR_Centre_D 4
 // Capteur couleur 
 //#define COULEUR_ ?
 //#define COULEUR_ ?

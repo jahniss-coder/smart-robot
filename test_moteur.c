@@ -3,15 +3,19 @@ Tests pour le moteur
 **/
 
 #include <stdio.h>
+#include <wiringPi.h> 
 #include "moteur.h"
 #include "configuration_GPIO.h"
 
 int main(){
     printf("--- DEBUT DES TESTS MOTEURS ---\n");
 
-    if (moteurs_init() == -1) {
-        return 1; // Quitte si erreur
+    if (GPIO_initialiserGpio() == -1) {
+    fprintf(stderr, "Erreur : Impossible d'initialiser wiringPi\n");
+    return 1;
     }
+    GPIO_configurerModeGpio();
+    printf("Initialisation GPIO : OK\n");
 
     printf("--- TEST1/2 ---\n");
 

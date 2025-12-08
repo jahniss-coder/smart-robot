@@ -22,7 +22,7 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
 #define VITESSE_MAX        100
 
 /** @brief Vitesse moyenne **/
-#define VITESSE_MOYENNE    50
+#define VITESSE_MOYENNE   80
 
 /** @brief Vitesse virage **/
 #define VITESSE_VIRAGE   25
