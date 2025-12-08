@@ -16,7 +16,6 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
 
 #ifndef MOTEURS_H
 #define MOTEURS_H
-
 #include "configuration_GPIO.h"
 
 /** @brief Vitesse maximale (100%) **/
@@ -37,18 +36,12 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
 /** @brief Temps nécessaire pour tourner de 180° **/
 #define TEMPS_180_DEGRES    3000
 
-
-
 /**
-  @brief Differents états du moteur
+    @brief Calculer la valeur pour le PWM
+    @param vitesse Vitesse du moteur
+    @return la vitesse PWM
 **/
-typedef enum {
-    MOTEUR_ARRET,      
-    MOTEUR_AVANCE,     
-    MOTEUR_RECULE,     
-    MOTEUR_TOURNE_GAUCHE, 
-    MOTEUR_TOURNE_DROITE  
-} EtatMoteur;
+int calcul_PWM(int vitesse);
 
 /**
     @brief Faire avancer le robot
@@ -95,12 +88,5 @@ void moteurs_demi_tour();
     @param sens sens dans lequel on veut tourner (1: droite, -1: gauche)
 **/
 void tourner(int sens);
-
-/**
-    @brief Calculer la valeur pour le PWM
-    @param vitesse Vitesse du moteur
-    @return la vitesse PWM
-**/
-int calcul_PWM(int vitesse)
 
 #endif 

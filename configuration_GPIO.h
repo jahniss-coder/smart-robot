@@ -21,10 +21,10 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
 #define SUIVEUR_Droit 26
 #define SUIVEUR_Centre 16
 // Capteur couleur 
-#define COULEUR_ ?
-#define COULEUR_ ?
+//#define COULEUR_ ?
+//#define COULEUR_ ?
 // Buzzeur
-#define BUZZER ?
+//#define BUZZER ?
 // LCD
 #define LCD_DATA 2
 #define LCD_CLOCL 3

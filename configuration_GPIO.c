@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <wiringPi.h>
 #include "configuration_GPIO.h"
 
@@ -17,16 +16,16 @@ void GPIO_configurerModeGpio()
 	pinMode(SUIVEUR_Gauche, INPUT);
 	pinMode(SUIVEUR_Droit, INPUT);
 	pinMode(SUIVEUR_Centre, INPUT);
-	pinMode(SUIVEUR, INPUT);
+	//pinMode(SUIVEUR, INPUT);
 
     // Capteur couleur
-    pinMode(COULEUR, OUTPUT);
+    //pinMode(COULEUR, OUTPUT);
 
     // Buzzeur
-    pinMode(BUZZER, OUTPUT);
+    //pinMode(BUZZER, OUTPUT);
 
     // LCD
-    pinMode(LCD OUTPUT);
+    //pinMode(LCD OUTPUT);
 }
 
 int GPIO_initialiserGpio()

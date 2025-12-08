@@ -2,9 +2,11 @@
 Tests pour le moteur
 **/
 
+#include <stdio.h>
 #include "moteur.h"
+#include "configuration_GPIO.h"
 
-int main() {
+int main(){
     printf("--- DEBUT DES TESTS MOTEURS ---\n");
 
     if (moteurs_init() == -1) {
