@@ -2,12 +2,6 @@
 #include "moteur.h"
 #include <stdbool.h>
 
-int getSensor(int gpio) {
-  int sensorValue = digitalRead(gpio); // lire la valeur du capteur
-  delay(50);
-  return sensorValue;
-}
-
 bool detecterLigne(int gpio) { return getSensor(gpio) == 1; }
 
 int detecterVirage(int gpioG, int gpioD, int gpioAG, int gpioAD) {

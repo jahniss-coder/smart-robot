@@ -67,18 +67,18 @@ int color_initialisation();
    @param file sortie de l'initialisation du capteur rgb
    @return 0 si couleur indéterminé, 1 si vert, 2 si rouge
 **/
-int lire_couleur(int file);
+int detecterPastille(int file);
 
 /**
    @brief Initialiser le capteur de contraste
 **/
 void setup_capteur_contraste();
 
-/**
+/** (anciennement capteur_contraste() )
    @brief détecter une ligne
    @return 0 si aucune ligne détéctée, 1 sinon
 **/
-int capteur_contraste();
+int getSensor(int gpio);
 
 /**
    @brief Fermer le file descriptor de l'I2C
