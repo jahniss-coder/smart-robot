@@ -1,6 +1,7 @@
-/** 
+/**
 Bibliotèque pour le projet
-Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce qui inclut :
+Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce
+qui inclut :
     - moteurs_avancer:
     - moteurs_reculer:
     - moteurs_arreter:
@@ -13,28 +14,27 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
     - calcul_PWM:
 **/
 
-
 #ifndef MOTEURS_H
 #define MOTEURS_H
 #include "configuration_GPIO.h"
 
 /** @brief Vitesse maximale (100%) **/
-#define VITESSE_MAX        100
+#define VITESSE_MAX 100
 
 /** @brief Vitesse moyenne **/
-#define VITESSE_MOYENNE   80
+#define VITESSE_MOYENNE 80
 
 /** @brief Vitesse virage **/
-#define VITESSE_VIRAGE   25
+#define VITESSE_VIRAGE 50
 
 /** @brief Vitesse minimale **/
-#define VITESSE_MIN        0
+#define VITESSE_MIN 35
 
 /** @brief Temps nécessaire pour tourner de 90° **/
-#define TEMPS_90_DEGRES       1500
+#define TEMPS_90_DEGRES 1500
 
 /** @brief Temps nécessaire pour tourner de 180° **/
-#define TEMPS_180_DEGRES    3000
+#define TEMPS_180_DEGRES 3000
 
 /**
     @brief Calculer la valeur pour le PWM
@@ -54,7 +54,7 @@ void moteurs_avancer();
 void moteurs_reculer();
 
 /**
-    @brief Arrêter tous les moteurs 
+    @brief Arrêter tous les moteurs
 **/
 void moteurs_arreter();
 
@@ -79,7 +79,7 @@ void tournerGaucheSansArret();
 void tournerDroiteSansArret();
 
 /**
-    @brief Faire un demi tour gauche 
+    @brief Faire un demi tour gauche
 **/
 void moteurs_demi_tour();
 
@@ -89,4 +89,4 @@ void moteurs_demi_tour();
 **/
 void tourner(int sens);
 
-#endif 
+#endif
