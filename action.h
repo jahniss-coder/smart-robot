@@ -24,3 +24,18 @@ void faireUnVirageAGauche();
 **/
 void faireUnVirageADroite();
 
+/**
+   @brief retourne le tableau avec les ordres de directions
+   @param cheminFichier la liste des instructions stockées dans un fichier texte
+   @param nbLigneFichier le nombre de ligne d'un fichier texte
+   @return un tableau contenant les instructions que doit suivre le robot
+**/
+char** retournerTableauOrdre(char* cheminFichier, int nbLigneFichier);
+
+/**
+   @brief controle le robot suivant les ordres du fichier
+   @param cheminFichier la liste des instructions stockées dans un fichier texte
+   @param nbLigneFichier le nombre de ligne d'un fichier texte
+   @note permet au robot de suivre les instructions placées dans un fichier texte
+**/
+void controlerRobotDepuisOrdre(char* cheminFichier, int nbLigneFichier);
