@@ -37,12 +37,30 @@ typedef struct{
 
 /**
    @brief Trouver le chemin pour aller aux points obligatoires
-   @return ???
+   @param g: Graphe des liaisons entre les points
+   @param depart: Point de départ sur lequel on se trouve
+   @param arrivee: Point ou l'on souhaite arriver
+   @return un chemin, le chemin le plus court
 **/
 Chemin dijkstra(Graphe* g, int depart, int arrivee);
 
 
+/**
+   @brief Trouver le chemin pour aller aux points obligatoires
+   @param g Graphe des liaisons entre les points
+   @param point_obligatoires tableau contenant les points de passage obligatoires dans la ville
+   @param depart point de départ du robot
+   @param longueur_ville longueur de la ville
+   @return la solution du chemin le plus court
+**/
+Solution resoudre_chemin_plus_court(Graphe* g, int point_obligatoires[3], int depart, int longueur_ville);
 
+/**
+   @brief pouvoir permuter l'ordre dans lequel on passe aux points
+   @param arr: tableau 1D ou l'on va stocker les 3 points ou l'on se trouve
+   @param permutations: tableau 2D pour stocker les 6 possibilités
+**/
+void permutation(int arr[3], int permutations[6][3]);
 
 
 
