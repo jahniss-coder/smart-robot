@@ -1,8 +1,9 @@
+#include "action.h"
 #include "capteurs.h"
 #include "configuration_GPIO.h"
 #include "detections.h"
 #include "moteur.h"
-#include "action.h"
+#include <string.h>
 
 void avancer(int file) {
   int pastille, intersection, virage;
@@ -32,10 +33,10 @@ void avancer(int file) {
   }
 }
 
-void faireUnVirageAGauche(){
+void faireUnVirageAGauche() {
   tournerGaucheSansArret();
   delay(1000);
-  while (!aRetrouveLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D)){
+  while (!aRetrouveLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D)) {
     afficherManoeuvre(TOURNER_GAUCHE);
   }
   tournerDroiteSansArret();
@@ -43,13 +44,72 @@ void faireUnVirageAGauche(){
   moteurs_avancer();
 }
 
-void faireUnVirageADroite(){
+void faireUnVirageADroite() {
   tournerDroiteSansArret();
   delay(1000);
-  while (!aRetrouveLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D)){
+  while (!aRetrouveLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D)) {
     afficherManoeuvre(TOURNER_DROITE);
   }
   tournerGaucheSansArret();
   delay(50);
   moteurs_avancer();
+}
+
+char **retourneTableauDOrdre(const char *cheminFichier, int nbLigneFichier) {
+  char **tableau = malloc(nbLigneFichier * sizeof(char *));
+  int indice = 0;
+
+  FILE *f = fopen(cheminFichier, "r");
+  if (!f) {
+    perror("Erreur d'ouverture");
+    return NULL;
+  }
+
+  char buffer[16];
+
+  while (fgets(buffer, sizeof(buffer), f) != NULL) {
+    buffer[strcspn(buffer, "\n")] = 0;
+
+    if (strcmp(buffer, ".") == 0) {
+      break;
+    }
+
+    tableau[indice] = malloc(strlen(buffer) + 1);
+    strcpy(tableau[indice], buffer);
+    indice++;
+  }
+
+  fclose(f);
+
+  tableau[indice] = NULL;
+
+  return tableau;
+}
+
+void controlerRobotDepuisOrdre(char *cheminFichier, int nbLigneFichier) {
+  char **tableau = retourneTableauDOrdre(cheminFichier, nbLigneFichier);
+  int fileCapteur = color_initialisation();
+
+  int indice = 0;
+
+  while (tableau[indice] != NULL) {
+    if (strcmp(tableau[indice], "AV") == 0) {
+      avancer(fileCapteur);
+    } else if (strcmp(tableau[indice], "TG") == 0) {
+      faireUnVirageAGauche();
+    } else if (strcmp(tableau[indice], "TD") == 0) {
+      faireUnVirageADroite();
+    }
+    indice++;
+  }
+
+  moteurs_arreter();
+
+  // pour libérer le tableau ensuite
+  indice = 0;
+  while (tableau[indice]) {
+    free(tableau[indice]);
+    indice++;
+  }
+  free(tableau);
 }
