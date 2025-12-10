@@ -4,6 +4,9 @@
 #include "moteur.h"
 
 #define AVANCER "avancer"
+#define TOURNER_GAUCHE "virage g"
+#define TOURNER_DROITE "virage d"
+
 
 void avancer(int file) {
   int pastille, intersection, virage;
@@ -31,4 +34,26 @@ void avancer(int file) {
   if (virage != 0) {
     afficherVirage(virage);
   }
+}
+
+void faireUnVirageAGauche(){
+  tournerGaucheSansArret();
+  delay(1000);
+  while (!aRetrouveLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D)){
+    afficherManoeuvre(TOURNER_GAUCHE);
+  }
+  tournerDroiteSansArret();
+  delay(50);
+  moteurs_avancer();
+}
+
+void faireUnVirageADroite(){
+  tournerDroiteSansArret();
+  delay(1000);
+  while (!aRetrouveLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D)){
+    afficherManoeuvre(TOURNER_DROITE);
+  }
+  tournerGaucheSansArret();
+  delay(50);
+  moteurs_avancer();
 }
