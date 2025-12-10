@@ -2,11 +2,7 @@
 #include "configuration_GPIO.h"
 #include "detections.h"
 #include "moteur.h"
-
-#define AVANCER "avancer"
-#define TOURNER_GAUCHE "virage g"
-#define TOURNER_DROITE "virage d"
-
+#include "action.h"
 
 void avancer(int file) {
   int pastille, intersection, virage;
