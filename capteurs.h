@@ -76,6 +76,7 @@ void setup_capteur_contraste();
 
 /** (anciennement capteur_contraste() )
    @brief détecter une ligne
+   @param GPIO_capteur capteur dont on veut lire la valeur
    @return 0 si aucune ligne détéctée, 1 sinon
 **/
 int getSensor(int gpio);

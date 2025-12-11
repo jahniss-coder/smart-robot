@@ -1,4 +1,11 @@
 #include "capteurs.h"
+#include <lcd.h>
+#include <wiringPi.h>
+
+int initialisation_globale() {
+  wiringPiSetupGpio();
+  return 0;
+}
 
 int lcd_initialisation() {
   // Initialisation de wiringPi si ce n'est pas déjà fait ailleurs

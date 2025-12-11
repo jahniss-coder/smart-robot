@@ -4,6 +4,9 @@ Tests pour les capteurs
 
 // Pour compiler gcc -o test_capteur test_capteur.c capteurs.c -lwiringPi -lpthread
 #include "capteurs.h"
+#include <stdio.h>
+#include <wiringPi.h> 
+#include "configuration_GPIO.h"
 
 // Test 1 pour le LCD
 int test_lcd() {
@@ -108,7 +111,7 @@ int test_capteur_contraste() {
     printf("\n=== TEST 3: CAPTEUR CONTRASTE ===\n");
     
     // Test que le capteur de contraste soit bien configuré
-    setup_capteur_contraste();
+    GPIO_configurerModeGpio();
     printf("Capteur contraste configuré\n");
     
     printf("\nDétection de ligne:\n");
@@ -117,9 +120,73 @@ int test_capteur_contraste() {
     int compteur_ligne = 0;
     int compteur_blanc = 0;
     
-    // Test que le capteur de contraste reconaisse le noir et le rest 
+    // Test que le capteur de contraste reconaisse le noir et le reste
+    printf("\nTest pour le capteur gauche\n");
     for (int i = 0; i < 20; i++) {
-        int valeur = capteur_contraste();
+        int valeur = capteur_contraste(SUIVEUR_Gauche);
+        
+        printf("Lecture %2d: ", i + 1);
+        if (valeur == 1) {
+            printf("LIGNE DÉTECTÉE\n");
+            compteur_ligne++;
+        } else {
+            printf(" Autre surfec détectée \n");
+            compteur_blanc++;
+        }
+        
+        delay(500);
+    }
+    
+    // Resultat du test précedent
+    printf("\n--- Statistiques ---\n");
+    printf("Ligne détectée: %d/20 (%.0f%%)\n", compteur_ligne, compteur_ligne * 5.0);
+    printf("Surface blanche: %d/20 (%.0f%%)\n", compteur_blanc, compteur_blanc * 5.0);
+
+    printf("\nTest pour le capteur droite\n");
+    for (int i = 0; i < 20; i++) {
+        int valeur = capteur_contraste(SUIVEUR_Droit);
+        
+        printf("Lecture %2d: ", i + 1);
+        if (valeur == 1) {
+            printf("LIGNE DÉTECTÉE\n");
+            compteur_ligne++;
+        } else {
+            printf(" Autre surfec détectée \n");
+            compteur_blanc++;
+        }
+        
+        delay(500);
+    }
+    
+    // Resultat du test précedent
+    printf("\n--- Statistiques ---\n");
+    printf("Ligne détectée: %d/20 (%.0f%%)\n", compteur_ligne, compteur_ligne * 5.0);
+    printf("Surface blanche: %d/20 (%.0f%%)\n", compteur_blanc, compteur_blanc * 5.0);
+
+    printf("\nTest pour le capteur centre gauche\n");
+    for (int i = 0; i < 20; i++) {
+        int valeur = capteur_contraste(SUIVEUR_Centre_G);
+        
+        printf("Lecture %2d: ", i + 1);
+        if (valeur == 1) {
+            printf("LIGNE DÉTECTÉE\n");
+            compteur_ligne++;
+        } else {
+            printf(" Autre surfec détectée \n");
+            compteur_blanc++;
+        }
+        
+        delay(500);
+    }
+    
+    // Resultat du test précedent
+    printf("\n--- Statistiques ---\n");
+    printf("Ligne détectée: %d/20 (%.0f%%)\n", compteur_ligne, compteur_ligne * 5.0);
+    printf("Surface blanche: %d/20 (%.0f%%)\n", compteur_blanc, compteur_blanc * 5.0);
+
+    printf("\nTest pour le capteur centre droite\n");
+    for (int i = 0; i < 20; i++) {
+        int valeur = capteur_contraste(SUIVEUR_Centre_D);
         
         printf("Lecture %2d: ", i + 1);
         if (valeur == 1) {
@@ -201,7 +268,7 @@ int test_scenario_suiveur_ligne() {
         return -1;
     }
     // Initialisation du capteur de contraste
-    setup_capteur_contraste();
+    GPIO_configurerModeGpio();
     printf("Systèmes prêts\n");
     
     lcd_afficher("Suiveur ligne");
@@ -212,7 +279,7 @@ int test_scenario_suiveur_ligne() {
     int lignes_detectees = 0;
     
     while (temps_ecoule < 30) {
-        int ligne = capteur_contraste();
+        int ligne = capteur_contraste(SUIVEUR_Centre_D);
         
         if (ligne == 1) {
             lcd_afficher("LIGNE!");
@@ -245,13 +312,17 @@ int test_scenario_suiveur_ligne() {
 
 // Programme principal
 int main() {
-    printf("-------   TEST DES CAPTEURS   --------")
-    
-    // Initialisation globale unique
+   
     if (initialisation_globale() == -1) {
-        printf("IMPOSSIBLE D'INITIALISER WIRINGP\n");
+        printf("IMPOSSIBLE D'INITIALISER WIRINGPI\n");
         return 1;
     }
+      
+    printf("WiringPi initialisé en mode GPIO\n");
+    printf("-------   TEST DES CAPTEURS   --------\n");
+    
+    // Initialisation globale unique
+    GPIO_configurerModeGpio();
     printf("WiringPi initialisé en mode GPIO\n");
     
     int choix;
