@@ -1,6 +1,8 @@
 #ifndef DIJKSTRA_H
 #define DIJKSTRA_H
 
+#include "graphe.h"
+
 //#include // inclure le graphe.h
 
 #define NB_POINTS_MAX 200 // Pour être sûr que jamais on ait autant de points
