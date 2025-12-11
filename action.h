@@ -7,7 +7,8 @@
 
 /**
    @brief faire avancer le robot
-   @param file fichier necessaire a la detection de la pastille par le capteur RGB
+   @param file fichier necessaire a la detection de la pastille par le capteur
+RGB
    @note le robot avance jusqu'a la detection d'un virage ou d'une intersection
 **/
 void avancer(int file);
@@ -24,3 +25,4 @@ void faireUnVirageAGauche();
 **/
 void faireUnVirageADroite();
 
+#endif;
