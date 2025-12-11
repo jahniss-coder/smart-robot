@@ -69,7 +69,21 @@
 \section{Introduction}
 \subsection{Contexte}
 
+
+Dans le cadre de notre premier semestre dans le départment ISIA, nous avons pour but de réaliser un \testit{Smart Robot} capable de se déplacer dans une ville modélisée sous forme de cases.
+Equipés de capteurs, moteurs et d'une raspberry Pi 4, notre objectif est de construire et coder un robot capable de parcourir un itinéraire imposés tout en determinant le plus court chemin permettant de passer par un certain nombre de points obligatoires.
+C'est en combinant électronique, algorithmique et développement en C, ainsi que l'utilisation de GitLab que nous allons réépondre aux attentes de ce projet.
+Ce rapport est structuré de la manière suivante:
+Dans un premier temps, nous présenterons la partie électronique contenant la description de la conception du robot avec le schéma électrique, les chois techniques que nous avons effectués, ainsi que les branchements et problèmes que nous avons pu rencontrés dans cette partie.\\
+Dans un deuxième temps, nous présenterons la partie informatique, depuis l'analyse descendante du problème, jusqu'à l'implémentation des fonctions et procédures en C.
+Enfin, nous concluerons sur ce projet avec la répartition des tâches et ce que l'on a pu tirer de ce projet.
+
 \subsection{Problematique}
+La problématique principale de ce projet est de faire en sorte que le robot parcours la ville de manière autonome et optimale en interprétant correctement les descriptions de la ville.
+En effet, le robot doit lire et traduire ces informations en une suite d'ordre (AV, TG, TD) lui permettant de se déplacer dans la ville. 
+Celui-ci doit non seulement suivre les lignes au sol en faisant attention à corriger d'éventuelles déviations, mais aussi detecter et signaler les pastilles colorées signalant les points de passages obligatoires.
+En définitive, notre robot doit être capable de passer par les trois points obligatoires repérables par des pastilles, afficher sur l'écran la couleur de celle-ci tout en buzzant,
+afficher chaque intersection qu'il croise, ainsi que chaque action qu'il réalise tout le long du parcours (Avancer, Tourner Gauche, Tourner Droite).
 
 \section{Partie électronique}
 
@@ -80,10 +94,47 @@
 % inclu le schéma ainsi que les explications des cablages et des choix techniques
 
 \subsection{Choix des composants}
-\subsubsection{Capteur NANANA}
+\subsubsection{Capteur suiveur de ligne}
+\textbf{Rôle}
+
+Les capteurs suiveurs de ligne permettent au robot de détecter et donc de suivre une ligne noire tracée sur une surface plus claire.
+L'objectif est de guider les mouvements du robot, de telle sorte que celui-ci corrige sa direction s'il n'est pas bien aligné sur la trajectoire de la ligne noire.
+En l'incluant dans notre projet, ce type de capteur nous permet de garder le robot sur la ligne noir, de détecter lorsque celui-ci dévie de la trajectroie, mais cela permet 
+aussi de repérer les intersections et virages lui permettant de s'orienter.
+
+\textbf{Fonctionnement}
+
+Ces types de capteurs fonctionnent de la manière suivante:\\
+Le noir absorbe la lumière tandis que le blanc ou les couleurs plus claires la réflechisse.
+Les capteurs de ligne sont alors composés d'une LED infrarouge qui éclaire le sol en continu et d'une photodiode mesurant la lumière renvoyée.
+Concrètement, si un capteur suiveur de ligne se trouve sur une surface claire, alors la lumière infrarouge est fortement réflechie.
+Le capteur reçoit donc beaucoup de lumière t envoie le signal iniquant qu'il s'agit d'une surface claire.
+Au contraire, sur une surface noire, la lumière est absorbée donc le capteur ne reçoit que très peu de lumière.
+Celui-ci envoie alors le signal indiquant qu'il s'agit d'une surface noire.
+
+\subsubsection{Capteur RGB}
+\textbf{Rôle}
+
+Le cpateur de couleur TCS ??? permet au robot de detecter la couleur des pastilles présentes sur le parcours comme la pastille verte indiquant le point de départ du robot.
+Ce capteur est très important car il permet d'identifier correctement les points de passage, mais aussi d'afficher la couleur que ce capteur détecte sur l'écran LCD.
+Il est essentiel d'inclure ce capteur, sans quoi, notre robot ne serait pas capable de repérer les points de passages obligatoires du parcours.
+
+\textbf{Fonctionnement}
+
+Le capteur de RGB, comme son nom l'indique, permet de repérer trois couleurs: rouge, vert et bleu.
+Le TSC ??? possède une petite LED blanche pour éclairer la surface et alors mesurer l'intensité lumineuse pour chacune des composantes (composantes rouge, ...).
+Ensuite, les valeurs sont converties en valeurs numériques via le moyen de communication I2C qui sont ensuite lus par la carte embarquée de la Raspberry Pi 4.
+Les trois intensités sont alors combinées pour determiner de quelle couleur il s'agit.
+
+\subsubsection{Moteur Shield}
 \textbf{Rôle}
 \textbf{Fonctionnement}
-\subsubsection{LED NANANANA}
+
+\subsubsection{Ecran LCD}
+\textbf{Rôle}
+\textbf{Fonctionnement}
+
+\subsubsection{Buzzer}
 \textbf{Rôle}
 \textbf{Fonctionnement}
 % on expliquera le rôle et le principe de fonctionnement des composants
@@ -94,6 +145,8 @@
 
 \subsection{Difficultés rencontrées et pistes d'amélioration}
 
+Nous avons rencontré de nombreuses difficultés, aussi bien sur le plan électronique que sur le plan organisationnel.
+Tout d'abord, 
 
 \section{Partie informatique}
 
