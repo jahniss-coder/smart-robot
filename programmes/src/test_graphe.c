@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "creationGraphe.h"
+#include "creationFichierOrdres.h"
 
 const char* fileName = "ville.txt";
 
@@ -98,6 +99,68 @@ void test_creation_graphe_ville(void) {
     CU_ASSERT_FALSE(G_arcPresent(g, 0, 14)); // Cet arc ne devrait pas exister
 }
 
+/*
+    Début des tests sur creation fichier ordres
+*/
+void test_determiner_ordres(void) {
+    // Initialisation du robot
+    Robot robot;
+    setCaseRobot(robot, 6); // Position initiale du robot
+    setDirection(robot, SUD); // Direction initiale du robot
+
+    // Chemin à suivre
+    Chemin c;
+    c.points[0] = 6;
+    c.points[1] = 11;
+    c.points[2] = 12;
+    c.points[3] = 13;
+    c.nb_points = 4;
+
+    // Tableau pour stocker les ordres
+    char* tabOrdres[MAX_ORDRES] = {0};
+
+    // Appel de la fonction à tester
+    determinerOrdres(tabOrdres, c, robot, 5);
+
+    // Vérification des ordres générés
+    CU_ASSERT_STRING_EQUAL(tabOrdres[0], "AV");
+    CU_ASSERT_STRING_EQUAL(tabOrdres[1], "TG");
+    CU_ASSERT_STRING_EQUAL(tabOrdres[2], "AV");
+    CU_ASSERT_STRING_EQUAL(tabOrdres[3], "AV");
+}
+
+void test_creation_fichier_ordres(void) {
+    // Chemin à suivre
+    Chemin c;
+    c.points[0] = 6;
+    c.points[1] = 11;
+    c.points[2] = 12;
+    c.points[3] = 13;
+    c.nb_points = 4;
+
+    // Création du fichier d'ordres
+    const char* nomFichierOrdres = "test_fichier_ordres.txt";
+    creationFichierOrdres(nomFichierOrdres, c);
+
+    // Vérification du contenu du fichier
+    FILE* fichier = fopen(nomFichierOrdres, "r");
+    CU_ASSERT_PTR_NOT_NULL(fichier);
+
+    char ligne[10];
+    fgets(ligne, sizeof(ligne), fichier);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), fichier);
+    CU_ASSERT_STRING_EQUAL(ligne, "TG\n");
+    fgets(ligne, sizeof(ligne), fichier);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), fichier);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), fichier);
+    CU_ASSERT_STRING_EQUAL(ligne, "."); // Marqueur de fin
+
+    fclose(fichier);
+}
+
 
 int main(void) {
     CU_pSuite pSuite = NULL;
@@ -118,7 +181,10 @@ int main(void) {
         (NULL == CU_add_test(pSuite, "test_caseInitialeRobot", test_caseInitialeRobot)) ||
         (NULL == CU_add_test(pSuite, "test_liaisons_points", test_liaisons_points)) ||
         (NULL == CU_add_test(pSuite, "test_points_obligatoires", test_points_obligatoires)) ||
-        (NULL == CU_add_test(pSuite, "test_creation_graphe_ville", test_creation_graphe_ville)))
+        (NULL == CU_add_test(pSuite, "test_creation_graphe_ville", test_creation_graphe_ville)) ||
+        (NULL == CU_add_test(pSuite, "test_determiner_ordres", test_determiner_ordres)) ||
+        (NULL == CU_add_test(pSuite, "test_creation_fichier_ordres", test_creation_fichier_ordres))
+       )
     {
         CU_cleanup_registry();
         return CU_get_error();

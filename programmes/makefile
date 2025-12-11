@@ -8,30 +8,38 @@ BIN_DIR = bin
 TEST_DIR = tests
 
 TARGET = $(BIN_DIR)/main
-TEST_TARGET = $(TEST_DIR)/test_graphe
+TEST_TARGET = $(TEST_DIR)/test_CreationGraphe
 
+# Sources pour le programme principal
 MAIN_SRC = $(SRC_DIR)/main.c
-SOURCES = $(SRC_DIR)/graphe.c $(SRC_DIR)/creationGraphe.c $(MAIN_SRC)
-TEST_SOURCES = $(SRC_DIR)/graphe.c $(SRC_DIR)/creationGraphe.c $(SRC_DIR)/test_graphe.c
+SOURCES_MAIN = $(SRC_DIR)/graphe.c \
+               $(SRC_DIR)/creationGraphe.c \
+               $(SRC_DIR)/dijkstra.c \
+               $(SRC_DIR)/creationFichierOrdres.c \
+               $(MAIN_SRC)
 
-OBJECTS = $(SRC_DIR)/graphe.o $(SRC_DIR)/creationGraphe.o $(SRC_DIR)/main.o
-TEST_OBJECTS = $(SRC_DIR)/graphe.o $(SRC_DIR)/creationGraphe.o $(SRC_DIR)/test_graphe.o
+# Sources pour les tests
+SOURCES_TEST = $(SRC_DIR)/graphe.c \
+               $(SRC_DIR)/creationGraphe.c \
+               $(SRC_DIR)/dijkstra.c \
+               $(SRC_DIR)/creationFichierOrdres.c \
+               $(SRC_DIR)/test_CreationGraphe.c
 
-.PHONY: all clean test run_test
+# Génération des objets
+OBJECTS_MAIN = $(SOURCES_MAIN:.c=.o)
+OBJECTS_TEST = $(SOURCES_TEST:.c=.o)
+
+.PHONY: all clean test
 
 all: directories $(TARGET)
 
 test: directories $(TEST_TARGET)
 	@echo "Exécutable de test généré : $(TEST_TARGET)"
 
-run_test: $(TEST_TARGET)
-	@echo "Exécution des tests..."
-	@$(TEST_TARGET)
-
-$(TARGET): $(OBJECTS)
+$(TARGET): $(OBJECTS_MAIN)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
-$(TEST_TARGET): $(TEST_OBJECTS)
+$(TEST_TARGET): $(OBJECTS_TEST)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 $(SRC_DIR)/%.o: $(SRC_DIR)/%.c
