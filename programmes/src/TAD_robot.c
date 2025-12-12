@@ -7,7 +7,7 @@ typedef struct {
 
 tDirection getDirection(Robot r) { return r.direction; }
 
-void setDirection(Robot r, tDirection direction) { r.direction = r.direction; }
+void setDirection(Robot r, tDirection direction) { r.direction = direction; }
 
 unsigned int getCaseRobot(Robot r) { return r.caseRobot; }
 
