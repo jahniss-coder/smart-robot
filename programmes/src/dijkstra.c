@@ -27,7 +27,7 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
         }
     }
     // On crée notre file pour faire le parcours
-    File* file;
+    File* file = malloc(sizeof(File)); // Ne pas oublier d'allouer la mémoire à la file
     // initialisation de la file
     initialisation_file(file);
     // état initial du Dijkstra
@@ -103,6 +103,7 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
     }
     // Si jamais, JAMAIS on trouve aucun chemin (normalement pas possible)
     // Mais ça voudrait dire qu'il y a 0 chemin entre le départ et l'arrivée donc bizarre
+    liberer_file(file);
     return resultat;
 }
 

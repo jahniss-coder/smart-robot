@@ -2,6 +2,7 @@
 #define CREATION_FICHIER_ORDRES
 #include <stdio.h>
 #include "TAD_robot.h"
+#include "dijkstra.h"
 
 #define MAX_ORDRES 4 // Il ne peut pas y avoir plus de 4 ordres sachant que les demi tour ne sont pas pris en compte car ils feraient perdre trop de temps au directionRobot
 #define MAX_CASES 50 // constante pour le plus court chemin.
@@ -37,7 +38,7 @@ void determinerOrdre(Robot* robot, unsigned int caseSuivanteRobot, unsigned int 
  * \param robot Le robot
  * \param largeurCircuit La largeur du circuit
  */
-void determinerOrdres(char* tabOrdres[MAX_ORDRES] , Chemin c , Robot robot , unsigned int largeurCircuit );
+void determinerOrdres(char tabOrdres[MAX_ORDRES] , Chemin c , Robot robot , unsigned int largeurCircuit );
 
 /**
  * \brief Crée un fichier contenant les ordres pour que le robot suive un chemin donné (fichier pris en entrée par le robot)

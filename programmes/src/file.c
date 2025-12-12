@@ -21,6 +21,10 @@ void enfiler(File* f, EtatDuDijkstra etat){
     }
 }
 
+void liberer_file(File* f){
+    free(f);
+}
+
 EtatDuDijkstra defiler(File* f){
     // On ne peut défiler que si la pile n'est pas vide
     if (!estVideFile(f)){

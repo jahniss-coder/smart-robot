@@ -119,7 +119,7 @@ void test_determiner_ordres(void) {
     c.nb_points = 4;
 
     // Tableau pour stocker les ordres
-    char* tabOrdres[MAX_ORDRES] = {0};
+    char tabOrdres[MAX_ORDRES] = {0};
 
     // Appel de la fonction à tester
     determinerOrdres(tabOrdres, c, robot, 5);
@@ -177,12 +177,12 @@ void test_dijkstra_depart_egal_arrivee(void) {
     unsigned int nbLiaisons = 20;
     G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
     
-    Chemin resultat = dijkstra(g, 2, 2);
+    Chemin resultat = dijkstra(&g, 2, 2);
     
     CU_ASSERT_EQUAL(resultat.nb_points, 1);
     CU_ASSERT_EQUAL(resultat.points[0], 2);
     
-    G_vider(g);
+    G_vider(&g);
 }
 
 /*
@@ -201,13 +201,13 @@ void test_dijkstra_1_chemin(void) {
 
     // On veut savoir le chemin le plus court entre le point 6 et 13
     
-    Chemin resultat = dijkstra(g, 6, 13);
+    Chemin resultat = dijkstra(&g, 6, 13);
     
     CU_ASSERT_EQUAL(resultat.nb_points, 4);
     CU_ASSERT_EQUAL(resultat.points[0], 6);
     CU_ASSERT_EQUAL(resultat.points[3], 13);
     
-    G_vider(g);
+    G_vider(&g);
 }
 
 /*
@@ -228,22 +228,22 @@ void test_dijkstra_points_obligatoires(void) {
     
     // Test avec des points intermédiaires
     // De 6 (case départ robot) vers 13, 22, 20
-    Chemin chemin1 = dijkstra(g, 6, 13);
+    Chemin chemin1 = dijkstra(&g, 6, 13);
     CU_ASSERT_TRUE(chemin1.nb_points > 0);
     CU_ASSERT_EQUAL(chemin1.points[0], 6);
     CU_ASSERT_EQUAL(chemin1.points[chemin1.nb_points - 1], 13);
     
-    Chemin chemin2 = dijkstra(g, 6, 22);
+    Chemin chemin2 = dijkstra(&g, 6, 22);
     CU_ASSERT_TRUE(chemin2.nb_points > 0);
     CU_ASSERT_EQUAL(chemin2.points[0], 6);
     CU_ASSERT_EQUAL(chemin2.points[chemin2.nb_points - 1], 22);
     
-    Chemin chemin3 = dijkstra(g, 6, 20);
+    Chemin chemin3 = dijkstra(&g, 6, 20);
     CU_ASSERT_TRUE(chemin3.nb_points > 0);
     CU_ASSERT_EQUAL(chemin3.points[0], 6);
     CU_ASSERT_EQUAL(chemin3.points[chemin3.nb_points - 1], 20);
     
-    G_vider(g);
+    G_vider(&g);
 }
 
 /*
@@ -309,14 +309,14 @@ void test_file_initialisation(void) {
     CU_ASSERT_TRUE(estVideFile(f));
     CU_ASSERT_FALSE(estPleineFile(f));
 
-    free(f);    // Ne pas oublier de liberer la mémoire
+    liberer_file(f);
 }
 
 /*
     tests que la file enfile et defile
 */
 void test_file_enfiler_defiler(void) {
-    File* f;
+    File* f = malloc(sizeof(File)); // Ne pas oublier d'allouer la mémoire à la file
     initialisation_file(f);
     
     EtatDuDijkstra etat;
@@ -332,13 +332,14 @@ void test_file_enfiler_defiler(void) {
     CU_ASSERT_EQUAL(etat_recupere.point_actuel, 5);
     CU_ASSERT_EQUAL(etat_recupere.chemin.nb_points, 1);
     CU_ASSERT_TRUE(estVideFile(f));
+    liberer_file(f);
 }
 
 /*
     tests que l'on a bien une liste fifo
 */
 void test_file_ordre_fifo(void) {
-    File* f;
+    File* f = malloc(sizeof(File)); // Ne pas oublier d'allouer la mémoire à la file
     initialisation_file(f);
     
     // Enfiler 5 états
@@ -358,6 +359,7 @@ void test_file_ordre_fifo(void) {
     }
     
     CU_ASSERT_TRUE(estVideFile(f));
+    liberer_file(f);
 }
 
 /*
@@ -382,7 +384,7 @@ void test_solution_graphe_simple_5x5(void){
     unsigned int longueur_ville = 5;
 
     // Calcul de la solution
-    Solution solution = resoudre_chemin_plus_court(&g, point_obligatoires, depart, longueur_ville);
+    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville);
 
     CU_ASSERT_TRUE(solution.chemin_complet.nb_points > 0);
     CU_ASSERT_EQUAL(solution.chemin_complet.points[0], depart); //Le premier point du chemin est bien le depart
@@ -417,7 +419,7 @@ void test_solution_parcours_points_obligatoires(void){
     unsigned int longueur_ville = 5;
 
     // Calcul de la solution
-    Solution solution = resoudre_chemin_plus_court(&g, point_obligatoires, depart, longueur_ville);
+    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville);
 
     // On verifie que pendant le parcours on passe bien par les points
     bool trouve13 = false, trouve22 = false, trouve20 = false;
@@ -438,7 +440,7 @@ void test_solution_parcours_points_obligatoires(void){
     CU_ASSERT_TRUE(trouve20);
     CU_ASSERT_TRUE(trouve22);
 
-    G_vider(g);
+    G_vider(&g);
 }
 
 /*
@@ -462,13 +464,13 @@ void test_solution_retour_au_depart(void){
     unsigned int longueur_ville = 5;
 
     // Calcul de la solution
-    Solution solution = resoudre_chemin_plus_court(&g, point_obligatoires, depart, longueur_ville);
+    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville);
 
     // Verification que le premier point et le dernier soient identiques
     CU_ASSERT_EQUAL(solution.chemin_complet.points[solution.chemin_complet.nb_points], depart);
     CU_ASSERT_EQUAL(solution.chemin_complet.points[0], depart);
 
-    G_vider(g);
+    G_vider(&g);
 }
 
 void test_solution_meilleur_chemin(void){
@@ -488,13 +490,13 @@ void test_solution_meilleur_chemin(void){
     unsigned int depart = 6;
     unsigned int longueur_ville = 5;
 
-    Solution solution = resoudre_chemin_plus_court(&g, point_obligatoires, depart, longueur_ville);
+    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville);
 
     // Verification qu'on est entre 0 et 20 points max (peut être a recalibrer ce que je dis la)
     CU_ASSERT_TRUE(solution.chemin_complet.points[solution.chemin_complet.nb_points] < 0);
     CU_ASSERT_TRUE(solution.chemin_complet.points[solution.chemin_complet.nb_points] > 20);
 
-    G_vider(g);
+    G_vider(&g);
 }
 
 void test_solution_continuite_chemin(void){
@@ -514,7 +516,7 @@ void test_solution_continuite_chemin(void){
     unsigned int depart = 6;
     unsigned int longueur_ville = 5;
 
-    Solution solution = resoudre_chemin_plus_court(&g, point_obligatoires, depart, longueur_ville);
+    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville);
 
     // Verification que le chemin effectue est valide
     for(unsigned int i = 0; i < solution.chemin_complet.nb_points - 1; i++){
@@ -524,7 +526,7 @@ void test_solution_continuite_chemin(void){
         CU_ASSERT_TRUE(G_arcPresent(g, point_actuel, point_suivant) || G_arcPresent(g, point_suivant, point_actuel) );
     }
 
-    G_vider(g);
+    G_vider(&g);
 
 }
 
@@ -550,7 +552,20 @@ int main(void) {
         (NULL == CU_add_test(pSuite, "test_points_obligatoires", test_points_obligatoires)) ||
         (NULL == CU_add_test(pSuite, "test_creation_graphe_ville", test_creation_graphe_ville)) ||
         (NULL == CU_add_test(pSuite, "test_determiner_ordres", test_determiner_ordres)) ||
-        (NULL == CU_add_test(pSuite, "test_creation_fichier_ordres", test_creation_fichier_ordres))
+        (NULL == CU_add_test(pSuite, "test_creation_fichier_ordres", test_creation_fichier_ordres)) ||
+        (NULL == CU_add_test(pSuite, "test_dijkstra_depart_egal_arrivee", test_dijkstra_depart_egal_arrivee)) ||
+        (NULL == CU_add_test(pSuite, "test_dijkstra_1_chemin", test_dijkstra_1_chemin)) || 
+        (NULL == CU_add_test(pSuite, "test_dijkstra_points_obligatoires", test_dijkstra_points_obligatoires)) ||
+        (NULL == CU_add_test(pSuite, "test_permutation_ordre_correct", test_permutation_ordre_correct)) ||
+        (NULL == CU_add_test(pSuite, "test_permutation_points_ville", test_permutation_points_ville)) ||
+        (NULL == CU_add_test(pSuite, "test_file_initialisation", test_file_initialisation)) ||
+        (NULL == CU_add_test(pSuite, "test_file_enfiler_defiler", test_file_enfiler_defiler)) ||
+        (NULL == CU_add_test(pSuite, "test_file_ordre_fifo", test_file_ordre_fifo)) ||
+        (NULL == CU_add_test(pSuite, "test_solution_graphe_simple_5x5", test_solution_graphe_simple_5x5)) ||
+        (NULL == CU_add_test(pSuite, "test_solution_parcours_points_obligatoires", test_solution_parcours_points_obligatoires)) ||
+        (NULL == CU_add_test(pSuite, "test_solution_retour_au_depart", test_solution_retour_au_depart)) ||
+        (NULL == CU_add_test(pSuite, "test_solution_meilleur_chemin", test_solution_meilleur_chemin)) ||
+        (NULL == CU_add_test(pSuite, "test_solution_continuite_chemin", test_solution_continuite_chemin))
        )
     {
         CU_cleanup_registry();

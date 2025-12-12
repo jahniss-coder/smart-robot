@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include "TAD_robot.h"
 #include "dijkstra.h"
+#include "creationFichierOrdres.h"
 
 #define MAX_ORDRES 4 // Il ne peut pas y avoir plus de 4 ordres sachant que les demi tour ne sont pas pris en compte car ils feraient perdre trop de temps au directionRobot
 #define MAX_CASES 50 // constante pour le plus court chemin.
-
-typedef enum { AV , TG , TD, NO } Ordre; // NAO correspond à aucun ordre (NO ORDER car NULL est un mot clé) 
 
 tDirection directionOuest(tDirection direction) {
     switch (direction)
@@ -78,7 +77,6 @@ void determinerOrdre(Robot* robot, unsigned int caseSuivanteRobot, unsigned int 
     *ordre2 = AV;
     setCaseRobot(*robot, caseSuivanteRobot);    
 }
-
 
 void determinerOrdres(char tabOrdres[MAX_ORDRES] , Chemin c , Robot robot , unsigned int largeurCircuit ) {
 

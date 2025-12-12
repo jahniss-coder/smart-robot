@@ -12,37 +12,45 @@ typedef struct{
 }File;
 
 /**
-   @brief initialisation de la file
-   @param f file 
-**/
+ * @brief initialiser une file
+ * @param f file 
+ */
 void initialisation_file(File* f);
 
 /**
-   @brief va regarder si une file est vide
-   @param f file 
-   @return 1 si Vrai, 0 sinon 
-**/
+ * @brief va regarder si une file est vide
+ * @param f file 
+ * @return 1 si Vrai, 0 sinon 
+ */
 int estVideFile(File* f);
 
 /**
-   @brief va regarder si une file est pleine
-   @param f file 
-   @return 1 si Vrai, 0 sinon 
-**/
+ * @brief va regarder si une file est pleine
+ * @param f file 
+ * @return 1 si Vrai, 0 sinon 
+ */
 int estPleineFile(File* f);
 
 /**
-   @brief enfiler l'élement
-   @param f file
-   @param pD point représenté par les élements de pointDijkstra 
-**/
+ * @brief enfiler un état du dijkstra dans la file
+ * @param f file 
+ * @param pD état du dijkstra à enfiler
+ */
 void enfiler(File* f, EtatDuDijkstra pD);
 
 /**
-   @brief Défiler le premier élément qui a été ajouté à la file
-   @param f file
-   @return le point de Dijkstra qui a été défilé 
-**/
+ * @brief libérer la mémoire allouée pour la file
+ * @param f file
+ */
+void liberer_file(File* f);
+
+/**
+ * @brief defiler l'élement
+ * @param f file 
+ * @return l'état du dijkstra defilé
+*/
 EtatDuDijkstra defiler(File* f);
+
+
 
 #endif
