@@ -1,9 +1,9 @@
-typedef enum { NORD, SUD, EST, OUEST } tDirection;
+// typedef enum { NORD, SUD, EST, OUEST } tDirection;
 
-typedef struct {
-  unsigned int caseRobot;
-  tDirection direction;
-} Robot;
+// typedef struct {
+//   unsigned int caseRobot;
+//   tDirection direction;
+// } Robot;
 
 tDirection getDirection(Robot r) { return r.direction; }
 
