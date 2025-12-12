@@ -29,24 +29,24 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
     // On crée notre file pour faire le parcours
     File* file;
     // initialisation de la file
-    initialisation_file(&file);
+    initialisation_file(file);
     // état initial du Dijkstra
     EtatDuDijkstra initial;
     initial.point_actuel = depart;     // On commence bien sur le point de départ du robot
     initial.point_precedent = (unsigned int)-1;  // On a pas de point précédent au départ
     initial.chemin[0] = depart;    // Le premier point du chemin que l'on va faire est le point de départ
     initial.nb_points = 1;    // Au depart, on a pas avancé de case
-    enfiler(&file, initial);    //On enfile l'état initial du Dijkstra
+    enfiler(file, initial);    //On enfile l'état initial du Dijkstra
 
     // On met à jour pour la situation initiale
     // On informe que l'on a visité la case départ puisque l'on est dessus
     // L'indice 0 indique qu'il n'y a pas de predecesseur
     points_visites[depart][0] = 1;
     // Boucle principale du dijkstra
-    while(!estVideFile(&file)) {
+    while(!estVideFile(file)) {
         // Tant qu'on a pas vidé toute la file, on récupère l'etat de la pile qu'on defile
         // L'etat recupéré sera la chemoin que l'on est en train d'explorer
-        EtatDuDijkstra etat = defiler(&file);
+        EtatDuDijkstra etat = defiler(file);
         // Vérification si on est arrivé à l'endroit que l'on voulait
         if (etat.point_actuel == arrivee) {
             // Si le point sur lequel on est correspond au point d'arrivée
@@ -60,11 +60,11 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
             return resultat;
         }
         // Si on est pas à l'arrivée, alors on recupère l'adresse du noeud acutel ou l'on se trouve
-        Noeud* noeud = &g->noeuds[etat.point_actuel];
+        LCL_Liste noeud = G_sommets(*g);
         // On parcourt tous les voisins du point actuel (tous les voisins du noeud )
-        for(unsigned int i = 0; i < noeud->nb_voisins; i++) {
+        for(unsigned int i = 0; i < LCL_longueur(noeud); i++) {
             // On recupère le numéro du point voisin
-            unsigned int voisin = noeud->voisin[i];
+            unsigned int voisin =  G_obtenirSommetsAdjascents(*g,*(unsigned int *)LCL_element(noeud,i));
             // Si le voisin que l'on a correspond au noeud dont on regarde les voisins, alors on passe car correspond au demi-tour
             if(voisin == etat.point_precedent) {
                 continue;
@@ -97,7 +97,7 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
             nouvel_etat.chemin[etat.nb_points] = voisin;
             // On va alors enfiler le nouvel état pour l'explorer plus tard
             //On va ensuite continuer avec les autres voisins ce qu'on vient de faire
-            enfiler(&file, nouvel_etat);
+            enfiler(file, nouvel_etat);
             // La boucle va continuer lorsque tous les voisins seront traités et donc le while reprend et défile le prochain état de la file
         }
     }
@@ -141,14 +141,14 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
     // On a 4 points obligatoires et on veut un tableau 2D pour noter la distance qu'il y a entre eux
     // À l'issue de cela, on aura le chemin de A->B, A->C, A->D, B->A, B->C...
      printf("Calcul des plus courts chemins...\n");
-    Chemin distance[4][4];
+    EtatDuDijkstra distance[4][4];
     for(unsigned int i = 0; i < 4; i++) {
         for(unsigned int j = 0; j < 4; j++) {  // Correction de i++ en j++
             // On ne peut pas être sur le point 6 en venant du point 6 donc on exclut le cas i = j
             if(i != j) {
-                distance[i][j] = dijkstra(g, point_cles[i], point_cles[j]);
+                distance[i][j].chemin = dijkstra(g, point_cles[i], point_cles[j]);
                 // on a forcément un point (le premier du parcours)
-                if(distance[i][j].nb_points > 0) {
+                if(distance[i][j].chemin.nb_points > 0) {
                     // Affichage des deux points qu'on relie + les points par lesquels on passe + la distance
                     unsigned int distance_temp = distance[i][j].nb_points - 1;
                     printf("%d -> %d :", point_cles[i], point_cles[j]);
@@ -191,14 +191,14 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
         for(unsigned int i = 0; i < 4; i++) {
             unsigned int debut_parcours_temp = parcours[i];
             unsigned int fin_parcours_temp = parcours[i + 1];
-            if(distance[debut_parcours_temp][fin_parcours_temp].nb_points == 0) {
+            if(distance[debut_parcours_temp][fin_parcours_temp].chemin.nb_points == 0) {
             // On est dans le cas où c'est pas possible de relier deux points entre eux
                 printf("Les deux points %d et %d ne peuvent pas être reliés entre eux\n", debut_parcours_temp, fin_parcours_temp);
                 // Alors la solution pour ce chemin n'est pas valide
                 estValide = 0;
                 break;
             }
-            unsigned int distance_entre_segments = distance[debut_parcours_temp][fin_parcours_temp].nb_points - 1;
+            unsigned int distance_entre_segments = distance[debut_parcours_temp][fin_parcours_temp].chemin.nb_points - 1;
             distance_totale = distance_totale + distance_entre_segments;
             // SI ce n'est pas valide = points qui ne peuvent pas être reliés ensembles
             if(!estValide) {
@@ -217,7 +217,7 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
                 for(unsigned int i = 0; i < 4; i++) {
                     unsigned int debut_parcours_temp = parcours[i];
                     unsigned int fin_parcours_temp = parcours[i + 1];
-                    Chemin* segment = &distance[debut_parcours_temp][fin_parcours_temp];
+                    Chemin* segment = distance[debut_parcours_temp][fin_parcours_temp];
                     unsigned int debut = (i == 0)? 0: 1;
                     for(unsigned int j = debut; j < segment->nb_points; j++) {
                         solution.chemin_complet[index++] = segment->points[j];
