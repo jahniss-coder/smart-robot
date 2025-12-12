@@ -94,6 +94,20 @@ afficher chaque intersection qu'il croise, ainsi que chaque action qu'il réalis
 % inclu le schéma ainsi que les explications des cablages et des choix techniques
 
 \subsection{Choix des composants}
+
+Pour le montage du robot, nous avons commencé par nous rassembler et dicuter des différents composants que nous pouvions inclure au robot.
+Tout d'abord, nous avons discuté du meilleur emplacment pour les capteurs, essentiels au projet pour detecter les lignes noires du parcours.
+Après plusieurs propositions, nous avons finalement décidé de positionner deux capteurs proches l'un de l'autre en avant pour pouvoir suivre correctement la ligne noire et alors détecter par la même occasion lorsque le robot dévie.
+De plus, nous avons choisi de placer deux capteurs sur les cotés, un capteur sur le côté droit, ainsi qu'un capteur sur le côté gauche afin de détecter les intersections et virages.
+En ce qui concerne les moteurs, ceux-ci sont alimentés à l'aide de piles connectées en parallèles et sont reliés à un interrupteur.
+La raspberry Pi est alimentée par une batterie externe afin de garantir une autonomie et une alimentation stable.
+Le buzzer et les capteurs (suiveurs de ligne et RGB) sont connectés aux GPIO de la RaspberryPi et alimentés avec 3,3V.
+Concernant l'écran LCD, celui-ci nécessite une alimentation de 5V comme précisé dans sa documentation technique.
+Avant de monter intégralement les composants sur le robot, nous avons testés chacun des composants séparéments:
+Une unité de test pour les moteurs (Avancer, reculer, s'arrêter...), une unité de test pour les capteurs (détecter une surface sombre, détecter une surface claire, détecter une pastille de couleur...), 
+ainsi qu'une unité de test pour l'affichage sur l'écran LCD (afficher 'Bonjour', effacer l'écran, afficher la couleur détectée par le capteur RGB...).
+Ces test nous ont permis de d'ajuster l'emplacement des composants, la calibration des capteurs, de la même manière que trouver plus facilement ce qui pouvait ne pas fonctionner.
+
 \subsubsection{Capteur suiveur de ligne}
 \textbf{Rôle}
 
@@ -115,19 +129,20 @@ Celui-ci envoie alors le signal indiquant qu'il s'agit d'une surface noire.
 \subsubsection{Capteur RGB}
 \textbf{Rôle}
 
-Le cpateur de couleur TCS ??? permet au robot de detecter la couleur des pastilles présentes sur le parcours comme la pastille verte indiquant le point de départ du robot.
+Le cpateur de couleur TCS 34725 permet au robot de detecter la couleur des pastilles présentes sur le parcours comme la pastille verte indiquant le point de départ du robot.
 Ce capteur est très important car il permet d'identifier correctement les points de passage, mais aussi d'afficher la couleur que ce capteur détecte sur l'écran LCD.
 Il est essentiel d'inclure ce capteur, sans quoi, notre robot ne serait pas capable de repérer les points de passages obligatoires du parcours.
 
 \textbf{Fonctionnement}
 
 Le capteur de RGB, comme son nom l'indique, permet de repérer trois couleurs: rouge, vert et bleu.
-Le TSC ??? possède une petite LED blanche pour éclairer la surface et alors mesurer l'intensité lumineuse pour chacune des composantes (composantes rouge, ...).
+Le TSC 34725 possède une petite LED blanche pour éclairer la surface et alors mesurer l'intensité lumineuse pour chacune des composantes (composantes rouge, ...).
 Ensuite, les valeurs sont converties en valeurs numériques via le moyen de communication I2C qui sont ensuite lus par la carte embarquée de la Raspberry Pi 4.
 Les trois intensités sont alors combinées pour determiner de quelle couleur il s'agit.
 
 \subsubsection{Moteur Shield}
 \textbf{Rôle}
+
 \textbf{Fonctionnement}
 
 \subsubsection{Ecran LCD}
@@ -152,6 +167,16 @@ Tout d'abord,
 
 \subsection{Cycle en V}
 \subsubsection{Analyse}
+
+L'analyse a un rôle essentiel dans ce projet afin d'identifier les principaux problèmes que cause ce projet, et alors de traiter ces problèmes en sous problèmes plus simples à resoudre.
+Les principaux problèmes à resoudres sont:
+\begin{itemize}
+    \item étudier le fichier \textbf{.txt} afin de récuperer les informations essentielles liées au robot et à la construction de la ville
+    \item créer un graphe modélisant les liaisons entre les différents points de la ville
+    \item calculer le chemin le plus court
+    \item génerer un fichier \textbf{.txt} contenant les ordres que le robot doit effectuer
+\end{itemize}
+
 \subsubsection{Conception préliminaire}
 \subsubsection{Conception détaillée}
 \subsubsection{Code C}
