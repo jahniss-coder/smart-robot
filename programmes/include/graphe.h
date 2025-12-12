@@ -131,7 +131,7 @@ LCL_Liste G_sommets(G_Graphe g);
  * \param idSrc Indice du sommet dont on veut connaître les sommets adjacents
  * \return Une liste chaînée contenant les ids des sommets adjacents au sommet donné. En cas d'erreur (sommet inexistant), la fonction retourne une liste vide et la variable errno contient le code d'erreur : G_SOMMET_ERREUR
  */
-LCL_Liste G_obtenirSommetsAdjascents(G_Graphe g, unsigned int idSrc);
+LCL_Liste G_obtenirSommetsAdjacents(G_Graphe g, unsigned int idSrc);
 
 /**
  * \brief Retourne l'étiquette d'un sommet
