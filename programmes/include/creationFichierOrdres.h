@@ -6,7 +6,7 @@
 #define MAX_ORDRES 4 // Il ne peut pas y avoir plus de 4 ordres sachant que les demi tour ne sont pas pris en compte car ils feraient perdre trop de temps au directionRobot
 #define MAX_CASES 50 // constante pour le plus court chemin.
 
-typedef enum { AV , TG , TD, NULL } Ordre; // NULL correspond à aucun ordre
+typedef enum { AV , TG , TD, NO } Ordre; // NULL correspond à aucun ordre
 
 tDirection directionOuest(tDirection direction);
 
