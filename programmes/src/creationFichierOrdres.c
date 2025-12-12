@@ -39,16 +39,16 @@ Ordre ordreDuChangementDeDirection(tDirection direction, tDirection nlleDirectio
     if (direction == nlleDirection)
         return NULL;
     else {
-        if (direction == directionGauche(nlleDirection))
+        if (direction == directionOuest(nlleDirection))
             return TG;
         else{ 
-            if (direction == directionDroite(nlleDirection))
+            if (direction == directionEst(nlleDirection))
                 return TD; 
             }
     }
 }
 
-void determinerOrdre(Robot* robot,, unsigned int caseSuivanteRobot, unsigned int largeurCircuit, Ordre* ordre1, Ordre* ordre2) {
+void determinerOrdre(Robot* robot, unsigned int caseSuivanteRobot, unsigned int largeurCircuit, Ordre* ordre1, Ordre* ordre2) {
     unsigned int caseInitRobot = getCaseRobot(*robot);
     tDirection dirRobot = getDirection(*robot);
     unsigned int diff = caseSuivanteRobot - caseInitRobot;
