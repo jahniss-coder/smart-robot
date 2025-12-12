@@ -76,8 +76,34 @@ void suivreLigne(int gpioAG, int gpioAD, int *g, int *d) {
     // pas de cas de les deux à 0
   }
 
+  // autre option
+  // if (getSensor(gpioAG) && !getSensor(gpioAD)) { // perdu à droite
+  //   tournerGaucheSansArret();
+  //   delay(25);
+  // }
+
+  // if (!getSensor(gpioAG) && getSensor(gpioAD)) { // perdu à gauche
+  //   tournerDroiteSansArret();
+  //   delay(25);
+  // }
+
   moteurs_avancer();
 }
+
+// void suivreLigneTroisCapteurs(int gpioAG, int gpioAD) {
+//   if (getSensor(gpioAG) && !getSensor(gpioAD)) { // perdu à droite
+//     tournerGaucheSansArret();
+//     delay(25);
+//   }
+
+//   if (!getSensor(gpioAG) && getSensor(gpioAD)) { // perdu à gauche
+//     tournerDroiteSansArret();
+//     delay(25);
+//   }
+//     // pas de cas de les deux à 0
+//   moteurs_avancer();
+// }
+
 
 bool aRetrouveLigne(int gpioAG, int gpioAD) {
   return getSensor(gpioAG) && getSensor(gpioAD);
