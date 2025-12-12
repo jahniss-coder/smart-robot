@@ -34,8 +34,8 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
     EtatDuDijkstra initial;
     initial.point_actuel = depart;     // On commence bien sur le point de départ du robot
     initial.point_precedent = (unsigned int)-1;  // On a pas de point précédent au départ
-    initial.chemin[0] = depart;    // Le premier point du chemin que l'on va faire est le point de départ
-    initial.nb_points = 1;    // Au depart, on a pas avancé de case
+    initial.chemin.points[0] = depart;    // Le premier point du chemin que l'on va faire est le point de départ
+    initial.chemin.nb_points = 1;    // Au depart, on a pas avancé de case
     enfiler(file, initial);    //On enfile l'état initial du Dijkstra
 
     // On met à jour pour la situation initiale
@@ -51,10 +51,10 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
         if (etat.point_actuel == arrivee) {
             // Si le point sur lequel on est correspond au point d'arrivée
             // Le nombre de point de ce chemin prend le nombre de point du Dijkstra que l'on était en train de faire
-            resultat.nb_points = etat.nb_points;
-            for(unsigned int i = 0; i < etat.nb_points; i++) {
+            resultat.nb_points = etat.chemin.nb_points;
+            for(unsigned int i = 0; i < etat.chemin.nb_points; i++) {
                 // On va copier tous les points par lesquels il faut passer
-                resultat.points[i] = etat.chemin[i];
+                resultat.points[i] = etat.chemin.points[i];
             }
             // On retourne le resultat = le plus court chemin du départ à l'arrivée
             return resultat;
@@ -89,12 +89,12 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
             EtatDuDijkstra nouvel_etat;
             nouvel_etat.point_actuel = voisin;
             nouvel_etat.point_precedent = etat.point_actuel;
-            nouvel_etat.nb_points = etat.nb_points + 1;
+            nouvel_etat.chemin.nb_points = etat.chemin.nb_points + 1;
             // On va copier le chemin actuel dans le nouvel état et donc ajouter le voisin à la fin du chemin puisque l'on est chez lui
-            for(unsigned int j = 0; j < etat.nb_points; j++) {
-                nouvel_etat.chemin[j] = etat.chemin[j];
+            for(unsigned int j = 0; j < etat.chemin.nb_points; j++) {
+                nouvel_etat.chemin.points[j] = etat.chemin.points[j];
             }
-            nouvel_etat.chemin[etat.nb_points] = voisin;
+            nouvel_etat.chemin.points[etat.chemin.nb_points] = voisin;
             // On va alors enfiler le nouvel état pour l'explorer plus tard
             //On va ensuite continuer avec les autres voisins ce qu'on vient de faire
             enfiler(file, nouvel_etat);
@@ -128,7 +128,7 @@ void permutation(unsigned int arr[3], unsigned int permutations[6][3]) {
 Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires[3], unsigned int depart, unsigned int longueur_ville) {
     // Au départ, on initialise la solution à 0
     Solution solution = {0};
-    solution.longueur_chemin_complet = 0;
+    solution.chemin_complet.nb_points = 0;
     // Pour pouvoir comparer les distances
     unsigned int meilleure_distance = 99999;
     // On va stocker les points clés: départ + Points obligatoires
@@ -150,11 +150,11 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
                 // on a forcément un point (le premier du parcours)
                 if(distance[i][j].chemin.nb_points > 0) {
                     // Affichage des deux points qu'on relie + les points par lesquels on passe + la distance
-                    unsigned int distance_temp = distance[i][j].nb_points - 1;
+                    unsigned int distance_temp = distance[i][j].chemin.nb_points - 1;
                     printf("%d -> %d :", point_cles[i], point_cles[j]);
-                    for(unsigned int k = 0; k < distance[i][j].nb_points - 1; k++) {
-                        printf("%d", distance[i][j].chemin[k]);
-                        if(k < distance[i][j].nb_points) {
+                    for(unsigned int k = 0; k < distance[i][j].chemin.nb_points - 1; k++) {
+                        printf("%d", distance[i][j].chemin.points[k]);
+                        if(k < distance[i][j].chemin.nb_points) {
                             printf("->");
                         }
                     }
@@ -220,11 +220,11 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
                     Chemin* segment = distance[debut_parcours_temp][fin_parcours_temp];
                     unsigned int debut = (i == 0)? 0: 1;
                     for(unsigned int j = debut; j < segment->nb_points; j++) {
-                        solution.chemin_complet[index++] = segment->points[j];
+                        solution.chemin_complet.points[index++] = segment->points[j];
                     }
                 }
 
-               solution.longueur_chemin_complet = index;
+                solution.chemin_complet.nb_points = index;
             }
         }
     }

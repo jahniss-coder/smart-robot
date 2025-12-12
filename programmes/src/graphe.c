@@ -205,8 +205,19 @@ LCL_Liste G_sommets(G_Graphe g) {
   return LCL_copier(g.sommets);
 }
 
-LCL_Liste G_obtenirSommetsAdjascents(G_Graphe g, unsigned int idSrc) {
-  return LCL_liste(CLCTS_copierInt, CLCTS_libererInt);
+LCL_Liste G_obtenirSommetsAdjacents(G_Graphe g, unsigned int idSrc) {
+  LCL_Liste res = LCL_liste(CLCTS_copierInt, CLCTS_libererInt);
+  for(int i=0; i<=LCL_longueur(g.arcs)-1; i++) {
+    G_Arc *temp = (G_Arc*)LCL_element(g.arcs, i);
+    if(temp->src == (int)idSrc) {
+      LCL_inserer(&res, &temp->dest, LCL_longueur(res));
+    }
+    if(!g.oriente && temp->dest == (int)idSrc) {
+      LCL_inserer(&res, &temp->src, LCL_longueur(res));
+    }
+    free(temp);
+  }
+  return res;
 }
 
 void* G_obtenirEtiquette(G_Graphe g, unsigned int id) {
