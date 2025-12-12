@@ -22,6 +22,7 @@ qui inclut :
 // Capteurs suiveurs lignes
 #define SUIVEUR_Gauche 27
 #define SUIVEUR_Droit 22
+//#define SUIVEUR_Centre_C
 #define SUIVEUR_Centre_G 4
 #define SUIVEUR_Centre_D 16
 // Buzzeur
