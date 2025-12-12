@@ -49,7 +49,7 @@ void avancer(int file) {
 
 void faireUnVirageAGauche() {
   tournerGaucheSansArret();
-  delay(1000);
+  delay(10);
   while (!aRetrouveLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D)) {
     afficherManoeuvre(TOURNER_GAUCHE);
   }
@@ -60,7 +60,7 @@ void faireUnVirageAGauche() {
 
 void faireUnVirageADroite() {
   tournerDroiteSansArret();
-  delay(1000);
+  delay(10);
   while (!aRetrouveLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D)) {
     afficherManoeuvre(TOURNER_DROITE);
   }
