@@ -18,8 +18,7 @@ typedef struct{
 typedef struct{
     unsigned int point_actuel;   // Le point sur lequel on se trouve
     unsigned int point_precedent;    // Le point depuis lequel on arrive
-    unsigned int chemin[NB_POINTS_MAX];      // Tous les points par lesquels il faut passer pour arriver jusqu'au point actuel
-    unsigned int nb_points;    // Le nombre de points dans le chemin
+    Chemin chemin; // Tous les points par lesquels il faut passer pour arriver jusqu'au point actuel
 } EtatDuDijkstra;
 
 typedef struct{
@@ -33,8 +32,7 @@ typedef struct{
     P3 -> P1 -> P2
     P3 -> P2 -> P1
     **/
-    unsigned int chemin_complet[NB_POINTS_MAX];  // Tableau avec tous les points par lesquels on doit passer
-    unsigned int longueur_chemin_complet;
+    Chemin chemin_complet;  // Tableau avec tous les points par lesquels on doit passer
 }Solution;
 
 /**
