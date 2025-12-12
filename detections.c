@@ -5,9 +5,10 @@
 
 bool detecterLigne(int gpio) { return getSensor(gpio) == 1; }
 
-int detecterVirage(int gpioG, int gpioD, int gpioAG, int gpioAD) {
-  return (getSensor(gpioG) == 1 ^ getSensor(gpioD) == 1) &&
-         !(getSensor(gpioAG) == 1 || getSensor(gpioAD) == 1);
+bool detecterVirage(int gpioG, int gpioD, int gpioAG, int gpioAD) {
+  // return (getSensor(gpioG) == 1 ^ getSensor(gpioD) == 1) &&
+  //        !(getSensor(gpioAG) == 1 || getSensor(gpioAD) == 1);
+  return getSensor(gpioG) == 1 ^ getSensor(gpioD) == 1;
 }
 
 int detecterIntersection(int gpioG, int gpioD, int gpioAG, int gpioAD) {
@@ -54,27 +55,26 @@ void suivreLigne(int gpioAG, int gpioAD, int *g, int *d) {
   }
 
   if (getSensor(gpioAG) && !getSensor(gpioAD)) { // perdu à droite
-    tournerGaucheSansArret();
-    delay(25);
-  }
-
-  if (!getSensor(gpioAG) && getSensor(gpioAD)) { // perdu à gauche
     tournerDroiteSansArret();
     delay(25);
   }
 
-  if (!getSensor(gpioAD) && !getSensor(gpioAG)) {
-    if (*d == 0 && *g == 1) {
-      tournerGaucheSansArret();
-      delay(25);
-    }
-    if (*d == 1 && *g == 0) {
-      tournerDroiteSansArret();
-      delay(25);
-    }
-
-    // pas de cas de les deux à 0
+  if (!getSensor(gpioAG) && getSensor(gpioAD)) { // perdu à gauche
+    tournerGaucheSansArret();
+    delay(25);
   }
+
+  // if (!getSensor(gpioAD) && !getSensor(gpioAG)) {
+  //   if (*d == 0 && *g == 1) {
+  //     tournerGaucheSansArret();
+  //     delay(25);
+  //   }
+  //   if (*d == 1 && *g == 0) {
+  //     tournerDroiteSansArret();
+  //     delay(25);
+  //   }
+
+  // pas de cas de les deux à 0
 
   // autre option
   // if (getSensor(gpioAG) && !getSensor(gpioAD)) { // perdu à droite
@@ -104,7 +104,12 @@ void suivreLigne(int gpioAG, int gpioAD, int *g, int *d) {
 //   moteurs_avancer();
 // }
 
+bool aRetrouveLigneGauche(int gpioAG) {
+  printf("retrouvé ligne gauche\n");
+  return getSensor(gpioAG);
+}
 
-bool aRetrouveLigne(int gpioAG, int gpioAD) {
-  return getSensor(gpioAG) && getSensor(gpioAD);
+bool aRetrouveLigneDroit(int gpioAD) {
+  printf("a retrouvé ligne droite\n");
+  return getSensor(gpioAD); // &&
 }

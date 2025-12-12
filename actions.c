@@ -26,7 +26,7 @@ void avancer(int file) {
                                       SUIVEUR_Centre_G, SUIVEUR_Centre_D);
   virage = detecterVirage(SUIVEUR_Gauche, SUIVEUR_Droit, SUIVEUR_Centre_G,
                           SUIVEUR_Centre_D);
-  while (intersection == 0 && virage == 0) {
+  while (intersection == 0 && !virage) {
     suivreLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D, &g, &d);
     pastille = detecterPastille(file);
     if (pastille != 0) {
@@ -39,6 +39,13 @@ void avancer(int file) {
                             SUIVEUR_Centre_D);
   }
 
+  if (virage) {
+    printf("\n\n\nVIRAGE DETECTÉ\n\n\n");
+  }
+  if (intersection != 0) {
+    printf("Intersection: %d\n", intersection);
+  }
+
   if (intersection != 0) {
     afficherIntersection(intersection);
   }
@@ -48,24 +55,26 @@ void avancer(int file) {
 }
 
 void faireUnVirageAGauche() {
-  tournerGaucheSansArret();
-  delay(10);
-  while (!aRetrouveLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D)) {
+  tournerGauche();
+  delay(300);
+  while (!aRetrouveLigneGauche(SUIVEUR_Centre_G)) {
     afficherManoeuvre(TOURNER_GAUCHE);
   }
-  tournerDroiteSansArret();
-  delay(50);
+  while (!aRetrouveLigneGauche(SUIVEUR_Centre_D)) {
+    tournerDroite();
+  }
+  // delay(50);
   moteurs_avancer();
 }
 
 void faireUnVirageADroite() {
-  tournerDroiteSansArret();
-  delay(10);
-  while (!aRetrouveLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D)) {
+  tournerDroite();
+  delay(300);
+  while (!aRetrouveLigneGauche(SUIVEUR_Centre_D)) {
     afficherManoeuvre(TOURNER_DROITE);
   }
-  tournerGaucheSansArret();
-  delay(50);
+
+  // delay(50);
   moteurs_avancer();
 }
 

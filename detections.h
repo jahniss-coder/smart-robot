@@ -10,7 +10,7 @@ int getSensor(int gpio);
 bool detecterLigne(int gpio);
 
 // Détection d’un virage (gauche/droite) selon les capteurs latéraux et avant
-int detecterVirage(int gpioG, int gpioD, int gpioAG, int gpioAD);
+bool detecterVirage(int gpioG, int gpioD, int gpioAG, int gpioAD);
 
 // Détection d’un type d’intersection selon une combinaison de capteurs
 int detecterIntersection(int gpioG, int gpioD, int gpioAG, int gpioAD);
@@ -19,6 +19,8 @@ int detecterIntersection(int gpioG, int gpioD, int gpioAG, int gpioAD);
 void suivreLigne(int gpioAG, int gpioAD, int *g, int *d);
 
 // Vérifie si les deux capteurs avant ont retrouvé la ligne
-bool aRetrouveLigne(int gpioAG, int gpioAD);
+// bool aRetrouveLigne(int gpioAG, int gpioAD);
+bool aRetrouveLigneGauche(int gpioAG);
+bool aRetrouveLigneDroit(int gpioAD);
 
 #endif

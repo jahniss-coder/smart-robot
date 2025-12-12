@@ -1,12 +1,10 @@
+#include "moteur.h"
 #include <stdio.h>
 #include <wiringPi.h>
-#include "moteur.h"
 
-int calcul_PWM(int vitesse) { 
-    return (vitesse * 1024) / 100; 
-}
+int calcul_PWM(int vitesse) { return (vitesse * 1024) / 100; }
 
-void moteurs_avancer(){
+void moteurs_avancer() {
   int pwmSpeed = calcul_PWM(VITESSE_MOYENNE);
 
   pwmWrite(MOTEUR_G_PWM, pwmSpeed);
@@ -19,7 +17,7 @@ void moteurs_avancer(){
   digitalWrite(MOTEUR_D_IN4, LOW);
 }
 
-void moteurs_reculer(){
+void moteurs_reculer() {
   int pwmSpeed = calcul_PWM(VITESSE_MOYENNE);
 
   pwmWrite(MOTEUR_G_PWM, pwmSpeed);
@@ -32,7 +30,7 @@ void moteurs_reculer(){
   digitalWrite(MOTEUR_D_IN4, HIGH);
 }
 
-void moteurs_arreter(){
+void moteurs_arreter() {
   pwmWrite(MOTEUR_G_PWM, 0);
   pwmWrite(MOTEUR_D_PWM, 0);
 
@@ -43,7 +41,7 @@ void moteurs_arreter(){
   digitalWrite(MOTEUR_D_IN4, LOW);
 }
 
-void tournerGauche(){
+void tournerGauche() {
   digitalWrite(MOTEUR_G_IN1, LOW);
   digitalWrite(MOTEUR_G_IN2, HIGH);
 
@@ -51,13 +49,13 @@ void tournerGauche(){
   digitalWrite(MOTEUR_D_IN4, LOW);
 
   // Application de la vitesse pour tourner
-  int pwmSpeed = calcul_PWM(VITESSE_MOYENNE);
+  int pwmSpeed = calcul_PWM(VITESSE_VIRAGE);
 
   pwmWrite(MOTEUR_G_PWM, pwmSpeed);
   pwmWrite(MOTEUR_D_PWM, pwmSpeed);
 }
 
-void tournerDroite(){
+void tournerDroite() {
   digitalWrite(MOTEUR_G_IN1, HIGH);
   digitalWrite(MOTEUR_G_IN2, LOW);
 
@@ -65,13 +63,13 @@ void tournerDroite(){
   digitalWrite(MOTEUR_D_IN4, HIGH);
 
   // Application de la vitesse pour tourner
-  int pwmSpeed = calcul_PWM(VITESSE_MOYENNE);
+  int pwmSpeed = calcul_PWM(VITESSE_VIRAGE);
 
   pwmWrite(MOTEUR_G_PWM, pwmSpeed);
   pwmWrite(MOTEUR_D_PWM, pwmSpeed);
 }
 
-void tournerGaucheSansArret(){
+void tournerGaucheSansArret() {
 
   digitalWrite(MOTEUR_G_IN1, HIGH);
   digitalWrite(MOTEUR_G_IN2, LOW);
@@ -87,7 +85,7 @@ void tournerGaucheSansArret(){
   pwmWrite(MOTEUR_D_PWM, pwmSpeedRight);
 }
 
-void tournerDroiteSansArret(){
+void tournerDroiteSansArret() {
 
   digitalWrite(MOTEUR_G_IN1, HIGH);
   digitalWrite(MOTEUR_G_IN2, LOW);
@@ -106,15 +104,16 @@ void tournerDroiteSansArret(){
 void moteurs_demi_tour() {
   moteurs_arreter();
   tournerGauche();
-  delay(TEMPS_180_DEGRES);  // Temps pour 180°, à calibrer
+  delay(TEMPS_180_DEGRES); // Temps pour 180°, à calibrer
   moteurs_arreter();
 }
 
 // Quand on aura calibré le temps pour la rotation de 90°
-void tourner(int sens){
+void tourner(int sens) {
   // sens: 1=droite, -1=gauche
   if (sens > 0)
     tournerDroiteSansArret();
-  else tournerGauche();
+  else
+    tournerGauche();
   delay(TEMPS_90_DEGRES);
 }

@@ -10,11 +10,11 @@ int main() {
 
   printf("Début programme\n");
 
-  GPIO_configurerModeGpio();
   if (GPIO_initialiserGpio() == -1) {
     printf("Erreur Initialisation GPIO\n");
   }
 
+  GPIO_configurerModeGpio();
   printf("Arrêt du moteur\n");
   moteurs_arreter();
 
@@ -23,15 +23,15 @@ int main() {
 
   fileColor = color_initialisation();
 
-  printf("Récupération fichier texte: test.txt");
+  printf("Récupération fichier texte: test.txt\n");
 
   printf("Délai 5 secondes\n");
   delay(5000);
 
   printf("Début mouvement\n");
 
-  controlerRobotDepuisOrdre("test.txt", 4);
-
+  // controlerRobotDepuisOrdre("test.txt", 10);
+  moteurs_avancer();
   printf("Fin mouvement\n");
 
   color_fermer(fileColor);

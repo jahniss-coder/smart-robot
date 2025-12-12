@@ -119,7 +119,7 @@ int detecterPastille(int file) {
 
 int getSensor(int gpio) {
   int sensorValue = digitalRead(gpio); // lire la valeur du capteur
-  delay(50);
+  // delay(50);
   return sensorValue;
 }
 
