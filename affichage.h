@@ -21,7 +21,7 @@
 // Global lcd handle:
 static int lcdHandle;
 
-void init();
+void initLcd();
 void afficherManoeuvre(char* manoeuvre);
 void afficherVirage(int);
 void afficherIntersection(int);

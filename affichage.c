@@ -1,7 +1,7 @@
 
 #include "affichage.h"
 
-void init() {
+void initLcd() {
     int i;
     int count;
 

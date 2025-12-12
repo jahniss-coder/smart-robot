@@ -16,6 +16,7 @@ void GPIO_configurerModeGpio()
 	pinMode(SUIVEUR_Gauche, INPUT);
 	pinMode(SUIVEUR_Droit, INPUT);
 	pinMode(SUIVEUR_Centre_G, INPUT);
+    //pinMode(SUIVEUR_Centre_C, INPUT);
 	pinMode(SUIVEUR_Centre_D, INPUT);
 
     // Capteur couleur
