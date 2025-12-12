@@ -8,13 +8,26 @@
 
 void avancer(int file) {
   int pastille, intersection, virage;
+  int g, d;
+  if (getSensor(SUIVEUR_Centre_D)) {
+    d = 1;
+  } else {
+    d = 0;
+  }
+
+  if (getSensor(SUIVEUR_Centre_G)) {
+    g = 1;
+  } else {
+    g = 0;
+  }
+
   moteurs_avancer();
   intersection = detecterIntersection(SUIVEUR_Gauche, SUIVEUR_Droit,
                                       SUIVEUR_Centre_G, SUIVEUR_Centre_D);
   virage = detecterVirage(SUIVEUR_Gauche, SUIVEUR_Droit, SUIVEUR_Centre_G,
                           SUIVEUR_Centre_D);
   while (intersection == 0 && virage == 0) {
-    suivreLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D);
+    suivreLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D, &g, &d);
     pastille = detecterPastille(file);
     if (pastille != 0) {
       afficherCouleur(pastille);
@@ -95,10 +108,13 @@ void controlerRobotDepuisOrdre(char *cheminFichier, int nbLigneFichier) {
 
   while (tableau[indice] != NULL) {
     if (strcmp(tableau[indice], "AV") == 0) {
+      printf("avancer\n");
       avancer(fileCapteur);
     } else if (strcmp(tableau[indice], "TG") == 0) {
+      printf("virage gauche\n");
       faireUnVirageAGauche();
     } else if (strcmp(tableau[indice], "TD") == 0) {
+      printf("virage droit\n");
       faireUnVirageADroite();
     }
     indice++;

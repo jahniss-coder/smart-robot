@@ -16,7 +16,7 @@ int detecterVirage(int gpioG, int gpioD, int gpioAG, int gpioAD);
 int detecterIntersection(int gpioG, int gpioD, int gpioAG, int gpioAD);
 
 // Suivi de ligne basé sur les capteurs avant gauche/droite
-void suivreLigne(int gpioAG, int gpioAD);
+void suivreLigne(int gpioAG, int gpioAD, int *g, int *d);
 
 // Vérifie si les deux capteurs avant ont retrouvé la ligne
 bool aRetrouveLigne(int gpioAG, int gpioAD);

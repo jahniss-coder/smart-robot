@@ -87,4 +87,4 @@ int getSensor(int gpio);
 **/
 void color_fermer(int file);
 
-#endif __CAPTEURS__
+#endif

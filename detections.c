@@ -1,3 +1,4 @@
+#include "detections.h"
 #include "capteurs.h"
 #include "moteur.h"
 #include <stdbool.h>
@@ -37,14 +38,45 @@ int detecterIntersection(int gpioG, int gpioD, int gpioAG, int gpioAD) {
   }
 }
 
-void suivreLigne(int gpioAG, int gpioAD) {
-  while (getSensor(gpioAG) && !getSensor(gpioAD)) { // perdu à droite
-    tournerGaucheSansArret();
+void suivreLigne(int gpioAG, int gpioAD, int *g, int *d) {
+  if (getSensor(gpioAD) ||
+      getSensor(gpioAG)) { // pour sauvegarder l'état précédent des capteurs
+    if (getSensor(gpioAD)) {
+      *d = 1;
+    } else {
+      *d = 0;
+    }
+    if (getSensor(gpioAG)) {
+      *g = 1;
+    } else {
+      *g = 0;
+    }
   }
 
-  while (!getSensor(gpioAD) && getSensor(gpioAD)) { // perdu à gauche
-    tournerDroiteSansArret();
+  if (getSensor(gpioAG) && !getSensor(gpioAD)) { // perdu à droite
+    tournerGaucheSansArret();
+    delay(25);
   }
+
+  if (!getSensor(gpioAG) && getSensor(gpioAD)) { // perdu à gauche
+    tournerDroiteSansArret();
+    delay(25);
+  }
+
+  if (!getSensor(gpioAD) && !getSensor(gpioAG)) {
+    if (*d == 0 && *g == 1) {
+      tournerGaucheSansArret();
+      delay(25);
+    }
+    if (*d == 1 && *g == 0) {
+      tournerDroiteSansArret();
+      delay(25);
+    }
+
+    // pas de cas de les deux à 0
+  }
+
+  moteurs_avancer();
 }
 
 bool aRetrouveLigne(int gpioAG, int gpioAD) {

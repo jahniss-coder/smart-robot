@@ -1,6 +1,7 @@
-/** 
+/**
 Bibliotèque pour le projet
-Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce qui inclut :
+Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce
+qui inclut :
     - L'initalisation des modes des GPIO
     - L'initialisation des GPIO
 
@@ -24,7 +25,7 @@ Celle-ci contient l'ensemble des fonctions utiles pour le projet Smart Robot ce 
 #define SUIVEUR_Centre_G 4
 #define SUIVEUR_Centre_D 16
 // Buzzeur
-//#define BUZZER ?
+// #define BUZZER ?
 // LCD
 #define LCD_DATA 2
 #define LCD_CLOCL 3
