@@ -1,4 +1,5 @@
 #include "action.h"
+#include "affichage.h"
 #include "capteurs.h"
 #include "configuration_GPIO.h"
 #include "detections.h"
@@ -55,8 +56,8 @@ void faireUnVirageADroite() {
   moteurs_avancer();
 }
 
-char **retourneTableauDOrdre(const char *cheminFichier, int nbLigneFichier) {
-  char **tableau = malloc(nbLigneFichier * sizeof(char *));
+char **retourneTableauDOrdre(char *cheminFichier, int nbLigneFichier) {
+  char **tableau = malloc((nbLigneFichier + 1) * sizeof(char *));
   int indice = 0;
 
   FILE *f = fopen(cheminFichier, "r");
