@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include "creationGraphe.h"
 #include "creationFichierOrdres.h"
+#include "dijkstra.h"   // Ajout des bibliothèques pour les test
+#include "file.h"
 
 const char* fileName = "ville.txt";
 
@@ -161,6 +163,205 @@ void test_creation_fichier_ordres(void) {
     fclose(fichier);
 }
 
+/*
+    tests de Dijkstra si le depart est aussi l'arrivée
+*/
+void test_dijkstra_depart_egal_arrivee(void) {
+    unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+        {0, 1}, {1, 2}, {2, 3}, {3, 4},
+        {0, 5}, {5, 6}, {6, 7}, {7, 8},
+        {1, 6}, {2, 7}, {3, 8}, {4, 9},
+        {5, 10}, {10, 11}, {11, 12}, {12, 13},
+        {6, 11}, {7, 12}, {8, 13}, {9, 14}
+    };
+    unsigned int nbLiaisons = 20;
+    G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
+    
+    Chemin resultat = dijkstra(g, 2, 2);
+    
+    CU_ASSERT_EQUAL(resultat.nb_points, 1);
+    CU_ASSERT_EQUAL(resultat.points[0], 2);
+    
+    G_vider(g);
+}
+
+/*
+    tests de Dijkstra pour un chemin entre 2 points
+*/
+void test_dijkstra_1_chemin(void) {
+    unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+        {0, 1}, {1, 2}, {2, 3}, {3, 4},
+        {0, 5}, {5, 6}, {6, 7}, {7, 8},
+        {1, 6}, {2, 7}, {3, 8}, {4, 9},
+        {5, 10}, {10, 11}, {11, 12}, {12, 13},
+        {6, 11}, {7, 12}, {8, 13}, {9, 14}
+    };
+    unsigned int nbLiaisons = 20;
+    G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
+
+    // On veut savoir le chemin le plus court entre le point 6 et 13
+    
+    Chemin resultat = dijkstra(g, 6, 13);
+    
+    CU_ASSERT_EQUAL(resultat.nb_points, 4);
+    CU_ASSERT_EQUAL(resultat.points[0], 6);
+    CU_ASSERT_EQUAL(resultat.points[3], 13);
+    
+    G_vider(g);
+}
+
+/*
+    tests de Dijkstra pour le chemin entier en passant par les points obligatoires
+    ceulement les 3 chemins en partant de la case départ
+*/
+void test_dijkstra_points_obligatoires(void) {
+    unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+        {1,2}, {1,6}, {2,3}, {2,7}, {3,4},
+        {4,5}, {5,10}, {6,11}, {7,8}, {8,13},
+        {9,14}, {10,15}, {11,16}, {11,12}, {12,17},
+        {12,13}, {14,19}, {15,20}, {16,21}, {17,22},
+        {18,19}, {18,23}, {19,20}, {20,25}, {21,22},
+        {22,23}, {23, 24}
+    };
+    unsigned int nbLiaisons = 27;
+    G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
+    
+    // Test avec des points intermédiaires
+    // De 6 (case départ robot) vers 13, 22, 20
+    Chemin chemin1 = dijkstra(g, 6, 13);
+    CU_ASSERT_TRUE(chemin1.nb_points > 0);
+    CU_ASSERT_EQUAL(chemin1.points[0], 6);
+    CU_ASSERT_EQUAL(chemin1.points[chemin1.nb_points - 1], 13);
+    
+    Chemin chemin2 = dijkstra(g, 6, 22);
+    CU_ASSERT_TRUE(chemin2.nb_points > 0);
+    CU_ASSERT_EQUAL(chemin1.points[0], 6);
+    CU_ASSERT_EQUAL(chemin1.points[chemin1.nb_points - 1], 22);
+    
+    Chemin chemin3 = dijkstra(g, 6, 20);
+    CU_ASSERT_TRUE(chemin3.nb_points > 0);
+    CU_ASSERT_EQUAL(chemin1.points[0], 6);
+    CU_ASSERT_EQUAL(chemin1.points[chemin1.nb_points - 1], 20);
+    
+    G_vider(g);
+}
+
+/*
+    test si les permutations s'executent dans l'ordre correct
+*/
+void test_permutation_ordre_correct(void) {
+    unsigned int arr[3] = {10, 20, 30};
+    unsigned int permutations[6][3];
+    
+    permutation(arr, permutations);
+    
+    // Verification des 6 permutations
+    CU_ASSERT_EQUAL(permutations[0][0], 10);
+    CU_ASSERT_EQUAL(permutations[0][1], 20);
+    CU_ASSERT_EQUAL(permutations[0][2], 30);
+    
+    CU_ASSERT_EQUAL(permutations[1][0], 10);
+    CU_ASSERT_EQUAL(permutations[1][1], 30);
+    CU_ASSERT_EQUAL(permutations[1][2], 20);
+    
+    CU_ASSERT_EQUAL(permutations[2][0], 20);
+    CU_ASSERT_EQUAL(permutations[2][1], 10);
+    CU_ASSERT_EQUAL(permutations[2][2], 30);
+    
+    CU_ASSERT_EQUAL(permutations[5][0], 30);
+    CU_ASSERT_EQUAL(permutations[5][1], 20);
+    CU_ASSERT_EQUAL(permutations[5][2], 10);
+}
+
+void test_permutation_points_ville(void) {
+    unsigned int arr[3] = {13, 22, 20};
+    unsigned int permutations[6][3];
+    
+    permutation(arr, permutations);
+    
+    // Verification que les permutations ont les bonnes valeurs
+    for(unsigned int i = 0; i < 6; i++) {
+        bool contient13 = false, contient22 = false, contient20 = false;
+        for(unsigned int j = 0; j < 3; j++) {
+            if(permutations[i][j] == 13){
+                 contient13 = true;
+                }
+            if(permutations[i][j] == 22){
+                contient22 = true;
+            } 
+            if(permutations[i][j] == 20){
+                contient20 = true;
+            } 
+        }
+        CU_ASSERT_TRUE(contient13);
+        CU_ASSERT_TRUE(contient22);
+        CU_ASSERT_TRUE(contient20);
+    }
+}
+
+/*
+    tests que le TAD file est correct
+*/
+void test_file_initialisation(void) {
+    File* f;
+    initialisation_file(f);
+    
+    CU_ASSERT_TRUE(estVideFile(f));
+    CU_ASSERT_FALSE(estPleineFile(f));
+}
+
+/*
+    tests que la file enfile et defile
+*/
+void test_file_enfiler_defiler(void) {
+    File* f;
+    initialisation_file(f);
+    
+    EtatDuDijkstra etat;
+    etat.point_actuel = 5;
+    etat.point_precedent = -1;
+    etat.chemin.points[0] = 5;
+    etat.chemin.nb_points = 1
+    
+    enfiler(f, etat);
+    CU_ASSERT_FALSE(estVideFile(f));
+    
+    EtatDuDijkstra etat_recupere = defiler(f);
+    CU_ASSERT_EQUAL(etat_recupere.point_actuel, 5);
+    CU_ASSERT_EQUAL(etat_recupere.chemin.nb_points, 1);
+    CU_ASSERT_TRUE(estVideFile(f));
+}
+
+/*
+    tests que l'on a bien une liste fifo
+*/
+void test_file_ordre_fifo(void) {
+    File* f;
+    initialisation_file(f);
+    
+    // Enfiler 5 états
+    for(int i = 0; i < 5; i++) {
+        EtatDuDijkstra etat;
+        etat.point_actuel = i;
+        etat.point_precedent = -1;
+        etat.chemin.nb_points = 1;
+        etat.chemin.points[0] = i;
+        enfiler(f, etat);
+    }
+    
+    // Vérifier l'ordre FIFO
+    for(int i = 0; i < 5; i++) {
+        EtatDuDijkstra etat = defiler(f);
+        CU_ASSERT_EQUAL(etat.point_actuel, i);
+    }
+    
+    CU_ASSERT_TRUE(estVideFile(f));
+}
+
+/*
+    tests pour la solution
+*/
+
 
 int main(void) {
     CU_pSuite pSuite = NULL;
@@ -196,3 +397,4 @@ int main(void) {
     CU_cleanup_registry();
     return CU_get_error();
 }
+
