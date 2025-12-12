@@ -45,7 +45,7 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
     // Boucle principale du dijkstra
     while(!estVideFile(file)) {
         // Tant qu'on a pas vidé toute la file, on récupère l'etat de la pile qu'on defile
-        // L'etat recupéré sera la chemoin que l'on est en train d'explorer
+        // L'etat recupéré sera la chemin que l'on est en train d'explorer
         EtatDuDijkstra etat = defiler(file);
         // Vérification si on est arrivé à l'endroit que l'on voulait
         if (etat.point_actuel == arrivee) {
@@ -59,12 +59,12 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
             // On retourne le resultat = le plus court chemin du départ à l'arrivée
             return resultat;
         }
-        // Si on est pas à l'arrivée, alors on recupère l'adresse du noeud acutel ou l'on se trouve
+        // Si on est pas à l'arrivée, alors on recupère l'adresse du noeud actuel ou l'on se trouve
         LCL_Liste noeud = G_sommets(*g);
         // On parcourt tous les voisins du point actuel (tous les voisins du noeud )
         for(unsigned int i = 0; i < LCL_longueur(noeud); i++) {
             // On recupère le numéro du point voisin
-            unsigned int voisin =  G_obtenirSommetsAdjascents(*g,*(unsigned int *)LCL_element(noeud,i));
+            unsigned int voisin =  *(unsigned int *) LCL_element(G_obtenirSommetsAdjacents(*g,*(unsigned int *)LCL_element(noeud,i)),1);
             // Si le voisin que l'on a correspond au noeud dont on regarde les voisins, alors on passe car correspond au demi-tour
             if(voisin == etat.point_precedent) {
                 continue;
@@ -140,7 +140,7 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
     // On va calculer les distances entre les points clés
     // On a 4 points obligatoires et on veut un tableau 2D pour noter la distance qu'il y a entre eux
     // À l'issue de cela, on aura le chemin de A->B, A->C, A->D, B->A, B->C...
-     printf("Calcul des plus courts chemins...\n");
+    printf("Calcul des plus courts chemins...\n");
     EtatDuDijkstra distance[4][4];
     for(unsigned int i = 0; i < 4; i++) {
         for(unsigned int j = 0; j < 4; j++) {  // Correction de i++ en j++
@@ -217,10 +217,10 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
                 for(unsigned int i = 0; i < 4; i++) {
                     unsigned int debut_parcours_temp = parcours[i];
                     unsigned int fin_parcours_temp = parcours[i + 1];
-                    Chemin* segment = distance[debut_parcours_temp][fin_parcours_temp];
+                    Chemin segment = distance[debut_parcours_temp][fin_parcours_temp].chemin;
                     unsigned int debut = (i == 0)? 0: 1;
-                    for(unsigned int j = debut; j < segment->nb_points; j++) {
-                        solution.chemin_complet.points[index++] = segment->points[j];
+                    for(unsigned int j = debut; j < segment.nb_points; j++) {
+                        solution.chemin_complet.points[index++] = segment.points[j];
                     }
                 }
 
