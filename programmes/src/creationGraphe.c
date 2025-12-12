@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "creationGraphe.h"
+#include "TAD_robot.h"
 
 /*
     @brief L'objectif ici est de concevoir l'alogrithme permettant de créer le graphe à partir du fichier de description de la ville.
@@ -8,15 +9,34 @@
     @return Graphe cricuit
 */
 
-void recuperationInfoFichier(const char* fileNameVille, unsigned int* l, unsigned int tabPourGraphe[MAX_LIAISONS][2],
+void recuperationInfoFichier(const char* fileNameVille, unsigned int* l, unsigned int tabPourGraphe[NB_POINTS_MAX][2],
     unsigned int tabCaseObligatoires[MAX_CASES_OBLIGATOIRES], unsigned int* nbLiaisons, unsigned int* nbCasesObligatoires, 
-    unsigned int* caseInitRobot, char* orientationInitRobot) {
+    unsigned int* caseInitRobot, tDirection* orientationInitRobot) {
 
     FILE *fichier = fopen(fileNameVille,"r"); // On lit juste ce fichier on n'écrit pas dedans.
 
     fscanf(fichier, "%u" , l);
 
-    fscanf(fichier, "%u%c", caseInitRobot, orientationInitRobot);
+    char orientationInitRobotChar; 
+    fscanf(fichier, "%u%c", caseInitRobot, &orientationInitRobotChar);
+
+    switch (orientationInitRobotChar)
+    {
+    case 'N':
+        *orientationInitRobot = NORD;
+        break;
+    case 'S':
+        *orientationInitRobot = SUD;
+        break;
+    case 'E':
+        *orientationInitRobot = EST;
+        break;
+    case 'O':
+        *orientationInitRobot = OUEST;
+        break;
+    default:
+        break;
+    }
 
     // Lecture des cases de liaisons nécessaires pour créer le graphe par la suite
     *nbLiaisons = 0;
@@ -53,7 +73,7 @@ void recuperationInfoFichier(const char* fileNameVille, unsigned int* l, unsigne
     } while (endChar != '.');
 }
 
-G_Graphe creationGrapheVille(unsigned int tabLiaisonsVille[MAX_LIAISONS][2], unsigned int nbLiaisons) {
+G_Graphe creationGrapheVille(unsigned int tabLiaisonsVille[NB_POINTS_MAX][2], unsigned int nbLiaisons) {
     // Graphe non orienté, non étiqueté, non valué
     G_Graphe g = G_graphe(false, NULL, NULL, NULL, NULL, NULL, NULL);
     

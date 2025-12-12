@@ -38,13 +38,16 @@ void determinerOrdre(Robot* robot, unsigned int caseSuivanteRobot, unsigned int 
  * \param robot Le robot
  * \param largeurCircuit La largeur du circuit
  */
-void determinerOrdres(char tabOrdres[MAX_ORDRES] , Chemin c , Robot robot , unsigned int largeurCircuit );
+void determinerOrdres(Ordre tabOrdres[NB_POINTS_MAX] , Chemin c , Robot robot , unsigned int largeurCircuit );
+
 
 /**
- * \brief Crée un fichier contenant les ordres pour que le robot suive un chemin donné (fichier pris en entrée par le robot)
+ * \brief Crée un fichier contenant les ordres pour que le robot suive un chemin donné
  * \param nomFichierOrdres Le nom du fichier dans lequel écrire les ordres
- * \param plusCourtChemin Le chemin que le robot doit suivre (fini par un point)
+ * \param plusCourtChemin Le chemin que le robot doit suivre
+ * \param largeurCircuit La largeur du circuit
+ * \param directionInitRobot La direction initiale du robot
  */
-void creationFichierOrdres(const char* nomFichierOrdres, Chemin plusCourtChemin);
+void creationFichierOrdres(const char* nomFichierOrdres, Chemin plusCourtChemin, unsigned int largeurCircuit , tDirection directionInitRobot);
 
 #endif

@@ -6,6 +6,7 @@
 #include "creationFichierOrdres.h"
 #include "dijkstra.h"   // Ajout des bibliothèques pour les test
 #include "file.h"
+#include "TAD_robot.h"
 
 const char* fileName = "ville.txt";
 
@@ -22,12 +23,12 @@ int clean_suite_success(void) {
 */
 void test_largeur_ville(void) {
     unsigned int l;
-    unsigned int tabGraphe[MAX_LIAISONS][2];
+    unsigned int tabGraphe[NB_POINTS_MAX][2];
     unsigned int tabCaseObligatoires[MAX_CASES_OBLIGATOIRES];
     unsigned int nbLiaisons;
     unsigned int nbCasesObligatoires;
     unsigned int caseInitRobot;
-    char directionInitRobot;
+    tDirection directionInitRobot;
 
     recuperationInfoFichier(fileName, &l, tabGraphe, tabCaseObligatoires, &nbLiaisons, &nbCasesObligatoires, &caseInitRobot, &directionInitRobot);
     CU_ASSERT_EQUAL(l, 5);
@@ -35,26 +36,26 @@ void test_largeur_ville(void) {
 
 void test_caseInitialeRobot(void) {
     unsigned int l;
-    unsigned int tabGraphe[MAX_LIAISONS][2];
+    unsigned int tabGraphe[NB_POINTS_MAX][2];
     unsigned int tabCaseObligatoires[MAX_CASES_OBLIGATOIRES];
     unsigned int nbLiaisons;
     unsigned int nbCasesObligatoires;
     unsigned int caseInitRobot;
-    char directionInitRobot;
+    tDirection directionInitRobot;
 
     recuperationInfoFichier(fileName, &l, tabGraphe, tabCaseObligatoires, &nbLiaisons, &nbCasesObligatoires, &caseInitRobot, &directionInitRobot);
     CU_ASSERT_EQUAL(caseInitRobot, 6);
-    CU_ASSERT_EQUAL(directionInitRobot, 'S');
+    CU_ASSERT_EQUAL(directionInitRobot, SUD);
 }
 
 void test_liaisons_points(void) {
     unsigned int l;
-    unsigned int tabGraphe[MAX_LIAISONS][2];
+    unsigned int tabGraphe[NB_POINTS_MAX][2];
     unsigned int tabCaseObligatoires[MAX_CASES_OBLIGATOIRES];
     unsigned int nbLiaisons;
     unsigned int nbCasesObligatoires;
     unsigned int caseInitRobot;
-    char directionInitRobot;
+    tDirection directionInitRobot;
 
     recuperationInfoFichier(fileName, &l, tabGraphe, tabCaseObligatoires, &nbLiaisons, &nbCasesObligatoires, &caseInitRobot, &directionInitRobot);
     CU_ASSERT_EQUAL(tabGraphe[0][1], 2);
@@ -63,12 +64,12 @@ void test_liaisons_points(void) {
 
 void test_points_obligatoires(void) {
     unsigned int l;
-    unsigned int tabGraphe[MAX_LIAISONS][2];
+    unsigned int tabGraphe[NB_POINTS_MAX][2];
     unsigned int tabCaseObligatoires[MAX_CASES_OBLIGATOIRES];
     unsigned int nbLiaisons;
     unsigned int nbCasesObligatoires;
     unsigned int caseInitRobot;
-    char directionInitRobot;
+    tDirection directionInitRobot;
 
     recuperationInfoFichier(fileName, &l, tabGraphe, tabCaseObligatoires, &nbLiaisons, &nbCasesObligatoires, &caseInitRobot, &directionInitRobot);
     CU_ASSERT_EQUAL(tabCaseObligatoires[0], 13);
@@ -80,7 +81,7 @@ void test_points_obligatoires(void) {
     Début des tests de création du graphe de la ville
 */
 void test_creation_graphe_ville(void) {
-    unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
         {0, 1}, {1, 2}, {2, 3}, {3, 4},
         {0, 5}, {5, 6}, {6, 7}, {7, 8},
         {1, 6}, {2, 7}, {3, 8}, {4, 9},
@@ -104,13 +105,52 @@ void test_creation_graphe_ville(void) {
 /*
     Début des tests sur creation fichier ordres
 */
-void test_determiner_ordres(void) {
-    // Initialisation du robot
+void test_direction_robot(void) {
     Robot robot;
-    setCaseRobot(robot, 6); // Position initiale du robot
-    setDirection(robot, SUD); // Direction initiale du robot
+    setCaseRobot(&robot, 0);
+    setDirection(&robot, NORD);
 
-    // Chemin à suivre
+    CU_ASSERT_EQUAL(getDirection(robot), NORD);
+
+    setDirection(&robot, EST);
+    CU_ASSERT_EQUAL(getDirection(robot), EST);
+
+    setDirection(&robot, SUD);
+    CU_ASSERT_EQUAL(getDirection(robot), SUD);
+
+    setDirection(&robot, OUEST);
+    CU_ASSERT_EQUAL(getDirection(robot), OUEST);
+}
+
+void test_directionOuestEst(void) {
+    CU_ASSERT_EQUAL(directionOuest(NORD), OUEST);
+    CU_ASSERT_EQUAL(directionOuest(OUEST), SUD);
+    CU_ASSERT_EQUAL(directionOuest(SUD), EST);
+    CU_ASSERT_EQUAL(directionOuest(EST), NORD);
+
+    CU_ASSERT_EQUAL(directionEst(NORD), EST);
+    CU_ASSERT_EQUAL(directionEst(EST), SUD);
+    CU_ASSERT_EQUAL(directionEst(SUD), OUEST);
+    CU_ASSERT_EQUAL(directionEst(OUEST), NORD);
+}
+
+void test_ordreChangementDirection(void) {
+    Robot robot;
+    setCaseRobot(&robot, 0);
+    setDirection(&robot, NORD);
+
+    Ordre ordre1, ordre2;
+    determinerOrdre(&robot, 1, 5, &ordre1, &ordre2); // Le robot doit aller à l'est
+
+    CU_ASSERT_EQUAL(ordre1, TD); // Tourner à droite
+    CU_ASSERT_EQUAL(ordre2, AV); // Avancer
+}
+
+void test_determiner_ordres(void) {
+    Robot robot;
+    setCaseRobot(&robot, 6);
+    setDirection(&robot, SUD);
+
     Chemin c;
     c.points[0] = 6;
     c.points[1] = 11;
@@ -118,17 +158,15 @@ void test_determiner_ordres(void) {
     c.points[3] = 13;
     c.nb_points = 4;
 
-    // Tableau pour stocker les ordres
-    char tabOrdres[MAX_ORDRES] = {0};
+    Ordre tabOrdres[NB_POINTS_MAX];
 
-    // Appel de la fonction à tester
     determinerOrdres(tabOrdres, c, robot, 5);
 
-    // Vérification des ordres générés
-    CU_ASSERT_STRING_EQUAL(tabOrdres[0], "AV");
-    CU_ASSERT_STRING_EQUAL(tabOrdres[1], "TG");
-    CU_ASSERT_STRING_EQUAL(tabOrdres[2], "AV");
-    CU_ASSERT_STRING_EQUAL(tabOrdres[3], "AV");
+    // Comparaison avec les valeurs de l'enum Ordre
+    CU_ASSERT_EQUAL(tabOrdres[0], AV);  
+    CU_ASSERT_EQUAL(tabOrdres[1], TG);
+    CU_ASSERT_EQUAL(tabOrdres[2], AV);
+    CU_ASSERT_EQUAL(tabOrdres[3], AV);
 }
 
 void test_creation_fichier_ordres(void) {
@@ -142,7 +180,7 @@ void test_creation_fichier_ordres(void) {
 
     // Création du fichier d'ordres
     const char* nomFichierOrdres = "test_fichier_ordres.txt";
-    creationFichierOrdres(nomFichierOrdres, c);
+    creationFichierOrdres(nomFichierOrdres, c, 5, SUD);
 
     // Vérification du contenu du fichier
     FILE* fichier = fopen(nomFichierOrdres, "r");
@@ -167,7 +205,7 @@ void test_creation_fichier_ordres(void) {
     tests de Dijkstra si le depart est aussi l'arrivée
 */
 void test_dijkstra_depart_egal_arrivee(void) {
-    unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
         {0, 1}, {1, 2}, {2, 3}, {3, 4},
         {0, 5}, {5, 6}, {6, 7}, {7, 8},
         {1, 6}, {2, 7}, {3, 8}, {4, 9},
@@ -189,7 +227,7 @@ void test_dijkstra_depart_egal_arrivee(void) {
     tests de Dijkstra pour un chemin entre 2 points
 */
 void test_dijkstra_1_chemin(void) {
-    unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
         {0, 1}, {1, 2}, {2, 3}, {3, 4},
         {0, 5}, {5, 6}, {6, 7}, {7, 8},
         {1, 6}, {2, 7}, {3, 8}, {4, 9},
@@ -215,7 +253,7 @@ void test_dijkstra_1_chemin(void) {
     ceulement les 3 chemins en partant de la case départ
 */
 void test_dijkstra_points_obligatoires(void) {
-    unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
         {1,2}, {1,6}, {2,3}, {2,7}, {3,4},
         {4,5}, {5,10}, {6,11}, {7,8}, {8,13},
         {9,14}, {10,15}, {11,16}, {11,12}, {12,17},
@@ -367,7 +405,7 @@ void test_file_ordre_fifo(void) {
 */
 void test_solution_graphe_simple_5x5(void){
     // On crée le graphe 5x5
-    unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
         {1,2}, {1,6}, {2,3}, {2,7}, {3,4},
         {4,5}, {5,10}, {6,11}, {7,8}, {8,13},
         {9,14}, {10,15}, {11,16}, {11,12}, {12,17},
@@ -402,7 +440,7 @@ void test_solution_graphe_simple_5x5(void){
     tests pour verifier qu'on passe bien par les trois points obligatoires
 */
 void test_solution_parcours_points_obligatoires(void){
-    unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
         {1,2}, {1,6}, {2,3}, {2,7}, {3,4},
         {4,5}, {5,10}, {6,11}, {7,8}, {8,13},
         {9,14}, {10,15}, {11,16}, {11,12}, {12,17},
@@ -447,7 +485,7 @@ void test_solution_parcours_points_obligatoires(void){
     Verifier que le robot retourne bien à la case départ
 */
 void test_solution_retour_au_depart(void){
-    unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
         {1,2}, {1,6}, {2,3}, {2,7}, {3,4},
         {4,5}, {5,10}, {6,11}, {7,8}, {8,13},
         {9,14}, {10,15}, {11,16}, {11,12}, {12,17},
@@ -474,7 +512,7 @@ void test_solution_retour_au_depart(void){
 }
 
 void test_solution_meilleur_chemin(void){
-    unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
         {1,2}, {1,6}, {2,3}, {2,7}, {3,4},
         {4,5}, {5,10}, {6,11}, {7,8}, {8,13},
         {9,14}, {10,15}, {11,16}, {11,12}, {12,17},
@@ -500,7 +538,7 @@ void test_solution_meilleur_chemin(void){
 }
 
 void test_solution_continuite_chemin(void){
-     unsigned int tabLiaisonsVille[MAX_LIAISONS][2] = {
+     unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
         {1,2}, {1,6}, {2,3}, {2,7}, {3,4},
         {4,5}, {5,10}, {6,11}, {7,8}, {8,13},
         {9,14}, {10,15}, {11,16}, {11,12}, {12,17},
@@ -551,6 +589,9 @@ int main(void) {
         (NULL == CU_add_test(pSuite, "test_liaisons_points", test_liaisons_points)) ||
         (NULL == CU_add_test(pSuite, "test_points_obligatoires", test_points_obligatoires)) ||
         (NULL == CU_add_test(pSuite, "test_creation_graphe_ville", test_creation_graphe_ville)) ||
+        (NULL == CU_add_test(pSuite, "test_direction_robot", test_direction_robot)) ||
+        (NULL == CU_add_test(pSuite, "test_directionOuestEst", test_directionOuestEst)) ||
+        (NULL == CU_add_test(pSuite, "test_ordreChangementDirection", test_ordreChangementDirection)) ||
         (NULL == CU_add_test(pSuite, "test_determiner_ordres", test_determiner_ordres)) ||
         (NULL == CU_add_test(pSuite, "test_creation_fichier_ordres", test_creation_fichier_ordres)) ||
         (NULL == CU_add_test(pSuite, "test_dijkstra_depart_egal_arrivee", test_dijkstra_depart_egal_arrivee)) ||
