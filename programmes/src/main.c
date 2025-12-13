@@ -1,30 +1,34 @@
 #include <stdio.h>
 #include "creationGraphe.h"
+#include "dijkstra.h"
+#include "creationFichierOrdres.h"
 
-int main() {
-    unsigned int l;
+const char* fileName = "fichierInstructions.txt";
+
+
+int main(int argc, char ** argv) {
+
+       if (argc < 2) {
+        printf("Utilisation: %s <fichier_entre_labyrinthe> <fichier_sortie_labyrinthe>\n", argv[0]);
+        return 1;
+    }
+
+    const char* nomFichierVille = argv[1];
+    unsigned int largeurVille;
     unsigned int tabPourGraphe[MAX_LIAISONS][2] = {0};
     unsigned int tabCaseObligatoires[MAX_CASES_OBLIGATOIRES] = {0};
     unsigned int nbLiaisons;
     unsigned int nbCasesObligatoires;
     unsigned int caseInitRobot;
-    char orientationInitRobot;
+    char directionInitRobot;
 
-    recuperationInfoFichier("ville.txt", &l, tabPourGraphe, tabCaseObligatoires, &nbLiaisons, &nbCasesObligatoires, &caseInitRobot, &orientationInitRobot);
+    recuperationInfoFichier(nomFichierVille, &largeurVille, tabPourGraphe, tabCaseObligatoires, &nbLiaisons, &nbCasesObligatoires, &caseInitRobot, &directionInitRobot);
 
-    // Affichage des résultats pour vérification
-    printf("Largeur de la ville : %u\n", l);
-    printf("Position initiale du robot : Case %u, Orientation %c\n", caseInitRobot, orientationInitRobot);
+    G_Graphe g = creationGrapheVille(tabPourGraphe, nbLiaisons);
 
-    printf("Liaisons entre les cases :\n");
-    for (unsigned int i = 0; i < nbLiaisons; i++) {
-        printf("%u - %u\n", tabPourGraphe[i][0], tabPourGraphe[i][1]);
-    }
+    Solution plusCourtChemin = resoudre_chemin_plus_court(&g, tabCaseObligatoires, caseInitRobot, largeurVille);
 
-    printf("Cases obligatoires :\n");
-    for (unsigned int i = 0; i < nbCasesObligatoires; i++) {
-        printf("%u\n", tabCaseObligatoires[i]);
-    }
+    creationFichierOrdres(fileName, g, plusCourtChemin.chemin, largeurVille, directionInitRobot);
 
     return 0;
 }
