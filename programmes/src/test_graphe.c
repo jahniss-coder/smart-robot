@@ -78,6 +78,30 @@ void test_points_obligatoires(void) {
 }
 
 /*
+    Début des tests de chemin
+*/
+void test_obtenir_fixer_nb_points(void) {
+    Chemin c;
+    fixerNbPoints(&c, 5);
+    CU_ASSERT_EQUAL(obtenirNbPoints(c), 5);
+}
+
+void test_obtenir_chemin(void) {
+    Chemin c;
+    c.points[0] = 1;
+    c.points[1] = 2;
+    c.points[2] = 3;
+    c.nb_points = 3;
+
+    unsigned int tabPoints[NB_POINTS_MAX] = {0};
+    obtenirChemin(c, tabPoints);
+
+    CU_ASSERT_EQUAL(tabPoints[0], 1);
+    CU_ASSERT_EQUAL(tabPoints[1], 2);
+    CU_ASSERT_EQUAL(tabPoints[2], 3);
+}
+
+/*
     Début des tests de création du graphe de la ville
 */
 void test_creation_graphe_ville(void) {
@@ -696,6 +720,8 @@ int main(void) {
         (NULL == CU_add_test(pSuite, "test_caseInitialeRobot", test_caseInitialeRobot)) ||
         (NULL == CU_add_test(pSuite, "test_liaisons_points", test_liaisons_points)) ||
         (NULL == CU_add_test(pSuite, "test_points_obligatoires", test_points_obligatoires)) ||
+        (NULL == CU_add_test(pSuite, "test_obtenir_fixer_nb_points", test_obtenir_fixer_nb_points)) ||
+        (NULL == CU_add_test(pSuite, "test_obtenir_chemin", test_obtenir_chemin)) ||
         (NULL == CU_add_test(pSuite, "test_creation_graphe_ville", test_creation_graphe_ville)) ||
         (NULL == CU_add_test(pSuite, "test_direction_robot", test_direction_robot)) ||
         (NULL == CU_add_test(pSuite, "test_directionOuestEst", test_directionOuestEst)) ||

@@ -18,6 +18,7 @@ SOURCES_MAIN = $(SRC_DIR)/graphe.c \
                $(SRC_DIR)/creationFichierOrdres.c \
                $(SRC_DIR)/file.c \
                $(SRC_DIR)/TAD_robot.c \
+               $(SRC_DIR)/chemin.c \
                $(MAIN_SRC)
 
 # Sources pour les tests
@@ -27,6 +28,7 @@ SOURCES_TEST = $(SRC_DIR)/graphe.c \
                $(SRC_DIR)/creationFichierOrdres.c \
                $(SRC_DIR)/file.c \
                $(SRC_DIR)/TAD_robot.c \
+               $(SRC_DIR)/chemin.c \
                $(SRC_DIR)/test_graphe.c
 
 # Génération des objets

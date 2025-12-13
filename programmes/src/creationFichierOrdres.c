@@ -48,9 +48,11 @@ void determinerOrdre(Robot* robot, unsigned int caseSuivanteRobot, unsigned int 
 
 void determinerOrdres(Ordre tabOrdres[NB_POINTS_MAX], Chemin c, G_Graphe grapheVille , Robot robot, unsigned int largeurCircuit) {
     Ordre ordre1, ordre2;
+    unsigned int plusCourtChemin[NB_POINTS_MAX];
+    obtenirChemin(c, plusCourtChemin);
     unsigned int nbCaseChemin = obtenirNbPoints(c);
-    unsigned int *plusCourtChemin = obtenirChemin(c);
     unsigned int j = 0;
+
 
     for (unsigned int i = 0; i < nbCaseChemin - 1; i++) {
         determinerOrdre(&robot, plusCourtChemin[i + 1], largeurCircuit, &ordre1, &ordre2);
