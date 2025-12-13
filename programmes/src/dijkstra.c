@@ -11,11 +11,12 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
     // Initiliasiation du chemin que l'on va renvoyer de toute la structure à 0
     // SI on trouve aucun chemin (normalement pas possible), nb_points restera à 0
     Chemin resultat = {0};
+    printf("iniciation Dijkstra du point %u à %u\n", depart, arrivee);
 
     // Comme on a un carre, on va faire un tableau pour noter les points déja visités
     //points_visites[point_actuel][point_precedent]
     // On met +1 pour ajouter une ligne et colonne si on a pas de predecesseur
-    unsigned int points_visites[NB_POINTS_MAX + 1][NB_POINTS_MAX + 1];
+    unsigned int points_visites[NB_POINTS_MAX][NB_POINTS_MAX];
     // ligne i: point précédent
     // colonne j: point
     // On initialise tout a 0 et vaudra 1 quand visité
@@ -26,17 +27,24 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
             points_visites[i][j] = 0;
         }
     }
+
+    printf("initlialisation tableau des points visités faite\n");
+
     // On crée notre file pour faire le parcours
     File* file = malloc(sizeof(File)); // Ne pas oublier d'allouer la mémoire à la file
     // initialisation de la file
     initialisation_file(file);
+
+    printf("initialisation de la file faite\n");
     // état initial du Dijkstra
     EtatDuDijkstra initial;
     initial.point_actuel = depart;     // On commence bien sur le point de départ du robot
-    initial.point_precedent = (unsigned int)-1;  // On a pas de point précédent au départ
+    initial.point_precedent = 0;  // On a pas de point précédent au départ et le point 0 n'existe pas dans la ville
     initial.chemin.points[0] = depart;    // Le premier point du chemin que l'on va faire est le point de départ
     initial.chemin.nb_points = 1;    // Au depart, on a pas avancé de case
     enfiler(file, initial);    //On enfile l'état initial du Dijkstra
+    printf("enfilage de l'état initial fait\n");
+    printf("dijkstra initial : point actuel: %u, point précédent: %u, nb_points dans le chemin: %d\n", initial.point_actuel, initial.point_precedent, initial.chemin.nb_points); 
 
     // On met à jour pour la situation initiale
     // On informe que l'on a visité la case départ puisque l'on est dessus
@@ -46,38 +54,54 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
     while(!estVideFile(file)) {
         // Tant qu'on a pas vidé toute la file, on récupère l'etat de la pile qu'on defile
         // L'etat recupéré sera la chemin que l'on est en train d'explorer
+
+        printf("début du while de la file\n");
         EtatDuDijkstra etat = defiler(file);
+        printf("défilage de la file fait, point actuel: %u, point précédent: %u, nb_points dans le chemin: %d\n", etat.point_actuel, etat.point_precedent, etat.chemin.nb_points);
         // Vérification si on est arrivé à l'endroit que l'on voulait
         if (etat.point_actuel == arrivee) {
+            printf("debut du if point actuel == arrivée\n");
             // Si le point sur lequel on est correspond au point d'arrivée
             // Le nombre de point de ce chemin prend le nombre de point du Dijkstra que l'on était en train de faire
             resultat.nb_points = etat.chemin.nb_points;
+            printf("nombre de point du dijkstra : %d\n", etat.chemin.nb_points);
             for(unsigned int i = 0; i < etat.chemin.nb_points; i++) {
                 // On va copier tous les points par lesquels il faut passer
                 resultat.points[i] = etat.chemin.points[i];
             }
             // On retourne le resultat = le plus court chemin du départ à l'arrivée
+            printf("chemin trouvé avec %d points\n", resultat.nb_points);
             return resultat;
         }
         // Si on est pas à l'arrivée, alors on recupère l'adresse du noeud actuel ou l'on se trouve
         LCL_Liste noeud = G_sommets(*g);
+        printf("récupération des sommets du graphe faite\n");
+        printf("longueur des sommets du graphe: %d\n", LCL_longueur(noeud));
         // On parcourt tous les voisins du point actuel (tous les voisins du noeud )
         for(unsigned int i = 0; i < LCL_longueur(noeud); i++) {
+            printf("début du for pour les voisins, i = %u\n", i);
             // On recupère le numéro du point voisin
-            unsigned int voisin =  *(unsigned int *) LCL_element(G_obtenirSommetsAdjacents(*g,*(unsigned int *)LCL_element(noeud,i)),1);
+            LCL_Liste voisins = G_obtenirSommetsAdjacents(*g, etat.point_actuel);
+            printf("récupération des voisins du point actuel %u faite\n", etat.point_actuel);
+            printf("longueur des voisins du point actuel %u: %d\n", etat.point_actuel, LCL_longueur(voisins));
+            unsigned int voisin =  *(unsigned int *) LCL_element(G_obtenirSommetsAdjacents(*g,*(unsigned int *)LCL_element(noeud,i)),i);
+            printf("voisin récupéré: %u\n", voisin);
             // Si le voisin que l'on a correspond au noeud dont on regarde les voisins, alors on passe car correspond au demi-tour
             if(voisin == etat.point_precedent) {
+                printf("voisin egal au point precedent, on passe\n");
                 continue;
             }
             // operateur ternaire: CONDITION ? VALEUR_SI_VRAI : VALEUR_SI_FAUX
             // Si le point actuel est -1 (impossible), alors on lui met la valeur 0, sinon, il garde sa valeur car ok
             // BUT: Verifier que l'ona pas de valeurs negatives car pas possible
             unsigned int index_precedent = (etat.point_actuel == (unsigned int)-1) ? 0 : etat.point_actuel;
+            printf("verification si le voisin %u a déjà été visité en venant de %u\n", voisin, index_precedent);
 
             // Si on a deja visité le voisin en venant de point_actuel, on ne retourne pas explorer car déjà fait
             // Concrètement, ça veut dire qu'on a déjà trouvé un chemin plus court pour arriver à ce voisin là
             // Si le voisin a déjà été accédé par le point actuel, on continue et passe
             if(points_visites[voisin][index_precedent]) {
+                printf("voisin déjà visité en venant de %u, on passe\n", index_precedent);
                 continue;
             }
 
@@ -87,11 +111,13 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
             // Le point précédent devient donc le point d'où on vient (le point actuel dans etat)
             // Il faut incrémenter le nombre de points car maintenant, on est chez le voisin,
             EtatDuDijkstra nouvel_etat;
+            printf("création du nouvel état pour le voisin %u\n", voisin);
             nouvel_etat.point_actuel = voisin;
             nouvel_etat.point_precedent = etat.point_actuel;
             nouvel_etat.chemin.nb_points = etat.chemin.nb_points + 1;
             // On va copier le chemin actuel dans le nouvel état et donc ajouter le voisin à la fin du chemin puisque l'on est chez lui
             for(unsigned int j = 0; j < etat.chemin.nb_points; j++) {
+                printf("copie du point %u dans le nouvel état\n", etat.chemin.points[j]);
                 nouvel_etat.chemin.points[j] = etat.chemin.points[j];
             }
             nouvel_etat.chemin.points[etat.chemin.nb_points] = voisin;
@@ -103,6 +129,8 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
     }
     // Si jamais, JAMAIS on trouve aucun chemin (normalement pas possible)
     // Mais ça voudrait dire qu'il y a 0 chemin entre le départ et l'arrivée donc bizarre
+
+    printf("nombre de points dans le resultat: %d\n", resultat.nb_points);
     liberer_file(file);
     return resultat;
 }
