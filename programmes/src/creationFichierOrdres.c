@@ -2,6 +2,9 @@
 #include "TAD_robot.h"
 #include "dijkstra.h"
 #include "creationFichierOrdres.h"
+#include "graphe.h"
+#include "ListeChaineeListe.h"
+
 
 #define MAX_CASES 50 // constante pour le plus court chemin.
 
@@ -81,7 +84,7 @@ void determinerOrdre(Robot* robot, unsigned int caseSuivanteRobot, unsigned int 
     setCaseRobot(robot, caseSuivanteRobot);    
 }
 
-void determinerOrdres(Ordre tabOrdres[NB_POINTS_MAX], Chemin c, Robot robot, unsigned int largeurCircuit) {
+void determinerOrdres(Ordre tabOrdres[NB_POINTS_MAX], Chemin c, G_Graphe grapheVille , Robot robot, unsigned int largeurCircuit) {
     Ordre ordre1, ordre2;
     unsigned int nbCaseChemin = c.nb_points;
     unsigned int *plusCourtChemin = c.points;
@@ -90,7 +93,10 @@ void determinerOrdres(Ordre tabOrdres[NB_POINTS_MAX], Chemin c, Robot robot, uns
     for (unsigned int i = 0; i < nbCaseChemin - 1; i++) {
         determinerOrdre(&robot, plusCourtChemin[i + 1], largeurCircuit, &ordre1, &ordre2);
         if (ordre1 == NO) {
-            tabOrdres[j] = ordre2;
+            LCL_Liste sommetsAdjacents = G_obtenirSommetsAdjacents(grapheVille, getCaseRobot(robot));
+            if (LCL_longueur(sommetsAdjacents) <= 2) {
+                tabOrdres[j] = ordre2;
+            }
         }
         else {
             tabOrdres[j] = ordre1;
@@ -102,7 +108,7 @@ void determinerOrdres(Ordre tabOrdres[NB_POINTS_MAX], Chemin c, Robot robot, uns
     tabOrdres[j] = NO; // Marqueur de fin des ordres
 }
 
-void creationFichierOrdres(const char* nomFichierOrdres, Chemin plusCourtChemin, unsigned int largeurCircuit , tDirection directionInitRobot) {
+void creationFichierOrdres(const char* nomFichierOrdres, G_Graphe grapheVille , Chemin plusCourtChemin, unsigned int largeurCircuit , tDirection directionInitRobot) {
     FILE* fichier = fopen(nomFichierOrdres, "w");
     if (fichier == NULL) {
         printf("Erreur lors de l'ouverture du fichier %s\n", nomFichierOrdres);
@@ -116,7 +122,7 @@ void creationFichierOrdres(const char* nomFichierOrdres, Chemin plusCourtChemin,
 
     // Tableau pour stocker les ordres
     Ordre tabOrdres[NB_POINTS_MAX];
-    determinerOrdres(tabOrdres, plusCourtChemin, robot, largeurCircuit);
+    determinerOrdres(tabOrdres, plusCourtChemin, grapheVille,robot, largeurCircuit);
 
     // Écriture des ordres dans le fichier
     unsigned int i = 0;

@@ -157,7 +157,6 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
         point_cles[i] = point_obligatoires[i - 1];
     }
 
-    printf("Points clés : %u, %u, %u, %u\n", point_cles[0], point_cles[1], point_cles[2], point_cles[3]);
 
     unsigned int indices_classement[3] = {1, 2, 3};
     unsigned int permutations[6][3];
@@ -165,7 +164,6 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
 
     // Tester chaque permutation
     for (unsigned int p = 0; p < 6; p++) {
-        printf("\n=== Test permutation %u ===\n", p);
         
         unsigned int parcours[5];
         parcours[0] = 0; // Index de départ
@@ -173,11 +171,6 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
         parcours[2] = permutations[p][1];
         parcours[3] = permutations[p][2];
         parcours[4] = 0; // Retour au départ
-        
-        printf("Ordre : %u -> %u -> %u -> %u -> %u\n",
-               point_cles[parcours[0]], point_cles[parcours[1]], 
-               point_cles[parcours[2]], point_cles[parcours[3]], 
-               point_cles[parcours[4]]);
 
         unsigned int distance_totale = 0;
         unsigned int estValide = 1;
@@ -253,17 +246,6 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
             solution.chemin_complet.nb_points = index;
         }
     }
-
-    printf("\n=== SOLUTION FINALE ===\n");
-    printf("Distance totale : %u\n", meilleure_distance);
-    printf("Ordre des points obligatoires : %u, %u, %u\n", 
-           solution.ordre[0], solution.ordre[1], solution.ordre[2]);
-    printf("Chemin complet (%u points) : ", solution.chemin_complet.nb_points);
-    for (unsigned int i = 0; i < solution.chemin_complet.nb_points; i++) {
-        printf("%u", solution.chemin_complet.points[i]);
-        if (i < solution.chemin_complet.nb_points - 1) printf(" -> ");
-    }
-    printf("\n");
 
     return solution;
 }

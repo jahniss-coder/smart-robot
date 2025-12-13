@@ -146,10 +146,21 @@ void test_ordreChangementDirection(void) {
     CU_ASSERT_EQUAL(ordre2, AV); // Avancer
 }
 
-void test_determiner_ordres(void) {
+void test_determiner_ordres_intersection_a_avancer(void) {
     Robot robot;
     setCaseRobot(&robot, 6);
     setDirection(&robot, SUD);
+    
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
+        {1, 2}, {1, 6}, {2, 3}, {2, 7}, {3, 4},
+        {4, 5}, {5, 10}, {6, 11}, {7, 8}, {8, 13},
+        {9, 10}, {9, 14}, {10, 15}, {11, 16}, {11, 12},
+        {12, 17}, {12, 13}, {13, 14}, {14, 19}, {15, 20},
+        {16, 21}, {17, 22}, {18, 19}, {18, 23}, {19, 20},
+        {20, 25}, {21, 22}, {22, 23}, {23, 24}, {24, 25}
+    };
+    unsigned int nbLiaisons = 30;
+    G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
 
     Chemin c;
     c.points[0] = 6;
@@ -160,7 +171,7 @@ void test_determiner_ordres(void) {
 
     Ordre tabOrdres[NB_POINTS_MAX];
 
-    determinerOrdres(tabOrdres, c, robot, 5);
+    determinerOrdres(tabOrdres, c, g , robot, 5);
 
     // Comparaison avec les valeurs de l'enum Ordre
     CU_ASSERT_EQUAL(tabOrdres[0], AV);  
@@ -169,7 +180,42 @@ void test_determiner_ordres(void) {
     CU_ASSERT_EQUAL(tabOrdres[3], AV);
 }
 
-void test_creation_fichier_ordres(void) {
+void test_intersection_tourner(void) {
+    Robot robot;
+    setCaseRobot(&robot, 1);
+    setDirection(&robot, EST);
+
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
+        {1, 2}, {1, 6}, {2, 3}, {2, 7}, {3, 4},
+        {4, 5}, {5, 10}, {6, 11}, {7, 8}, {8, 13},
+        {9, 10}, {9, 14}, {10, 15}, {11, 16}, {11, 12},
+        {12, 17}, {12, 13}, {13, 14}, {14, 19}, {15, 20},
+        {16, 21}, {17, 22}, {18, 19}, {18, 23}, {19, 20},
+        {20, 25}, {21, 22}, {22, 23}, {23, 24}, {24, 25}
+    };
+    unsigned int nbLiaisons = 30;
+    G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
+
+    Chemin c;
+    c.points[0] = 1;
+    c.points[1] = 2;
+    c.points[2] = 7;
+    c.points[3] = 8;
+    c.nb_points = 4;
+
+    Ordre tabOrdres[NB_POINTS_MAX];
+
+    determinerOrdres(tabOrdres, c, g ,robot, 5);
+
+    // Comparaison avec les valeurs de l'enum Ordre
+    CU_ASSERT_EQUAL(tabOrdres[0], AV);  
+    CU_ASSERT_EQUAL(tabOrdres[1], TD);
+    CU_ASSERT_EQUAL(tabOrdres[2], AV);
+    CU_ASSERT_EQUAL(tabOrdres[3], TG);
+    CU_ASSERT_EQUAL(tabOrdres[4], AV);
+}
+
+void test_creation_fichier_ordres_avancer_intersection(void) {
     // Chemin à suivre
     Chemin c;
     c.points[0] = 6;
@@ -178,9 +224,20 @@ void test_creation_fichier_ordres(void) {
     c.points[3] = 13;
     c.nb_points = 4;
 
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
+        {1, 2}, {1, 6}, {2, 3}, {2, 7}, {3, 4},
+        {4, 5}, {5, 10}, {6, 11}, {7, 8}, {8, 13},
+        {9, 10}, {9, 14}, {10, 15}, {11, 16}, {11, 12},
+        {12, 17}, {12, 13}, {13, 14}, {14, 19}, {15, 20},
+        {16, 21}, {17, 22}, {18, 19}, {18, 23}, {19, 20},
+        {20, 25}, {21, 22}, {22, 23}, {23, 24}, {24, 25}
+    };
+    unsigned int nbLiaisons = 30;
+    G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
+
     // Création du fichier d'ordres
     const char* nomFichierOrdres = "test_fichier_ordres.txt";
-    creationFichierOrdres(nomFichierOrdres, c, 5, SUD);
+    creationFichierOrdres(nomFichierOrdres, g , c, 5, SUD);
 
     // Vérification du contenu du fichier
     FILE* fichier = fopen(nomFichierOrdres, "r");
@@ -193,6 +250,51 @@ void test_creation_fichier_ordres(void) {
     CU_ASSERT_STRING_EQUAL(ligne, "TG\n");
     fgets(ligne, sizeof(ligne), fichier);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), fichier);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), fichier);
+    CU_ASSERT_STRING_EQUAL(ligne, "."); // Marqueur de fin
+
+    fclose(fichier);
+}
+
+void test_creation_fichier_ordres_tourner_intersection(void) {
+    // Chemin à suivre
+    Chemin c;
+    c.points[0] = 1;
+    c.points[1] = 2;
+    c.points[2] = 7;
+    c.points[3] = 8;
+    c.nb_points = 4;
+
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
+        {1, 2}, {1, 6}, {2, 3}, {2, 7}, {3, 4},
+        {4, 5}, {5, 10}, {6, 11}, {7, 8}, {8, 13},
+        {9, 10}, {9, 14}, {10, 15}, {11, 16}, {11, 12},
+        {12, 17}, {12, 13}, {13, 14}, {14, 19}, {15, 20},
+        {16, 21}, {17, 22}, {18, 19}, {18, 23}, {19, 20},
+        {20, 25}, {21, 22}, {22, 23}, {23, 24}, {24, 25}
+    };
+    unsigned int nbLiaisons = 30;
+    G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
+
+    // Création du fichier d'ordres
+    const char* nomFichierOrdres = "test_fichier_ordres.txt";
+    creationFichierOrdres(nomFichierOrdres, g , c, 5, EST);
+
+    // Vérification du contenu du fichier
+    FILE* fichier = fopen(nomFichierOrdres, "r");
+    CU_ASSERT_PTR_NOT_NULL(fichier);
+
+    char ligne[10];
+    fgets(ligne, sizeof(ligne), fichier);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), fichier);
+    CU_ASSERT_STRING_EQUAL(ligne, "TD\n");
+    fgets(ligne, sizeof(ligne), fichier);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), fichier);
+    CU_ASSERT_STRING_EQUAL(ligne, "TG\n");
     fgets(ligne, sizeof(ligne), fichier);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
     fgets(ligne, sizeof(ligne), fichier);
@@ -598,8 +700,10 @@ int main(void) {
         (NULL == CU_add_test(pSuite, "test_direction_robot", test_direction_robot)) ||
         (NULL == CU_add_test(pSuite, "test_directionOuestEst", test_directionOuestEst)) ||
         (NULL == CU_add_test(pSuite, "test_ordreChangementDirection", test_ordreChangementDirection)) ||
-        (NULL == CU_add_test(pSuite, "test_determiner_ordres", test_determiner_ordres)) ||
-        (NULL == CU_add_test(pSuite, "test_creation_fichier_ordres", test_creation_fichier_ordres)) ||
+        (NULL == CU_add_test(pSuite, "test_determiner_ordres_intersection_a_avancer", test_determiner_ordres_intersection_a_avancer)) ||
+        (NULL == CU_add_test(pSuite, "test_intersection_tourner", test_intersection_tourner)) || 
+        (NULL == CU_add_test(pSuite, "test_creation_fichier_ordres_avancer_intersection", test_creation_fichier_ordres_avancer_intersection)) ||
+        (NULL == CU_add_test(pSuite, "test_creation_fichier_ordres_tourner_intersection", test_creation_fichier_ordres_tourner_intersection)) ||
         (NULL == CU_add_test(pSuite, "test_dijkstra_depart_egal_arrivee", test_dijkstra_depart_egal_arrivee)) ||
         (NULL == CU_add_test(pSuite, "test_dijkstra_1_chemin", test_dijkstra_1_chemin)) ||
         (NULL == CU_add_test(pSuite, "test_dijkstra_points_obligatoires", test_dijkstra_points_obligatoires)) ||
