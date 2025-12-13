@@ -1,4 +1,11 @@
-// ✅ Dijkstra amélioré avec liste de sommets à éviter
+#include <stdio.h>
+#include <stdlib.h>
+#include "dijkstra.h"
+#include "graphe.h"
+#include "file.h"
+#include "ListeChaineeListe.h"
+
+
 Chemin dijkstra_avec_exclusions(G_Graphe* g, unsigned int depart, unsigned int arrivee,
                                  unsigned int* sommets_a_eviter, unsigned int nb_a_eviter) {
     Chemin resultat = {0};
@@ -44,7 +51,7 @@ Chemin dijkstra_avec_exclusions(G_Graphe* g, unsigned int depart, unsigned int a
                 continue;
             }
             
-            // ✅ Vérifier si ce voisin est dans la liste d'exclusion
+            // Vérifier si ce voisin est un le point à exclure
             int est_a_eviter = 0;
             for (unsigned int k = 0; k < nb_a_eviter; k++) {
                 if (voisin == sommets_a_eviter[k]) {
@@ -99,12 +106,10 @@ Chemin dijkstra_avec_exclusions(G_Graphe* g, unsigned int depart, unsigned int a
     return resultat;
 }
 
-// Wrapper pour garder la compatibilité
 Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
     return dijkstra_avec_exclusions(g, depart, arrivee, NULL, 0);
 }
 
-// Fonctions de vérification (inchangées)
 void permutation(unsigned int arr[3], unsigned int permutations[6][3]) {
     unsigned int perm[6][3] = {
         {0, 1, 2}, {0, 2, 1},
@@ -122,8 +127,6 @@ void permutation(unsigned int arr[3], unsigned int permutations[6][3]) {
 int chemin_autorise(Chemin c) {
     for (unsigned int i = 0; i < c.nb_points - 2; i++) {
         if (c.points[i] == c.points[i + 2]) {
-            printf("❌ Demi-tour détecté dans segment : %u -> %u -> %u\n", 
-                   c.points[i], c.points[i+1], c.points[i+2]);
             return 0;
         }
     }
@@ -136,16 +139,12 @@ int verifier_jonction_segments(Chemin segment1, Chemin segment2) {
         unsigned int deuxieme_seg2 = segment2.points[1];
         
         if (avant_dernier_seg1 == deuxieme_seg2) {
-            printf("❌ Demi-tour entre segments : ...%u -> %u (fin seg1) puis %u -> %u... (début seg2)\n",
-                   avant_dernier_seg1, segment1.points[segment1.nb_points - 1], 
-                   segment2.points[0], deuxieme_seg2);
             return 0;
         }
     }
     return 1;
 }
 
-// ✅ FONCTION CORRIGÉE : Résolution avec exclusion des points des segments précédents
 Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires[3], 
                                      unsigned int depart, unsigned int longueur_ville) {
     Solution solution = {0};
@@ -184,43 +183,30 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
         unsigned int estValide = 1;
         Chemin segments[4];
 
-        // ✅ CALCUL DES SEGMENTS AVEC EXCLUSION
+        // CALCUL DES SEGMENTS AVEC EXCLUSION
         for (unsigned int i = 0; i < 4; i++) {
             unsigned int index_debut = parcours[i];
             unsigned int index_fin = parcours[i + 1];
             unsigned int sommet_depart = point_cles[index_debut];
             unsigned int sommet_arrivee = point_cles[index_fin];
 
-            // ✅ Construire la liste d'exclusion = points du segment précédent
-            // (sauf le point de jonction qui est le départ du segment actuel)
-            unsigned int sommets_a_eviter[NB_POINTS_MAX];
-            unsigned int nb_a_eviter = 0;
+            // Déterminer le sommet à exclure qui est dans le segment précédent
+            // C'est le point juste avant le point de jonction dans le segment précédent
+            unsigned int sommets_a_eviter;
+            unsigned int nb_a_eviter = 1; // On retire dans tous les cas un seul point celui à éviter
 
             if (i > 0) {
-                // On exclut tous les points du segment précédent sauf le point de jonction
                 Chemin segment_precedent = segments[i - 1];
-                for (unsigned int k = 0; k < segment_precedent.nb_points - 1; k++) {
-                    sommets_a_eviter[nb_a_eviter++] = segment_precedent.points[k];
-                }
-                
-                printf("  Segment %u (%u -> %u) évite %u points du segment précédent\n", 
-                       i, sommet_depart, sommet_arrivee, nb_a_eviter);
+                segment_precedent.nb_points = segment_precedent.nb_points - 1; // Indices commencent à 0
+                sommets_a_eviter = segment_precedent.points[segment_precedent.nb_points - 1]; // exclure le point de jonction                
             }
 
             // Calculer le chemin avec exclusions
             segments[i] = dijkstra_avec_exclusions(g, sommet_depart, sommet_arrivee, 
-                                                    sommets_a_eviter, nb_a_eviter);
-
-            printf("  Chemin [%u->%u] : longueur = %u : ", 
-                   sommet_depart, sommet_arrivee, segments[i].nb_points);
-            for (unsigned int k = 0; k < segments[i].nb_points; k++) {
-                printf("%u ", segments[i].points[k]);
-            }
-            printf("\n");
+                                                    &sommets_a_eviter, nb_a_eviter);
 
             // Vérifications
             if (segments[i].nb_points == 0) {
-                printf("❌ Pas de chemin entre %u et %u\n", sommet_depart, sommet_arrivee);
                 estValide = 0;
                 break;
             }
@@ -237,7 +223,6 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
         if (estValide) {
             for (unsigned int i = 0; i < 3; i++) {
                 if (!verifier_jonction_segments(segments[i], segments[i + 1])) {
-                    printf("❌ Jonction invalide entre segment %u et %u\n", i, i+1);
                     estValide = 0;
                     break;
                 }
@@ -246,7 +231,6 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
 
         // Si cette permutation est valide et meilleure
         if (estValide && distance_totale < meilleure_distance) {
-            printf("✅ Meilleur chemin trouvé ! Distance = %u\n", distance_totale);
             meilleure_distance = distance_totale;
 
             for(unsigned int i = 0; i < 3; i++) {
