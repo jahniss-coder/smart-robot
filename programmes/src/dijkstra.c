@@ -145,7 +145,7 @@ int verifier_jonction_segments(Chemin segment1, Chemin segment2) {
     return 1;
 }
 
-// ✅ FONCTION MODIFIÉE : Résolution avec exclusion des points des segments précédents
+// ✅ FONCTION CORRIGÉE : Résolution avec exclusion des points des segments précédents
 Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires[3], 
                                      unsigned int depart, unsigned int longueur_ville) {
     Solution solution = {0};
@@ -193,13 +193,14 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
 
             // ✅ Construire la liste d'exclusion = points du segment précédent
             // (sauf le point de jonction qui est le départ du segment actuel)
-            unsigned int sommets_a_eviter;
-            unsigned int nb_a_eviter = 1 ; // Uniquement le point avant la jonction
+            unsigned int sommets_a_eviter[NB_POINTS_MAX];
+            unsigned int nb_a_eviter = 0;
 
             if (i > 0) {
                 // On exclut tous les points du segment précédent sauf le point de jonction
                 Chemin segment_precedent = segments[i - 1];
-                sommets_a_eviter = segment_precedent.points[k];
+                for (unsigned int k = 0; k < segment_precedent.nb_points - 1; k++) {
+                    sommets_a_eviter[nb_a_eviter++] = segment_precedent.points[k];
                 }
                 
                 printf("  Segment %u (%u -> %u) évite %u points du segment précédent\n", 
