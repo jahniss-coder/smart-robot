@@ -9,6 +9,20 @@ typedef struct {
 } Robot;
 
 /**
+   @brief obtenir la direction à gauche (ouest)
+   @param direction la direction actuelle
+   @return la direction à gauche
+**/
+tDirection directionOuest(tDirection direction);
+
+/**
+ * @brief obtenir la direction à droite (est)
+ * @param direction la direction actuelle
+ * @return la direction à droite
+*/
+tDirection directionEst(tDirection direction);
+
+/**
    @brief obtenir la direction du robot
    @param r le robot
    @return la direction du robot

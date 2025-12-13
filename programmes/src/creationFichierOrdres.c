@@ -4,45 +4,7 @@
 #include "creationFichierOrdres.h"
 #include "graphe.h"
 #include "ListeChaineeListe.h"
-
-
-#define MAX_CASES 50 // constante pour le plus court chemin.
-
-tDirection directionOuest(tDirection direction) {
-    switch (direction)
-    {
-    case OUEST : {
-        return SUD;
-    }
-    case SUD :{
-        return EST;
-    }
-    case EST : {
-        return NORD;
-    }
-    case NORD : {
-        return OUEST;
-    }
-    }        
-}
-
-tDirection directionEst(tDirection direction){
-    switch (direction)
-    {
-    case OUEST : {
-        return NORD;
-    }
-    case SUD : {
-        return OUEST;
-    }
-    case EST : {
-        return SUD;
-    }
-    case NORD : {
-        return EST;
-    }
-    }
-}
+#include "chemin.h"
 
 Ordre ordreDuChangementDeDirection(tDirection direction, tDirection nlleDirection){
     if (direction == nlleDirection) {
@@ -86,8 +48,8 @@ void determinerOrdre(Robot* robot, unsigned int caseSuivanteRobot, unsigned int 
 
 void determinerOrdres(Ordre tabOrdres[NB_POINTS_MAX], Chemin c, G_Graphe grapheVille , Robot robot, unsigned int largeurCircuit) {
     Ordre ordre1, ordre2;
-    unsigned int nbCaseChemin = c.nb_points;
-    unsigned int *plusCourtChemin = c.points;
+    unsigned int nbCaseChemin = obtenirNbPoints(c);
+    unsigned int *plusCourtChemin = obtenirChemin(c);
     unsigned int j = 0;
 
     for (unsigned int i = 0; i < nbCaseChemin - 1; i++) {

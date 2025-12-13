@@ -9,6 +9,7 @@
     @return Graphe cricuit
 */
 
+
 void recuperationInfoFichier(const char* fileNameVille, unsigned int* l, unsigned int tabPourGraphe[NB_POINTS_MAX][2],
     unsigned int tabCaseObligatoires[MAX_CASES_OBLIGATOIRES], unsigned int* nbLiaisons, unsigned int* nbCasesObligatoires, 
     unsigned int* caseInitRobot, tDirection* orientationInitRobot) {
