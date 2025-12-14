@@ -1,0 +1,13 @@
+# ignore tous les .o
+*.o
+
+# ignore le fichier DS Store de Mac
+*.DS_Store
+
+# ignore les fichiers de compilation du compte rendu latex
+*.log
+*.aux
+*.toc
+
+# ignore les lib 
+*.a

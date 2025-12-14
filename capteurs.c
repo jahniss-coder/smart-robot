@@ -98,12 +98,10 @@ int detecterPastille(int file) {
     int g = (buffer[5] << 8) | buffer[4];
     int b = (buffer[7] << 8) | buffer[6];
 
-    if (g > 300 && g > r + b) {
+    if (g > 100 && g > r) {
       return 1; // rouge
-    } else if (r > 300 && r > g + b) {
+    } else if (r > 100 && r > g + b) {
       return 2; // vert
-    } else if (b > 300 && b > r + g) {
-      return 3; // bleu
     } else {
       return 0; // indetermine
     }

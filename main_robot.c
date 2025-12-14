@@ -3,10 +3,12 @@
 #include "capteurs.h"
 #include "configuration_GPIO.h"
 #include "moteur.h"
+#include <pthread.h>
 #include <stdio.h>
 
 int main() {
-  int fileColor;
+  pthread_t display_tid;
+  message_type m;
 
   printf("Début programme\n");
 
@@ -21,20 +23,25 @@ int main() {
   printf("Intialisation affichage LCD\n");
   initLcd();
 
-  fileColor = color_initialisation();
-
   printf("Récupération fichier texte: test.txt\n");
 
-  printf("Délai 5 secondes\n");
-  delay(5000);
+  if (pthread_create(&display_tid, NULL, affichage_thread, NULL) != 0) {
+    perror("Erreur création thread affichage");
+    return EXIT_FAILURE;
+  }
+
+  printf("Délai 10 secondes\n");
+  delay(10000);
 
   printf("Début mouvement\n");
 
-  // controlerRobotDepuisOrdre("test.txt", 10);
-  moteurs_avancer();
+  controlerRobotDepuisOrdre("fichierInstructions.txt", 28);
+
   printf("Fin mouvement\n");
 
-  color_fermer(fileColor);
+  m.type = ARRET;
+  push_queue_affichage(m);
+  pthread_join(display_tid, NULL); // fermeture du thread à la fin
 
   printf("FIN programme\n");
   return EXIT_SUCCESS;

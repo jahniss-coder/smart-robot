@@ -5,7 +5,7 @@
 int calcul_PWM(int vitesse) { return (vitesse * 1024) / 100; }
 
 void moteurs_avancer() {
-  int pwmSpeed = calcul_PWM(VITESSE_MOYENNE);
+  int pwmSpeed = calcul_PWM(VITESSE_MAX);
 
   pwmWrite(MOTEUR_G_PWM, pwmSpeed);
   pwmWrite(MOTEUR_D_PWM, pwmSpeed);
@@ -49,7 +49,7 @@ void tournerGauche() {
   digitalWrite(MOTEUR_D_IN4, LOW);
 
   // Application de la vitesse pour tourner
-  int pwmSpeed = calcul_PWM(VITESSE_VIRAGE);
+  int pwmSpeed = calcul_PWM(VITESSE_MOYENNE);
 
   pwmWrite(MOTEUR_G_PWM, pwmSpeed);
   pwmWrite(MOTEUR_D_PWM, pwmSpeed);
@@ -63,7 +63,7 @@ void tournerDroite() {
   digitalWrite(MOTEUR_D_IN4, HIGH);
 
   // Application de la vitesse pour tourner
-  int pwmSpeed = calcul_PWM(VITESSE_VIRAGE);
+  int pwmSpeed = calcul_PWM(VITESSE_MOYENNE);
 
   pwmWrite(MOTEUR_G_PWM, pwmSpeed);
   pwmWrite(MOTEUR_D_PWM, pwmSpeed);

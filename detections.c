@@ -8,7 +8,7 @@ bool detecterLigne(int gpio) { return getSensor(gpio) == 1; }
 bool detecterVirage(int gpioG, int gpioD, int gpioAG, int gpioAD) {
   // return (getSensor(gpioG) == 1 ^ getSensor(gpioD) == 1) &&
   //        !(getSensor(gpioAG) == 1 || getSensor(gpioAD) == 1);
-  return getSensor(gpioG) == 1 ^ getSensor(gpioD) == 1;
+  return getSensor(gpioG) == 1 || getSensor(gpioD) == 1;
 }
 
 int detecterIntersection(int gpioG, int gpioD, int gpioAG, int gpioAD) {
@@ -40,52 +40,28 @@ int detecterIntersection(int gpioG, int gpioD, int gpioAG, int gpioAD) {
 }
 
 void suivreLigne(int gpioAG, int gpioAD, int *g, int *d) {
-  if (getSensor(gpioAD) ||
-      getSensor(gpioAG)) { // pour sauvegarder l'état précédent des capteurs
-    if (getSensor(gpioAD)) {
-      *d = 1;
-    } else {
-      *d = 0;
-    }
-    if (getSensor(gpioAG)) {
-      *g = 1;
-    } else {
-      *g = 0;
-    }
+
+  // Lecture des capteurs
+  int valAG = getSensor(gpioAG);
+  int valAD = getSensor(gpioAD);
+
+  // Mise à jour de la mémoire (ton code existant)
+  if (valAD || valAG) {
+    *d = valAD ? 1 : 0;
+    *g = valAG ? 1 : 0;
   }
 
-  if (getSensor(gpioAG) && !getSensor(gpioAD)) { // perdu à droite
-    tournerDroiteSansArret();
-    delay(25);
-  }
+  // --- CORRECTION LOGIQUE ---
 
-  if (!getSensor(gpioAG) && getSensor(gpioAD)) { // perdu à gauche
+  if (valAG && !valAD) {
     tournerGaucheSansArret();
-    delay(25);
+    delay(35);
   }
 
-  // if (!getSensor(gpioAD) && !getSensor(gpioAG)) {
-  //   if (*d == 0 && *g == 1) {
-  //     tournerGaucheSansArret();
-  //     delay(25);
-  //   }
-  //   if (*d == 1 && *g == 0) {
-  //     tournerDroiteSansArret();
-  //     delay(25);
-  //   }
-
-  // pas de cas de les deux à 0
-
-  // autre option
-  // if (getSensor(gpioAG) && !getSensor(gpioAD)) { // perdu à droite
-  //   tournerGaucheSansArret();
-  //   delay(25);
-  // }
-
-  // if (!getSensor(gpioAG) && getSensor(gpioAD)) { // perdu à gauche
-  //   tournerDroiteSansArret();
-  //   delay(25);
-  // }
+  if (!valAG && valAD) {
+    tournerDroiteSansArret();
+    delay(35);
+  }
 
   moteurs_avancer();
 }
@@ -104,12 +80,6 @@ void suivreLigne(int gpioAG, int gpioAD, int *g, int *d) {
 //   moteurs_avancer();
 // }
 
-bool aRetrouveLigneGauche(int gpioAG) {
-  printf("retrouvé ligne gauche\n");
-  return getSensor(gpioAG);
-}
+bool aRetrouveLigneGauche(int gpioAG) { return getSensor(gpioAG); }
 
-bool aRetrouveLigneDroit(int gpioAD) {
-  printf("a retrouvé ligne droite\n");
-  return getSensor(gpioAD); // &&
-}
+bool aRetrouveLigneDroit(int gpioAD) { return getSensor(gpioAD); }

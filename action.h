@@ -1,9 +1,14 @@
 #ifndef __ACTION__
 #define __ACTION__
 
-#define AVANCER "avancer"
-#define TOURNER_GAUCHE "virage g"
-#define TOURNER_DROITE "virage d"
+#define NB_POINTS_MAX 200
+
+typedef enum { AVANCER, TOURNER_GAUCHE, TOURNER_DROITE } manoeuvre_type;
+
+// extern int type_couleur;
+// extern int type_virage;
+// extern int type_intersection;
+// extern manoeuvre_type type_manoeuvre;
 
 /**
    @brief faire avancer le robot

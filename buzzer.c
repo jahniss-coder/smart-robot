@@ -1,9 +1,10 @@
-#include"buzzer.h"
-void buzzerPastille(int gpio){
+#include "buzzer.h"
+#include "configuration_GPIO.h"
+#include <wiringPi.h>
+
+void buzzerPastille(int gpio) {
   pinMode(gpio, OUTPUT);
   digitalWrite(gpio, HIGH);
-  delay(2000);
-  digitalWrite(gpio, LOW)
+  delay(250);
+  digitalWrite(gpio, LOW);
 }
-
-

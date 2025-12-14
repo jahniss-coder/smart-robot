@@ -7,8 +7,11 @@
 #include <string.h>
 
 void avancer(int file) {
-  int pastille, intersection, virage;
-  int g, d;
+  int g, d, type_intersection, type_virage, type_couleur;
+  message_type msgCouleur;
+  message_type msgManoeuvre;
+  message_type msgVirage;
+  message_type msgIntersection;
   if (getSensor(SUIVEUR_Centre_D)) {
     d = 1;
   } else {
@@ -22,64 +25,72 @@ void avancer(int file) {
   }
 
   moteurs_avancer();
-  intersection = detecterIntersection(SUIVEUR_Gauche, SUIVEUR_Droit,
-                                      SUIVEUR_Centre_G, SUIVEUR_Centre_D);
-  virage = detecterVirage(SUIVEUR_Gauche, SUIVEUR_Droit, SUIVEUR_Centre_G,
-                          SUIVEUR_Centre_D);
-  while (intersection == 0 && !virage) {
+  type_intersection = detecterIntersection(SUIVEUR_Gauche, SUIVEUR_Droit,
+                                           SUIVEUR_Centre_G, SUIVEUR_Centre_D);
+  type_virage = detecterVirage(SUIVEUR_Gauche, SUIVEUR_Droit, SUIVEUR_Centre_G,
+                               SUIVEUR_Centre_D);
+  while (type_intersection == 0 && !type_virage) {
     suivreLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D, &g, &d);
-    pastille = detecterPastille(file);
-    if (pastille != 0) {
-      afficherCouleur(pastille);
+    type_couleur = detecterPastille(file);
+    if (type_couleur != 0) {
+      msgCouleur.type = AFFICHER_COULEUR;
+      msgCouleur.data.couleur = type_couleur;
+      push_queue_affichage(msgCouleur);
     }
-    afficherManoeuvre(AVANCER);
-    intersection = detecterIntersection(SUIVEUR_Gauche, SUIVEUR_Droit,
-                                        SUIVEUR_Centre_G, SUIVEUR_Centre_D);
-    virage = detecterVirage(SUIVEUR_Gauche, SUIVEUR_Droit, SUIVEUR_Centre_G,
-                            SUIVEUR_Centre_D);
+
+    msgManoeuvre.data.manoeuvre = AVANCER;
+    msgManoeuvre.type = AFFICHER_MANOEUVRE;
+    push_queue_affichage(msgManoeuvre);
+    type_intersection = detecterIntersection(
+        SUIVEUR_Gauche, SUIVEUR_Droit, SUIVEUR_Centre_G, SUIVEUR_Centre_D);
+    type_virage = detecterVirage(SUIVEUR_Gauche, SUIVEUR_Droit,
+                                 SUIVEUR_Centre_G, SUIVEUR_Centre_D);
   }
 
-  if (virage) {
-    printf("\n\n\nVIRAGE DETECTÉ\n\n\n");
-  }
-  if (intersection != 0) {
-    printf("Intersection: %d\n", intersection);
-  }
-
-  if (intersection != 0) {
-    afficherIntersection(intersection);
-  }
-  if (virage != 0) {
-    afficherVirage(virage);
+  if (type_intersection != 0) {
+    printf("INTERSECTION - Type: %d\n", type_intersection);
+    msgIntersection.type = AFFICHER_INTERSECTION;
+    msgIntersection.data.intersection = type_intersection;
+    push_queue_affichage(msgIntersection);
+  } else if (type_virage != 0) {
+    printf("VIRAGE\n");
+    msgVirage.type = AFFICHER_VIRAGE;
+    msgVirage.data.virage = type_virage;
+    push_queue_affichage(msgVirage);
   }
 }
 
 void faireUnVirageAGauche() {
+  message_type msgManoeuvre;
+
   tournerGauche();
-  delay(300);
-  while (!aRetrouveLigneGauche(SUIVEUR_Centre_G)) {
-    afficherManoeuvre(TOURNER_GAUCHE);
+  delay(100);
+  while (!aRetrouveLigneDroit(SUIVEUR_Centre_D)) {
+
+    msgManoeuvre.data.manoeuvre = TOURNER_GAUCHE;
+    msgManoeuvre.type = AFFICHER_MANOEUVRE;
+    push_queue_affichage(msgManoeuvre);
   }
-  while (!aRetrouveLigneGauche(SUIVEUR_Centre_D)) {
-    tournerDroite();
-  }
-  // delay(50);
   moteurs_avancer();
 }
 
 void faireUnVirageADroite() {
-  tournerDroite();
-  delay(300);
-  while (!aRetrouveLigneGauche(SUIVEUR_Centre_D)) {
-    afficherManoeuvre(TOURNER_DROITE);
-  }
+  message_type msgManoeuvre;
 
-  // delay(50);
+  tournerDroite();
+  delay(100);
+  while (!aRetrouveLigneGauche(SUIVEUR_Centre_G)) {
+
+    msgManoeuvre.data.manoeuvre = TOURNER_DROITE;
+    msgManoeuvre.type = AFFICHER_MANOEUVRE;
+    push_queue_affichage(msgManoeuvre);
+  }
   moteurs_avancer();
 }
 
 char **retourneTableauDOrdre(char *cheminFichier, int nbLigneFichier) {
-  char **tableau = malloc((nbLigneFichier + 1) * sizeof(char *));
+  // char **tableau = malloc((nbLigneFichier + 1) * sizeof(char *));
+  char **tableau = malloc(NB_POINTS_MAX * sizeof(char *));
   int indice = 0;
 
   FILE *f = fopen(cheminFichier, "r");
@@ -116,6 +127,7 @@ void controlerRobotDepuisOrdre(char *cheminFichier, int nbLigneFichier) {
   int indice = 0;
 
   while (tableau[indice] != NULL) {
+    delay(80);
     if (strcmp(tableau[indice], "AV") == 0) {
       printf("avancer\n");
       avancer(fileCapteur);
@@ -138,4 +150,6 @@ void controlerRobotDepuisOrdre(char *cheminFichier, int nbLigneFichier) {
     indice++;
   }
   free(tableau);
+
+  color_fermer(fileCapteur);
 }

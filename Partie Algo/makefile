@@ -8,26 +8,30 @@ BIN_DIR = bin
 TEST_DIR = tests
 
 TARGET = $(BIN_DIR)/main
-TEST_TARGET = $(TEST_DIR)/test_CreationGraphe
+TEST_TARGET = $(TEST_DIR)/test_graphe
 
 # Sources pour le programme principal
 MAIN_SRC = $(SRC_DIR)/main.c
 SOURCES_MAIN = $(SRC_DIR)/graphe.c \
-               $(SRC_DIR)/creationGraphe.c \
-               $(SRC_DIR)/dijkstra.c \
+               $(SRC_DIR)/graphe_dijkstra.c \
                $(SRC_DIR)/creationFichierOrdres.c \
+               $(SRC_DIR)/file.c \
+               $(SRC_DIR)/TAD_robot.c \
+               $(SRC_DIR)/chemin.c \
                $(MAIN_SRC)
 
 # Sources pour les tests
 SOURCES_TEST = $(SRC_DIR)/graphe.c \
-               $(SRC_DIR)/creationGraphe.c \
-               $(SRC_DIR)/dijkstra.c \
+               $(SRC_DIR)/graphe_dijkstra.c \
                $(SRC_DIR)/creationFichierOrdres.c \
-               $(SRC_DIR)/test_CreationGraphe.c
+               $(SRC_DIR)/file.c \
+               $(SRC_DIR)/TAD_robot.c \
+               $(SRC_DIR)/chemin.c \
+               $(SRC_DIR)/test_graphe.c
 
 # Génération des objets
-OBJECTS_MAIN = $(SOURCES_MAIN:.c=.o)
-OBJECTS_TEST = $(SOURCES_TEST:.c=.o)
+OBJECTS_MAIN = $(patsubst $(SRC_DIR)/%.c,$(SRC_DIR)/%.o,$(SOURCES_MAIN))
+OBJECTS_TEST = $(patsubst $(SRC_DIR)/%.c,$(SRC_DIR)/%.o,$(SOURCES_TEST))
 
 .PHONY: all clean test
 
