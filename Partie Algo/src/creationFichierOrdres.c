@@ -56,21 +56,14 @@ void determinerOrdres(Ordre tabOrdres[NB_POINTS_MAX], Chemin c, G_Graphe grapheV
     for (unsigned int i = 0; i < nbCaseChemin - 1; i++) {
         LCL_Liste sommetsAdjacents = G_obtenirSommetsAdjacents(grapheVille, getCaseRobot(robot));
         determinerOrdre(&robot, plusCourtChemin[i + 1], largeurCircuit, &ordre1, &ordre2);
-        printf("Robot case: %u -> %u\n", plusCourtChemin[i], plusCourtChemin[i + 1]);
-        printf("ordre1: %d, ordre2: %d\n", ordre1, ordre2);
         if (ordre1 == NO) {
             if (j >= 1 && tabOrdres[j-1] == AV && LCL_longueur(sommetsAdjacents) > 2) {
                 tabOrdres[j] = ordre2;
                 j = j + 1;
-                printf("Il y a une intersection au point %u, on avance\n", getCaseRobot(robot));
             }
             else if (j == 0) {
                 tabOrdres[j] = ordre2;
                 j = j + 1;
-                printf("Premier ordre il faut avancer\n");
-            }
-            else {
-                printf("Pas d'intersection on ne met pas d'ordre pour avancer\n");
             }
         }
         else {
@@ -81,17 +74,10 @@ void determinerOrdres(Ordre tabOrdres[NB_POINTS_MAX], Chemin c, G_Graphe grapheV
         }
     }
     tabOrdres[j] = NO; // Marqueur de fin des ordres
-    for (unsigned int k = j + 1; k < nbCaseChemin; k++) {
-        printf("tabOrdres[%u] = %d\n", k, tabOrdres[k]);
-    }
 }
 
 void creationFichierOrdres(const char* nomFichierOrdres, G_Graphe grapheVille , Chemin plusCourtChemin, unsigned int largeurCircuit , tDirection directionInitRobot) {
     FILE* fichier = fopen(nomFichierOrdres, "w");
-    if (fichier == NULL) {
-        printf("Erreur lors de l'ouverture du fichier %s\n", nomFichierOrdres);
-        return;
-    }
 
     // Initialisation du robot
     Robot robot;
@@ -108,15 +94,12 @@ void creationFichierOrdres(const char* nomFichierOrdres, G_Graphe grapheVille , 
     while (tabOrdres[i] != NO && i < NB_POINTS_MAX) {
         if (tabOrdres[i] == AV) {
             fprintf(fichier, "AV\n");
-            printf("Ecriture ordre AV\n");
         }
         else if (tabOrdres[i] == TG) {
             fprintf(fichier, "TG\n");
-            printf("Ecriture ordre TG\n");
         }
         else if (tabOrdres[i] == TD) {
             fprintf(fichier, "TD\n");
-            printf("Ecriture ordre TD\n");
         }
         i++;
     }

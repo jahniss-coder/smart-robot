@@ -13,8 +13,8 @@ TEST_TARGET = $(TEST_DIR)/test_graphe
 # Sources pour le programme principal
 MAIN_SRC = $(SRC_DIR)/main.c
 SOURCES_MAIN = $(SRC_DIR)/graphe.c \
-               $(SRC_DIR)/creationGraphe.c \
                $(SRC_DIR)/graphe_dijkstra.c \
+               $(SRC_DIR)/creationFichierOrdres.c \
                $(SRC_DIR)/file.c \
                $(SRC_DIR)/TAD_robot.c \
                $(SRC_DIR)/chemin.c \
@@ -22,8 +22,8 @@ SOURCES_MAIN = $(SRC_DIR)/graphe.c \
 
 # Sources pour les tests
 SOURCES_TEST = $(SRC_DIR)/graphe.c \
-               $(SRC_DIR)/creationGraphe.c \
                $(SRC_DIR)/graphe_dijkstra.c \
+               $(SRC_DIR)/creationFichierOrdres.c \
                $(SRC_DIR)/file.c \
                $(SRC_DIR)/TAD_robot.c \
                $(SRC_DIR)/chemin.c \

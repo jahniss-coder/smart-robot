@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include "creationGraphe.h"
 #include "creationFichierOrdres.h"
-#include "dijkstra.h"   // Ajout des bibliothèques pour les test
+#include "graphe_dijkstra.h"
 #include "file.h"
 #include "TAD_robot.h"
 
