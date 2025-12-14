@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "TAD_robot.h"
-#include "dijkstra.h"
+#include "graphe_dijkstra.h"
 #include "creationFichierOrdres.h"
 #include "graphe.h"
 #include "ListeChaineeListe.h"

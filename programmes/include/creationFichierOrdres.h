@@ -2,7 +2,7 @@
 #define CREATION_FICHIER_ORDRES
 #include <stdio.h>
 #include "TAD_robot.h"
-#include "dijkstra.h"
+#include "graphe_dijkstra.h"
 #include "chemin.h"
 
 #define MAX_ORDRES 4 // Il ne peut pas y avoir plus de 4 ordres sachant que les demi tour ne sont pas pris en compte car ils feraient perdre trop de temps au directionRobot

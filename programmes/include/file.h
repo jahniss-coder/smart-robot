@@ -1,7 +1,7 @@
 #ifndef FILE_H
 #define FILE_H
 
-# include "dijkstra.h"
+# include "graphe_dijkstra.h"
 
 #define MAX_FILE 500 // Pour être sûr que jamais on ait autant de points
 // Structure pour utiliser la file et regarder par quels points passer
