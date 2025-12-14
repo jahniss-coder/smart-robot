@@ -8,3 +8,6 @@
 *.log
 *.aux
 *.toc
+
+# ignore les lib 
+*.a
