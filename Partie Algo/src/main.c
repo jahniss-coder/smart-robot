@@ -24,7 +24,7 @@ int main(int argc, char ** argv) {
 
     G_Graphe g = creationGrapheVille(tabPourGraphe, nbLiaisons);
 
-    Solution plusCourtChemin = resoudre_chemin_plus_court(&g, tabCaseObligatoires, caseInitRobot, largeurVille);
+    Solution plusCourtChemin = resoudre_chemin_plus_court(&g, tabCaseObligatoires, caseInitRobot, largeurVille, directionInitRobot);
 
     // Construction du chemin complet pour le fichier de sortie
     char fichierSortie[256];

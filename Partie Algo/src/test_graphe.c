@@ -7,7 +7,7 @@
 #include "file.h"
 #include "TAD_robot.h"
 
-const char* fileName = "ville.txt";
+const char* fileName = "tests/ville_test.txt";
 
 int init_suite_success(void) {
     return 0;
@@ -581,10 +581,11 @@ void test_solution_graphe_simple_5x5(void) {
     // Points obligatoires à visiter
     unsigned int points_obligatoires[3] = {13, 22, 20};
     unsigned int depart = 6;
+    tDirection directionInitRobot = SUD;
     unsigned int longueur_ville = 5;
 
     // Calcul de la solution
-    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville);
+    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville, directionInitRobot);
 
     CU_ASSERT_TRUE(solution.chemin_complet.nb_points > 0);
     CU_ASSERT_EQUAL(solution.chemin_complet.points[0], depart); // Le premier point du chemin est bien le départ
@@ -618,10 +619,11 @@ void test_solution_parcours_points_obligatoires(void) {
     // Points obligatoires à visiter
     unsigned int points_obligatoires[3] = {13, 22, 20};
     unsigned int depart = 6;
+    tDirection directionInitRobot = SUD;
     unsigned int longueur_ville = 5;
 
     // Calcul de la solution
-    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville);
+    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville, directionInitRobot);
 
     // On vérifie que pendant le parcours on passe bien par les points
     bool trouve13 = false, trouve22 = false, trouve20 = false;
@@ -661,10 +663,11 @@ void test_solution_retour_au_depart(void) {
     // Points obligatoires à visiter
     unsigned int points_obligatoires[3] = {13, 22, 20};
     unsigned int depart = 6;
+    tDirection directionInitRobot = SUD;
     unsigned int longueur_ville = 5;
 
     // Calcul de la solution
-    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville);
+    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville, directionInitRobot);
 
     // Vérification que le premier point et le dernier soient identiques
     CU_ASSERT_EQUAL(solution.chemin_complet.points[solution.chemin_complet.nb_points - 1], depart);
@@ -691,9 +694,10 @@ void test_solution_meilleur_chemin(void) {
     // Points obligatoires à visiter
     unsigned int points_obligatoires[3] = {13, 22, 20};
     unsigned int depart = 6;
+    tDirection directionInitRobot = SUD;
     unsigned int longueur_ville = 5;
 
-    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville);
+    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville, directionInitRobot);
 
     // Vérification que le chemin est valide
     for(unsigned int i = 0; i < solution.chemin_complet.nb_points - 1; i++) {
@@ -723,9 +727,10 @@ void test_solution_continuite_chemin(void) {
     // Points obligatoires à visiter
     unsigned int points_obligatoires[3] = {13, 22, 20};
     unsigned int depart = 6;
+    tDirection directionInitRobot = SUD;
     unsigned int longueur_ville = 5;
 
-    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville);
+    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville, directionInitRobot);
 
     // Vérification que le chemin effectue est valide
     for(unsigned int i = 0; i < solution.chemin_complet.nb_points - 1; i++) {
@@ -755,9 +760,10 @@ void test_fichier_ordres_a_partir_meilleur_chemin(void) {
     // Points obligatoires à visiter
     unsigned int points_obligatoires[3] = {13, 22, 20};
     unsigned int depart = 6;
+    tDirection directionInitRobot = SUD;
     unsigned int longueur_ville = 5;
 
-    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville);
+    Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville, directionInitRobot);
 
     const char* nomFichierOrdres = "test_fichier_ordres_solution.txt";
     creationFichierOrdres(nomFichierOrdres, g , solution.chemin_complet, longueur_ville, SUD);

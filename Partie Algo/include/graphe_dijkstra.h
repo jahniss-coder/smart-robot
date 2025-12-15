@@ -73,7 +73,7 @@ Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee);
  * \return La solution contenant l'ordre des points visités et le chemin complet
  */
 Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires[3], 
-                                     unsigned int depart, unsigned int longueur_ville); 
+                                     unsigned int depart, unsigned int longueur_ville, tDirection directionInitialeRobot); 
 
 /**
  * \brief Génère toutes les permutations des indices donnés

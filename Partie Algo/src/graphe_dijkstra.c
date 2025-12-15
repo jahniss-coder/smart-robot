@@ -250,7 +250,7 @@ int verifier_jonction_segments(Chemin segment1, Chemin segment2) {
 }
 
 Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires[3], 
-                                     unsigned int depart, unsigned int longueur_ville) {
+                                     unsigned int depart, unsigned int longueur_ville, tDirection directionInitialeRobot) {
     Solution solution = {0};
     solution.chemin_complet.nb_points = 0;
     unsigned int meilleure_distance = 99999;
@@ -261,20 +261,18 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
         point_cles[i] = point_obligatoires[i - 1];
     }
 
-
     unsigned int indices_classement[3] = {1, 2, 3};
     unsigned int permutations[6][3];
     permutation(indices_classement, permutations);
 
     // Tester chaque permutation
-    for (unsigned int p = 0; p < 6; p++) {
-        
+    for (unsigned int p = 0; p < 6; p++) {        
         unsigned int parcours[5];
-        parcours[0] = 0; // Index de départ
+        parcours[0] = 0;
         parcours[1] = permutations[p][0];
         parcours[2] = permutations[p][1];
         parcours[3] = permutations[p][2];
-        parcours[4] = 0; // Retour au départ
+        parcours[4] = 0;
 
         unsigned int distance_totale = 0;
         unsigned int estValide = 1;
@@ -287,27 +285,33 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
             unsigned int sommet_depart = point_cles[index_debut];
             unsigned int sommet_arrivee = point_cles[index_fin];
 
-            // Déterminer le sommet à exclure qui est dans le segment précédent
-            // C'est le point juste avant le point de jonction dans le segment précédent
-            unsigned int sommets_a_eviter;
-            unsigned int nb_a_eviter = 1; // On retire dans tous les cas un seul point celui à éviter
+            // Déterminer le sommet à exclure
+            unsigned int sommets_a_eviter = 0;
+            unsigned int nb_a_eviter = 1;
 
             if (i > 0) {
                 Chemin segment_precedent = segments[i - 1];
-                segment_precedent.nb_points = segment_precedent.nb_points - 1; // Indices commencent à 0
-                sommets_a_eviter = segment_precedent.points[segment_precedent.nb_points - 1]; // exclure le point de jonction                
+                sommets_a_eviter = segment_precedent.points[segment_precedent.nb_points - 2];
+                nb_a_eviter = 1;
+            } else {
+                if (directionInitialeRobot == SUD) {
+                    sommets_a_eviter = depart - longueur_ville;
+                }
+                else {
+                    sommets_a_eviter = depart + longueur_ville;
+                }
             }
 
             // Calculer le chemin avec exclusions
             segments[i] = dijkstra_avec_exclusions(g, sommet_depart, sommet_arrivee, 
                                                     &sommets_a_eviter, nb_a_eviter);
 
-            // Vérifications
             if (segments[i].nb_points == 0) {
                 estValide = 0;
                 break;
             }
 
+            // Vérifier les demi-tours internes
             if (!chemin_autorise(segments[i])) {
                 estValide = 0;
                 break;
@@ -326,8 +330,12 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
             }
         }
 
+        if (!estValide) {
+            continue;
+        }
+
         // Si cette permutation est valide et meilleure
-        if (estValide && distance_totale < meilleure_distance) {
+        if (distance_totale < meilleure_distance) {
             meilleure_distance = distance_totale;
 
             for(unsigned int i = 0; i < 3; i++) {
@@ -342,15 +350,15 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
                 
                 for(unsigned int j = debut; j < segments[i].nb_points; j++) {
                     if (index < NB_POINTS_MAX) {
-                        solution.chemin_complet.points[index++] = segments[i].points[j];
+                        solution.chemin_complet.points[index] = segments[i].points[j];
+                        index++;
                     }
                 }
             }
             
             solution.chemin_complet.nb_points = index;
-        }
+        } 
     }
 
     return solution;
 }
-
