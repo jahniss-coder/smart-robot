@@ -89,6 +89,13 @@ afficher chaque intersection qu'il croise, ainsi que chaque action qu'il réalis
 
 \subsection{Conception du Robot}
 \subsubsection{Schéma électrique}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{schema_electrique.jpg}
+    \caption{Schéma électrique du robot autonome}
+\end{figure}
+
 \subsubsection{Choix techniques}
 \subsubsection{Estimation du robot}
 % inclu le schéma ainsi que les explications des cablages et des choix techniques
@@ -143,11 +150,31 @@ Les trois intensités sont alors combinées pour determiner de quelle couleur il
 \subsubsection{Moteur Shield}
 \textbf{Rôle}
 
+Le moteur driver est un intermédiaire entre la Raspberry Pi 4 et les moteurs du robot car il permet de fournir assez de courant aux moteurs, régler la vitesse, contrôler le sens de rotation des roues mais aussi de protéger la raspberry car celle ci ne peux pas alimenter directement les moteurs.
+En effet, la Raspberry ne fournirait que 3.3V ou au maximum 5V pour les moteurs tandis que ceux-ci peuvent être alimenter jusqu’à 12V. Il est donc indispensable d’utiliser un moteur shield.
+
 \textbf{Fonctionnement}
 
 \subsubsection{Ecran LCD}
 \textbf{Rôle}
+
+Un écran LCD I2C permet d’afficher les informations provenant du robot comme les indications concernant son trajet sur le parcours (Tourner gauche, intersection…)
+Mais aussi d’afficher la couleur des pastilles située sur les points de passage obligatoires.
+Concrètement, il s’agit de l’interface entre le robot et nous, utilisateur.
+
 \textbf{Fonctionnement}
+
+Un écran LCD utilise beaucoup de fils, pour gérer cela, nous utilisons un LCD avec l’I2C pour réduire à seulement 2 fils de communication. Le câblage est alors plus simple et cet configuration est idéal pour notre robot surtout quand on utilise déjà beaucoup de GPIO avec les capteurs et moteurs.
+Seulement 4 lignes sont utilisées: 
+\begin{itemize}
+    \item SDA: données
+    \item SCL: horloge
+    \item VCC: alimentation
+    \item GND: masse
+\end{itemize}
+Il est intéressant de noter que tous les périphériques I2C sont connectés en parallèle sur SDA/SCL. C’est exactement ce que l’on a pu faire avec le capteur RGB.
+L’écran LCD fonctionne de la manière suivante:
+Le micro contrôleur envoie les commandes comme  le texte à afficher ou encore effacer l’écran. Le module I2C lui, reçoit les données et les convertir en signaux compréhensibles par le LCD.
 
 \subsubsection{Buzzer}
 \textbf{Rôle}
