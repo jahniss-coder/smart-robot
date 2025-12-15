@@ -20,6 +20,8 @@ tDirection directionOuest(tDirection direction) {
     case NORD : {
         return OUEST;
     }
+    default :
+        return NORD;
     }        
 }
 
@@ -38,6 +40,8 @@ tDirection directionEst(tDirection direction){
     case NORD : {
         return EST;
     }
+    default : 
+        return NORD;
     }
 }
 
