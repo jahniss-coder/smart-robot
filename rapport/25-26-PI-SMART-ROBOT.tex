@@ -250,11 +250,21 @@ Le dernier type que nous avons décidé d'implémenter est une structure File qu
 
 Pour ce qui est du Graphe, nous utilisons les TAD déjà implémentés de Monsieur Delestre utilisant de la même manière les TAD ListeChaineeListe ainsi que tableHachage.
 
-\paragraph{2. TAD} \mbox{} \\[5pt] 
+\paragraph{3. Analyse descendante}\mbox{} \\[5pt] 
+Une fois avoir pré-défini les types et structure que nous souhaitions mettre en place, nous avons étudié les algorithmes de parcours afin de choisir le plus adapté.
+Souhaitantt représenter la ville sous forme de graphe, nous avions le choix entre deux algorithmes bien précis:
+\begin{itemize}
+    \item \textbf{Dijkstra} : un algorithme efficace pour trouver le plus court chemin dans un graphe pondéré.
+    \item \textbf{A*} : une version améliorée de Dijkstra, utilisant une heuristique pour optimiser la recherche.
+\end{itemize}
+Étant donné la petite taille du labyrinthe, nous avons opté pour un Dijkstra dont les distances entre sommets des graphes seraient tous égaux à un.
+
+\subsubsection{Conception préliminaire}
+
+\paragraph{1. TAD} \mbox{} \\[5pt] 
 \paragraph{TAD tDirection} \
 \noindent\textbf{Nom} : tDirection
 
-\noindent\textbf{Utilise} :
 \noindent\textbf{Opérations} :
 \begin{itemize}
     \item \textbf{directionOuest} : tDirection $\rightarrow$ tDirection
@@ -305,7 +315,7 @@ Pour ce qui est du Graphe, nous utilisons les TAD déjà implémentés de Monsie
 \end{itemize}
 \noindent\textbf{Opérations} :
 \begin{itemize}
-    \item \textbf{initialisation_file} :$\rightarrow$ File 
+    \item \textbf{initialisation\_file} :$\rightarrow$ File 
     \item \textbf{estVideFile} : File $\rightarrow$ Naturel
     \item \textbf{estPleineFile} :  File $\rightarrow$ Naturel
     \item \textbf{enfiler} : File $\times$ EtatDuDijkstra $\rightarrow$ File
@@ -318,16 +328,69 @@ enfiler$(f, pDij)$ : non estPleineFile$(f)$
 \noindent\textbf{Préconditions} :
 defiler$(f)$ : non estVideFile$(f)$
 
-\paragraph{3. Analyse descendante}\mbox{} \\[5pt] 
-Une fois avoir pré-défini les types et structure que nous souhaitions mettre en place, nous avons étudié les algorithmes de parcours afin de choisir le plus adapté.
-Souhaitantt représenter la ville sous forme de graphe, nous avions le choix entre deux algorithmes bien précis:
-\begin{itemize}
-    \item \textbf{Dijkstra} : un algorithme efficace pour trouver le plus court chemin dans un graphe pondéré.
-    \item \textbf{A*} : une version améliorée de Dijkstra, utilisant une heuristique pour optimiser la recherche.
-\end{itemize}
-Étant donné la petite taille du labyrinthe, nous avons opté pour un Dijkstra dont les distances entre sommets des graphes seraient tous égaux à un.
+\paragraph{2. Signatures des fonctions}\mbox{} \\[5pt] 
+Dans cette sous partie, nous établirons les signatures de toutes les fonctions et procédures utilisées dans la partie algorithme du projet.
+Toutefois, pour la partie conception détaillée, nous ne présenterons que les algorithmes non triviaux et essentiels à notre résolution du problème principal: Trouver le chemin le plus court.\\
 
-\subsubsection{Conception préliminaire}
+\textbf{Fonctions et procédures du TAD Robot}
+\begin{itemize}
+    \item\texttt{Fonction directionOuest(direction: tDirection) : tDirection}
+
+    \item\texttt{Fonction directionEst(direction: tDirection) : tDirection}
+    
+    \item\texttt{Fonction getDirection(r: Robot) : tDirection}
+    
+    \item\texttt{Procedure setDirection(E/S r: Robot, E direction: tDirection)}
+    
+    \item\texttt{Fonction getCaseRobot(r: Robot) : NaturelNonNul}
+    
+    \item\texttt{Fonction setCaseRobot(E/S r: Robot, E nouvelleCase: NaturelNonNul)}
+\end{itemize}
+
+
+\textbf{Fonctions et procédures du TAD Chemin}
+\begin{itemize}
+    \item\texttt{Fonction obtenirNbPoints(c: Chemin) : naturel}
+
+    \item\texttt{Procedure obtenirChemin(E c: Chemin, S tabPoints: tableau[1..NB\_POINTS\_MAX] de NaturelNonNul)}
+    
+    \item\texttt{Procedure fixerNbPoints(E/S c: Chemin, E nombre\_points: NaturelNonNul)}
+\end{itemize}
+
+
+\textbf{Fonctions et procédures du TAD File}
+\begin{itemize}
+    \item\texttt{Fonction initialisation\_file(): File}
+
+    \item\texttt{Fonction estVideFile(f: File) : naturel}
+    
+    \item\texttt{Fonction estPleineFile(f: File) : naturel}    
+
+    \item\texttt{Procedure enfiler(E/S f: File, E etat: EtatDuDijkstra)}
+    
+    \item\texttt{Procedure defiler(E/S f: File)}
+    
+    \item\texttt{Procedure liberer\_file(E f: File)}
+\end{itemize}
+
+
+\textbf{Fonctions et procédures du graphe et de Dijkstra}
+\begin{itemize}
+    \item\texttt{Procedure recuperationInfoFichier(E fileNameVille: ChaineDeCaractères, S l, nb\_liaisons, nbCasesObligatoires, caseInitRObot: NaturelNonNul, tabCasesObligatoires: tableau[1..MAX\_CASES\_OBLIGATOIRES], tabPourGraphe[NB\_POINTS\_MAX][2], orientationInitRobot: tDirection): File}
+
+    \item\texttt{Fonction creationGrapheVille(tabLiasonsVille: tableau[1..NB\_POINTS\_MAX][2] de NaturelNonNul, nbLiaisons: NaturelNonNul) : G\_Graphe}
+    
+    \item\texttt{Fonction dijkstra\_avec\_exclusions(g: G\_Graphe, depart, arrivee, nb\_a\_eviter : NaturelNonNul, sommet\_a\_eviter : tableau[1..NB\_POINTS\_MAX] de NaturelNonNul) : Chemin}    
+
+    \item\texttt{Fonction dijkstra(g: G\_Graphe, depart, arrivee: NaturelNonNul)}
+    
+    \item\texttt{Procedure permutation(E arr: tableau[3] de NaturelNonNul, S permutations[6][3])}
+    
+    \item\texttt{Procedure liberer\_file(E f: File)}
+\end{itemize}
+
+
+\subsubsection{Conception détaillée}
 
 \paragraph{1. Types}\mbox{} \\[5pt] 
 \noindent\textbf{Type tDirection} = \{NORD, SUD, EST, OUEST \}
@@ -377,13 +440,6 @@ Souhaitantt représenter la ville sous forme de graphe, nous avions le choix ent
     \item \textbf{debut} : NaturelNonNul
     \item \textbf{fin} : NaturelNonNul
 \end{itemize} 
-
-\paragraph{2. Signatures des fonctions}\mbox{} \\[5pt] 
-Dans cette sous partie, nous établirons les signatures de toutes les fonctions et procédures utilisées dans la partie algorithme du projet.
-Toutefois, pour la partie conception détaillée, nous ne présenterons que les algorithmes non triviaux et essentiels à notre résolution du problème principal: Trouver le chemin le plus court.
-
-
-\subsubsection{Conception détaillée}
 \subsubsection{Code C}
 
 \subsection{Conclusion}
