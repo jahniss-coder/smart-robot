@@ -76,9 +76,7 @@ void determinerOrdres(Ordre tabOrdres[NB_POINTS_MAX], Chemin c, G_Graphe grapheV
     tabOrdres[j] = NO; // Marqueur de fin des ordres
 }
 
-void creationFichierOrdres(const char* nomFichierOrdres, G_Graphe grapheVille , Chemin plusCourtChemin, unsigned int largeurCircuit , tDirection directionInitRobot) {
-    FILE* fichier = fopen(nomFichierOrdres, "w");
-
+void creationFichierOrdres(G_Graphe grapheVille , Chemin plusCourtChemin, unsigned int largeurCircuit , tDirection directionInitRobot) {
     // Initialisation du robot
     Robot robot;
     setCaseRobot(&robot, plusCourtChemin.points[0]); // Position initiale du robot
@@ -93,18 +91,17 @@ void creationFichierOrdres(const char* nomFichierOrdres, G_Graphe grapheVille , 
     unsigned int i = 0;
     while (tabOrdres[i] != NO && i < NB_POINTS_MAX) {
         if (tabOrdres[i] == AV) {
-            fprintf(fichier, "AV\n");
+            fprintf(stdout, "AV\n");
         }
         else if (tabOrdres[i] == TG) {
-            fprintf(fichier, "TG\n");
+            fprintf(stdout,"TG\n");
         }
         else if (tabOrdres[i] == TD) {
-            fprintf(fichier, "TD\n");
+            fprintf(stdout, "TD\n");
         }
         i++;
     }
-    fputc('.', fichier); // Marqueur de fin des ordres
-    fclose(fichier);
+    fprintf(stdout, "."); // Marqueur de fin des ordres
 }
 
 

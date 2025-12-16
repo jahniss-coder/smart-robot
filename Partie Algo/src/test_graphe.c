@@ -272,96 +272,6 @@ void test_pas_intersection_avancer(void) {
     CU_ASSERT_EQUAL(tabOrdres[1], NO); // fin des ordres
 }
 
-void test_creation_fichier_ordres_avancer_intersection(void) {
-    // Chemin à suivre
-    Chemin c;
-    c.points[0] = 6;
-    c.points[1] = 11;
-    c.points[2] = 12;
-    c.points[3] = 13;
-    c.points[4] = 14;
-    c.nb_points = 5;
-
-    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
-        {1, 2}, {1, 6}, {2, 3}, {2, 7}, {3, 4},
-        {4, 5}, {5, 10}, {6, 11}, {7, 8}, {8, 13},
-        {9, 10}, {9, 14}, {10, 15}, {11, 16}, {11, 12},
-        {12, 17}, {12, 13}, {13, 14}, {14, 19}, {15, 20},
-        {16, 21}, {17, 22}, {18, 19}, {18, 23}, {19, 20},
-        {20, 25}, {21, 22}, {22, 23}, {23, 24}, {24, 25}
-    };
-    unsigned int nbLiaisons = 30;
-    G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
-
-    // Création du fichier d'ordres
-    const char* nomFichierOrdres = "test_fichier_ordres.txt";
-    creationFichierOrdres(nomFichierOrdres, g , c, 5, SUD);
-
-    // Vérification du contenu du fichier
-    FILE* fichier = fopen(nomFichierOrdres, "r");
-    CU_ASSERT_PTR_NOT_NULL(fichier);
-
-    char ligne[10];
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "TG\n");
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "."); // Marqueur de fin
-
-    fclose(fichier);
-}
-
-void test_creation_fichier_ordres_tourner_intersection(void) {
-    // Chemin à suivre
-    Chemin c;
-    c.points[0] = 1;
-    c.points[1] = 2;
-    c.points[2] = 7;
-    c.points[3] = 8;
-    c.nb_points = 4;
-
-    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
-        {1, 2}, {1, 6}, {2, 3}, {2, 7}, {3, 4},
-        {4, 5}, {5, 10}, {6, 11}, {7, 8}, {8, 13},
-        {9, 10}, {9, 14}, {10, 15}, {11, 16}, {11, 12},
-        {12, 17}, {12, 13}, {13, 14}, {14, 19}, {15, 20},
-        {16, 21}, {17, 22}, {18, 19}, {18, 23}, {19, 20},
-        {20, 25}, {21, 22}, {22, 23}, {23, 24}, {24, 25}
-    };
-    unsigned int nbLiaisons = 30;
-    G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
-
-    // Création du fichier d'ordres
-    const char* nomFichierOrdres = "test_fichier_ordres.txt";
-    creationFichierOrdres(nomFichierOrdres, g , c, 5, EST);
-
-    // Vérification du contenu du fichier
-    FILE* fichier = fopen(nomFichierOrdres, "r");
-    CU_ASSERT_PTR_NOT_NULL(fichier);
-
-    char ligne[10];
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "TD\n");
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "TG\n");
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
-    CU_ASSERT_STRING_EQUAL(ligne, "."); // Marqueur de fin
-
-    fclose(fichier);
-}
 
 /*
     tests de Dijkstra si le depart est aussi l'arrivée
@@ -745,6 +655,118 @@ void test_solution_continuite_chemin(void) {
 /*
     Début test creation fichier a partir du meilleur chemin
 */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void test_creation_fichier_ordres_avancer_intersection(void) {
+    // Chemin à suivre
+    Chemin c;
+    c.points[0] = 6;
+    c.points[1] = 11;
+    c.points[2] = 12;
+    c.points[3] = 13;
+    c.points[4] = 14;
+    c.nb_points = 5;
+
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
+        {1, 2}, {1, 6}, {2, 3}, {2, 7}, {3, 4},
+        {4, 5}, {5, 10}, {6, 11}, {7, 8}, {8, 13},
+        {9, 10}, {9, 14}, {10, 15}, {11, 16}, {11, 12},
+        {12, 17}, {12, 13}, {13, 14}, {14, 19}, {15, 20},
+        {16, 21}, {17, 22}, {18, 19}, {18, 23}, {19, 20},
+        {20, 25}, {21, 22}, {22, 23}, {23, 24}, {24, 25}
+    };
+    unsigned int nbLiaisons = 30;
+    G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
+
+    // Redirection de la sortie standard vers un fichier temporaire
+    FILE* tempFile = tmpfile();
+    FILE* oldStdout = stdout;
+    stdout = tempFile;
+
+    // Appel de la fonction
+    creationFichierOrdres(g, c, 5, SUD);
+
+    // Restauration de la sortie standard
+    fflush(tempFile);
+    stdout = oldStdout;
+
+    // Remise à zéro du pointeur de fichier pour lire depuis le début
+    rewind(tempFile);
+
+    // Vérification du contenu
+    char ligne[10];
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "TG\n");
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "."); // Marqueur de fin
+
+    fclose(tempFile);
+}
+
+void test_creation_fichier_ordres_tourner_intersection(void) {
+    // Chemin à suivre
+    Chemin c;
+    c.points[0] = 1;
+    c.points[1] = 2;
+    c.points[2] = 7;
+    c.points[3] = 8;
+    c.nb_points = 4;
+
+    unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
+        {1, 2}, {1, 6}, {2, 3}, {2, 7}, {3, 4},
+        {4, 5}, {5, 10}, {6, 11}, {7, 8}, {8, 13},
+        {9, 10}, {9, 14}, {10, 15}, {11, 16}, {11, 12},
+        {12, 17}, {12, 13}, {13, 14}, {14, 19}, {15, 20},
+        {16, 21}, {17, 22}, {18, 19}, {18, 23}, {19, 20},
+        {20, 25}, {21, 22}, {22, 23}, {23, 24}, {24, 25}
+    };
+    unsigned int nbLiaisons = 30;
+    G_Graphe g = creationGrapheVille(tabLiaisonsVille, nbLiaisons);
+
+    // Redirection de la sortie standard vers un fichier temporaire
+    FILE* tempFile = tmpfile();
+    FILE* oldStdout = stdout;
+    stdout = tempFile;
+
+    // Appel de la fonction
+    creationFichierOrdres(g, c, 5, EST);
+
+    // Restauration de la sortie standard
+    fflush(tempFile);
+    stdout = oldStdout;
+
+    // Remise à zéro du pointeur de fichier pour lire depuis le début
+    rewind(tempFile);
+
+    // Vérification du contenu
+    char ligne[10];
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "TD\n");
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "TG\n");
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
+    fgets(ligne, sizeof(ligne), tempFile);
+    CU_ASSERT_STRING_EQUAL(ligne, "."); // Marqueur de fin
+
+    fclose(tempFile);
+}
+
 void test_fichier_ordres_a_partir_meilleur_chemin(void) {
     unsigned int tabLiaisonsVille[NB_POINTS_MAX][2] = {
         {1, 2}, {1, 6}, {2, 3}, {2, 7}, {3, 4},
@@ -765,58 +787,69 @@ void test_fichier_ordres_a_partir_meilleur_chemin(void) {
 
     Solution solution = resoudre_chemin_plus_court(&g, points_obligatoires, depart, longueur_ville, directionInitRobot);
 
-    const char* nomFichierOrdres = "test_fichier_ordres_solution.txt";
-    creationFichierOrdres(nomFichierOrdres, g , solution.chemin_complet, longueur_ville, SUD);
-    // Vérification du contenu du fichier
-    FILE* fichier = fopen(nomFichierOrdres, "r");
-    CU_ASSERT_PTR_NOT_NULL(fichier);
+    // Redirection de la sortie standard vers un fichier temporaire
+    FILE* tempFile = tmpfile();
+    FILE* oldStdout = stdout;
+    stdout = tempFile;
 
+    // Appel de la fonction
+    creationFichierOrdres(g, solution.chemin_complet, longueur_ville, SUD);
+
+    // Restauration de la sortie standard
+    fflush(tempFile);
+    stdout = oldStdout;
+
+    // Remise à zéro du pointeur de fichier pour lire depuis le début
+    rewind(tempFile);
+
+    // Vérification du contenu
     char ligne[10];
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "TG\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "TD\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "TG\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "TD\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "TD\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "TD\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "TG\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "TD\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "AV\n");
-    fgets(ligne, sizeof(ligne), fichier);
+    fgets(ligne, sizeof(ligne), tempFile);
     CU_ASSERT_STRING_EQUAL(ligne, "."); // Marqueur de fin
-    
-    fclose(fichier);
+
+    fclose(tempFile);
 }
+
 
 int main(void) {
     CU_pSuite pSuite = NULL;
@@ -846,8 +879,6 @@ int main(void) {
         (NULL == CU_add_test(pSuite, "test_determiner_ordres_intersection_a_avancer", test_determiner_ordres_intersection_a_avancer)) ||
         (NULL == CU_add_test(pSuite, "test_intersection_tourner", test_intersection_tourner)) || 
         (NULL == CU_add_test(pSuite, "test_pas_intersection_avancer", test_pas_intersection_avancer)) ||
-        (NULL == CU_add_test(pSuite, "test_creation_fichier_ordres_avancer_intersection", test_creation_fichier_ordres_avancer_intersection)) ||
-        (NULL == CU_add_test(pSuite, "test_creation_fichier_ordres_tourner_intersection", test_creation_fichier_ordres_tourner_intersection)) ||
         (NULL == CU_add_test(pSuite, "test_dijkstra_depart_egal_arrivee", test_dijkstra_depart_egal_arrivee)) ||
         (NULL == CU_add_test(pSuite, "test_dijkstra_1_chemin", test_dijkstra_1_chemin)) ||
         (NULL == CU_add_test(pSuite, "test_dijkstra_points_obligatoires", test_dijkstra_points_obligatoires)) ||
@@ -861,6 +892,8 @@ int main(void) {
         (NULL == CU_add_test(pSuite, "test_solution_retour_au_depart", test_solution_retour_au_depart)) ||
         (NULL == CU_add_test(pSuite, "test_solution_meilleur_chemin", test_solution_meilleur_chemin)) ||
         (NULL == CU_add_test(pSuite, "test_solution_continuite_chemin", test_solution_continuite_chemin)) ||
+        (NULL == CU_add_test(pSuite, "test_creation_fichier_ordres_avancer_intersection", test_creation_fichier_ordres_avancer_intersection)) ||
+        (NULL == CU_add_test(pSuite, "test_creation_fichier_ordres_tourner_intersection", test_creation_fichier_ordres_tourner_intersection)) ||
         (NULL == CU_add_test(pSuite, "test_fichier_ordres_a_partir_meilleur_chemin", test_fichier_ordres_a_partir_meilleur_chemin)))
     {
         CU_cleanup_registry();

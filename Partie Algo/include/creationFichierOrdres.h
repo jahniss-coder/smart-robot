@@ -44,12 +44,11 @@ void determinerOrdres(Ordre tabOrdres[NB_POINTS_MAX], Chemin c, G_Graphe grapheV
 
 
 /**
- * \brief Crée un fichier contenant les ordres pour que le robot suive un chemin donné
- * \param nomFichierOrdres Le nom du fichier dans lequel écrire les ordres
+ * \brief affiche sur la sortie standard les ordres pour que le robot suive un chemin donné
  * \param plusCourtChemin Le chemin que le robot doit suivre
  * \param largeurCircuit La largeur du circuit
  * \param directionInitRobot La direction initiale du robot
  */
-void creationFichierOrdres(const char* nomFichierOrdres, G_Graphe grapheVille , Chemin plusCourtChemin, unsigned int largeurCircuit , tDirection directionInitRobot);
+void creationFichierOrdres(G_Graphe grapheVille , Chemin plusCourtChemin, unsigned int largeurCircuit , tDirection directionInitRobot);
 
 #endif

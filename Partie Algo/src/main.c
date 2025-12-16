@@ -26,11 +26,7 @@ int main(int argc, char ** argv) {
 
     Solution plusCourtChemin = resoudre_chemin_plus_court(&g, tabCaseObligatoires, caseInitRobot, largeurVille, directionInitRobot);
 
-    // Construction du chemin complet pour le fichier de sortie
-    char fichierSortie[256];
-    snprintf(fichierSortie, sizeof(fichierSortie), "%s%s", BIN_DIR, "fichierInstructions.txt");
-
-    creationFichierOrdres(fichierSortie, g, plusCourtChemin.chemin_complet, largeurVille, directionInitRobot);
+    creationFichierOrdres(g, plusCourtChemin.chemin_complet, largeurVille, directionInitRobot);
 
     return 0;
 }
