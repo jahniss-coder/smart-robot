@@ -39,12 +39,17 @@ void faireUnVirageADroite();
 char **retourneTableauDOrdre(char *cheminFichier, int nbLigneFichier);
 
 /**
-   @brief controle le robot suivant les ordres du fichier
-   @param cheminFichier la liste des instructions stockées dans un fichier texte
-   @param nbLigneFichier le nombre de ligne d'un fichier texte
+   @brief retourne le tableau avec les ordres de directions depuis l'entrée standard
+   @param nbLigne le nombre d'élément du tableau 
+   @return un tableau contenant les instructions que doit suivre le robot
+**/
+char **lireOrdreDepuisStdin(int *nbLignes)
+
+/**
+   @brief controle le robot suivant les ordres de l'entré standard
    @note permet au robot de suivre les instructions placées dans un fichier
 texte
 **/
-void controlerRobotDepuisOrdre(char *cheminFichier, int nbLigneFichier);
+void controlerRobotDepuisOrdre();
 
 #endif

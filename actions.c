@@ -120,13 +120,37 @@ char **retourneTableauDOrdre(char *cheminFichier, int nbLigneFichier) {
   return tableau;
 }
 
-void controlerRobotDepuisOrdre(char *cheminFichier, int nbLigneFichier) {
-  char **tableau = retourneTableauDOrdre(cheminFichier, nbLigneFichier);
+char **lireOrdreDepuisStdin(int *nbLignes) {
+    char **tableau = NULL;
+    char ligne[TAILLE_LIGNE_MAX];
+    int capacite = 0;
+
+    while (fgets(ligne, TAILLE_LIGNE_MAX, stdin) != NULL) {
+        // Supprimer le saut de ligne si présent
+        ligne[strcspn(ligne, "\n")] = '\0';
+
+        if (capacite == 0) {
+            tableau = malloc(sizeof(char *));
+            capacite = 1;
+        } else {
+            tableau = realloc(tableau, (capacite + 1) * sizeof(char *));
+            capacite++;
+        }
+        tableau[capacite - 1] = strdup(ligne);
+    }
+
+    *nbLignes = capacite;
+    return tableau;
+}
+
+void controlerRobotDepuisOrdre() {
+  int nbLignes = 0;
+  char **tableau = lireOrdreDepuisStdin(nbLigneFichier);
   int fileCapteur = color_initialisation();
 
   int indice = 0;
 
-  while (tableau[indice] != NULL) {
+  while (/*tableau[indice] != NULL*/ tableau[indice] != '.') {
     delay(80);
     if (strcmp(tableau[indice], "AV") == 0) {
       printf("avancer\n");
@@ -143,11 +167,9 @@ void controlerRobotDepuisOrdre(char *cheminFichier, int nbLigneFichier) {
 
   moteurs_arreter();
 
-  // pour libérer le tableau ensuite
-  indice = 0;
-  while (tableau[indice]) {
-    free(tableau[indice]);
-    indice++;
+  // Libérer le tableau
+  for (int i = 0; i < nbLignes; i++) {
+      free(tableau[i]);
   }
   free(tableau);
 

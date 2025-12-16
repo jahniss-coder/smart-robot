@@ -23,7 +23,7 @@ int main() {
   printf("Intialisation affichage LCD\n");
   initLcd();
 
-  printf("Récupération fichier texte: test.txt\n");
+  // printf("Récupération fichier texte: test.txt\n");
 
   if (pthread_create(&display_tid, NULL, affichage_thread, NULL) != 0) {
     perror("Erreur création thread affichage");
@@ -35,7 +35,7 @@ int main() {
 
   printf("Début mouvement\n");
 
-  controlerRobotDepuisOrdre("fichierInstructions.txt", 28);
+  controlerRobotDepuisOrdre();
 
   printf("Fin mouvement\n");
 
