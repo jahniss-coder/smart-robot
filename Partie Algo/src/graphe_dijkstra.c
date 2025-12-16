@@ -297,8 +297,14 @@ Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires
                 if (directionInitialeRobot == SUD) {
                     sommets_a_eviter = depart - longueur_ville;
                 }
-                else {
+                else if (directionInitialeRobot == NORD) {
                     sommets_a_eviter = depart + longueur_ville;
+                }
+                else if (directionInitialeRobot == EST) {
+                    sommets_a_eviter = depart - 1;
+                }
+                else {
+                    sommets_a_eviter = depart + 1;
                 }
             }
 
