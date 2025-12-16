@@ -1,6 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -pedantic -Iinclude
-LDFLAGS = -Llib -lcollections -lsdd -lcunit
+LDFLAGS = -Llib -Wl,-rpath,'$$ORIGIN/../lib' -lcollections -lsdd -lcunit
+
 SRC_DIR = src
 INCLUDE_DIR = include
 LIB_DIR = lib
