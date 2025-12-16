@@ -2,17 +2,18 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
-\usepackage{amsmath} 
-\usepackage{listings} 
-\usepackage{xcolor} 
-\usepackage[margin=2.5cm]{geometry} 
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[margin=2.5cm]{geometry}
 \usepackage{graphicx}
-\usepackage{float}
 \usepackage{fancyhdr}
+\usepackage{hyperref}
 \usepackage{tabularx}
-\usepackage{array}    % Pour un meilleur contrôle des tableaux
+\usepackage{array}
 
-\lstset{inputencoding=utf8, extendedchars=true}
+\usepackage[french,ruled,lined,linesnumbered,algochapter]{algorithm2e}
+
 
 \lstset{
     basicstyle=\ttfamily\small,
@@ -74,7 +75,7 @@
 \subsection{Contexte}
 
 
-Dans le cadre de notre premier semestre dans le départment ISIA, nous avons pour but de réaliser un \testit{Smart Robot} capable de se déplacer dans une ville modélisée sous forme de cases.
+Dans le cadre de notre premier semestre dans le départment ISIA, nous avons pour but de réaliser un \textit{Smart Robot} capable de se déplacer dans une ville modélisée sous forme de cases.
 Equipés de capteurs, moteurs et d'une raspberry Pi 4, notre objectif est de construire et coder un robot capable de parcourir un itinéraire imposés tout en determinant le plus court chemin permettant de passer par un certain nombre de points obligatoires.
 C'est en combinant électronique, algorithmique et développement en C, ainsi que l'utilisation de GitLab que nous allons réépondre aux attentes de ce projet.
 Ce rapport est structuré de la manière suivante:
@@ -91,44 +92,12 @@ afficher chaque intersection qu'il croise, ainsi que chaque action qu'il réalis
 
 \section{Partie électronique}
 
-\subsection{Conception du Robot}
-\subsubsection{Schéma électrique}
+\subsection{Cahier des charges}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{schema_electrique.jpg}
-    \caption{Schéma électrique du robot autonome}
-
-    % Légende des couleurs (plus discrète)
-    \vspace{8pt}
-    \small
-    \fcolorbox{black!10}{white}{\begin{minipage}{0.7\textwidth}
-        \small
-        \textbf{Légende des couleurs} \vspace{4pt}
-        \begin{tabular}{@{}m{1.2cm} m{4.5cm}@{}}
-            \textcolor{red!60}{\rule{1cm}{0.15cm}} & Fil d'alimentation (3.3V ou 5V) \\
-            \textcolor{black!80}{\rule{1cm}{0.15cm}} & Fil de masse (GND) \\
-            \textcolor{green!60}{\rule{1cm}{0.15cm}} & Communication I2C (SDA et SCL) \\
-            \textcolor{orange!60}{\rule{1cm}{0.15cm}} & GPIO des capteurs \\
-            \textcolor{brown!60}{\rule{1cm}{0.15cm}} & Écran LCD \\
-            \textcolor{pink!60}{\rule{1cm}{0.15cm}} & Fil de commande moteurs \\
-            \textcolor{violet!60}{\rule{1cm}{0.15cm}} & Fil moteur shield \\
-        \end{tabular}
-    \end{minipage}}
-    \label{fig:schema}
-\end{figure}
-
-
-\subsubsection{Choix techniques}
-\subsubsection{Estimation du robot}
-% inclu le schéma ainsi que les explications des cablages et des choix techniques
+Pour la partie électronique, le cahier des charges est assez clair et précis car il était renseigné dans le sujet. La partie électronique se concentre sur le robot, ses composants et son fonctionnement. Les attendus sont les suivants : un robot qui suit un chemin tracé au sol, passant par des points précis, et qui revient à son point de départ. Lorsque le robot passera sur le point distinguable par une pastille de couleur, il emettra un son distinct et affichera la couleur de la pastille sur le LCD. Chacune de ses actions doivent être affichée en temps réel sur l'écran du LCD (Avancer, Virage à Gauche et Virage à Droite).L'arrivée qui est également le point de départ sera visible et détectable par le robot car il sera representé par une pastille rouge.
 
 \subsection{Choix des composants}
 
-Pour le montage du robot, nous avons commencé par nous rassembler et dicuter des différents composants que nous pouvions inclure au robot.
-Tout d'abord, nous avons discuté du meilleur emplacment pour les capteurs, essentiels au projet pour detecter les lignes noires du parcours.
-Après plusieurs propositions, nous avons finalement décidé de positionner deux capteurs proches l'un de l'autre en avant pour pouvoir suivre correctement la ligne noire et alors détecter par la même occasion lorsque le robot dévie.
-De plus, nous avons choisi de placer deux capteurs sur les cotés, un capteur sur le côté droit, ainsi qu'un capteur sur le côté gauche afin de détecter les intersections et virages.
 En ce qui concerne les moteurs, ceux-ci sont alimentés à l'aide de piles connectées en parallèles et sont reliés à un interrupteur.
 La raspberry Pi est alimentée par une batterie externe afin de garantir une autonomie et une alimentation stable.
 Le buzzer et les capteurs (suiveurs de ligne et RGB) sont connectés aux GPIO de la RaspberryPi et alimentés avec 3,3V.
@@ -201,15 +170,105 @@ Le micro contrôleur envoie les commandes comme  le texte à afficher ou encore 
 
 \subsubsection{Buzzer}
 \textbf{Rôle}
+
+Le Buzzer a servi d'émettre un son lorsque le robot passe sur une pastille. Concrètement c'est un moyen pour le robot de nous confirmer qu'il a bien vu la pastille.
+
 \textbf{Fonctionnement}
 
-\subsection{Cahier des charges}
-% On fera notre cahier des charges et comment on va y répondre
+Le buzzer est un composant simple qui ne demande pas de protocole de communication compliqué. Pour le gérer, nous utilisons directement un GPIO. Le câblage est rapide et cette configuration est pratique. Seulement 3 lignes sont utilisées sur le module : 
+\begin{itemize}
+    \item S : signal de commande
+    \item VCC: L'alimentation
+    \item GND : La masse
+\end{itemize}
+
+\subsection{Conception du Robot}
+\subsubsection{Schéma électrique}
+
+\clearpage
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{schema_electrique.jpg}
+    \caption{Schéma électrique du robot autonome}
+
+    % Légende des couleurs (plus discrète)
+    \vspace{8pt}
+    \small
+    \fcolorbox{black!10}{white}{\begin{minipage}{0.7\textwidth}
+        \small
+        \textbf{Légende des couleurs} \vspace{4pt}
+        \begin{tabular}{@{}m{1.2cm} m{4.5cm}@{}}
+            \textcolor{red!60}{\rule{1cm}{0.15cm}} & Fil d'alimentation (3.3V ou 5V) \\
+            \textcolor{black!80}{\rule{1cm}{0.15cm}} & Fil de masse (GND) \\
+            \textcolor{green!60}{\rule{1cm}{0.15cm}} & Communication I2C (SDA et SCL) \\
+            \textcolor{orange!60}{\rule{1cm}{0.15cm}} & GPIO des capteurs \\
+            \textcolor{brown!60}{\rule{1cm}{0.15cm}} & Écran LCD \\
+            \textcolor{pink!60}{\rule{1cm}{0.15cm}} & Fil de commande moteurs \\
+            \textcolor{violet!60}{\rule{1cm}{0.15cm}} & Fil moteur shield \\
+        \end{tabular}
+    \end{minipage}}
+    \label{fig:schema}
+\end{figure}
+
+
+\subsubsection{Choix techniques}
+
+Pour le montage du robot, nous avons commencé par nous rassembler et dicuter des différents composants que nous pouvions inclure au robot.
+Tout d'abord, nous avons discuté du meilleur emplacment pour les capteurs, essentiels au projet pour detecter les lignes noires du parcours.
+Après plusieurs propositions, nous avons finalement décidé de positionner deux capteurs proches l'un de l'autre en avant pour pouvoir suivre correctement la ligne noire et alors détecter par la même occasion lorsque le robot dévie.
+De plus, nous avons choisi de placer deux capteurs sur les cotés, un capteur sur le côté droit, ainsi qu'un capteur sur le côté gauche afin de détecter les intersections et virages.
+
+
+
+\subsubsection{Estimation du robot}
+% inclu le schéma ainsi que les explications des cablages et des choix techniques
+
+Pour estimer les différentes valeurs de puissances consommées par notre robot nous sommes allée chercher les valeurs dans les datasheets associés au composants sur leurs différents site de vente ou sur le site du producteur, si un datasheet de composant n'est pas disponible ou trouvable alors nous prenons alors une valeurs moyennes des produits similaires que nous trouvons.  
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\small
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Appareil} & \textbf{Tension (V)} & \textbf{Courant (mA)} & \textbf{Puissance (W)} \\ \hline
+TCS34725 & 3,3  & 0,33 & $1,09 \times 10^{-3}$ \\ \hline
+Capteur de ligne x4 & 3,3  & 20  & 0,264  \\ \hline
+L293D x2 & 3,3  & 600  & 3,96  \\ \hline
+LCD1602 & 5  & 21  & 0,105  \\ \hline
+Buzzer actif & 3,3  & 30  & 0,099  \\ \hline
+PCF8574 & 3,3  & 0,04  & $0,132 \times 10^{-3}$ \\ \hline
+Raspberry Pi & 5  & 1 200 & 6  \\ \hline
+\end{tabular}
+\caption{Bilan de consommation du robot }
+\end{table}
+%\footnotetext[1]{Les références des sites sont disponibles dans la partie bibliographie}
+
+
+Ainsi pour estimer l'autonomie de notre batterie nous allons simplement venir diviser la capacité de la batterie par le courant total consommé par les différents composants connectés a la batterie.
+
+\vspace{2mm}
+Les composants lié a la batterie sont le buzzer actif, les 4 capteurs de lignes et le capteur RGB,  les 2 contrôleur de pilotes de moteur, ainsi que le l'écran LCD qui sont connecté au GPIO de la Raspberry qui est elle même connecté à la batterie. Ainsi la consommations estimé des composants est de environ 10,4 W, dont 4,32 W pour les éléments alimentés en 3,3 V et 6,11 W pour ceux alimentés en 5 V.
+
+\vspace{1mm}
+
+nb : Les moteurs étant alimentés séparément par des piles, leur consommation n’est pas incluse dans ce calcul.
+
+\vspace{2mm}
+
+L’autonomie du système peut donc être estimée à partir de l’énergie fournie par la batterie. Elle est donnée par le rapport entre l’énergie stockée dans la batterie et la puissance consommée par le système (environ 10,4 W hors moteurs). Ainsi, pour une batterie d’énergie 37.0 (en Wh), l’autonomie est approximativement T=37.0/10,4=3h33min. En tenant compte des pertes liées aux convertisseurs de tension, l’autonomie réelle est comprise entre 80 \% et 90 \% de cette valeur théorique.
 
 \subsection{Difficultés rencontrées et pistes d'amélioration}
 
-Nous avons rencontré de nombreuses difficultés, aussi bien sur le plan électronique que sur le plan organisationnel.
-Tout d'abord, 
+Nous avons rencontré de nombreuses difficultés, aussi bien sur le plan électronique que sur le plan organisationnel.\\
+
+Tout d'abord, pour ce qui était de l'électronique, les premiers problèmes furent de s'accoutumer avec les composants. Pour la majorité, on ne les avait jamais vu avant et comprendre leur fonctionnement nécessite d'avoir un code lié et de pouvoir faire des tests, or nous n'avions pas de code pré-disposé. La suite fut de passer de la théorie à la pratique. En effet, lorsque nous avons codé le comportement du robot, nous nous sommes rendu compte de la différence entre notre comportement théorique et le fonctionnement réel. Une erreur dans la récupération de l'information des capteurs nous empêchait d'avancer. Un autre problème qui nous a beaucoup occupé fut la détection de couleur. Lors de nos tests préliminaire le capteur fonctionnait comme souhaité, mais en pratique non, et notre manière de trouver les bonnes valeurs pour le faire fonctionner reste assez hasardeuse.
+De plus, faire un montage stable pour le robot fut une réel épreuve, certains câbles ne se branchaient pas correctement et/ou se détachaient. Faire tenir les composants sur la structure du robot n'était pas de tout repos non plus. Sa structure aillant les dimensions minimales afin de tout accueillir, il est difficile de le monter rapidement et on a un manque de solidité.\\
+
+De l'autre coté nous avons aussi eu des difficultés d'organisations, au début nous avons séparé le groupe en deux, puis très vite nous avons remarqué que nous perdions du temps et de l'efficacité, alors nous avons choisis de faire trois groupe de deux. Cela nous a permis de prêter plus de temps à la partie algorithmique tout en restant efficace sur la partie électronique.\\
+
+Notre robot reste largement améliorable, dans un premier temps dans notre gestion des tâches et de l'effectif, mais surtout dans notre relecture du code et notre vigilance sur ce que l'on écrit. La détection de couleur pourrait être plus stable et efficace. Après de nombreux essais, le robot échoue parfois à accomplir sa tâche, cela est du à plusieurs paramètres comme l'éclairage de la pièce, ou encore la couleur du circuit.
+
 
 \section{Partie informatique}
 
@@ -222,7 +281,7 @@ Les principaux problèmes à resoudres sont:
     \item étudier le fichier \textbf{.txt} afin de récuperer les informations essentielles liées au robot et à la construction de la ville
     \item créer un graphe modélisant les liaisons entre les différents points de la ville
     \item calculer le chemin le plus court
-    \item génerer un fichier \textbf{.txt} contenant les ordres que le robot doit effectuer
+    \item génerer les ordres que le robot doit suivre sur la sortie standard
 \end{itemize}
 
 \paragraph{1. Types} \mbox{} \\[5pt] 
@@ -319,7 +378,7 @@ Souhaitantt représenter la ville sous forme de graphe, nous avions le choix ent
     \item \textbf{estVideFile} : File $\rightarrow$ Naturel
     \item \textbf{estPleineFile} :  File $\rightarrow$ Naturel
     \item \textbf{enfiler} : File $\times$ EtatDuDijkstra $\rightarrow$ File
-    \item \textbf{defiler} : File $\rightarrow$ File
+    \item \textbf{defiler} : File $\rightarrow$ File $\times$ EtatDuDijkstra
     \item \textbf{liberer\_file} : File $\rightarrow$
 \end{itemize}
 \noindent\textbf{Préconditions} :
@@ -347,6 +406,7 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
     \item\texttt{Fonction setCaseRobot(E/S r: Robot, E nouvelleCase: NaturelNonNul)}
 \end{itemize}
 
+\vspace{1.1em}
 
 \textbf{Fonctions et procédures du TAD Chemin}
 \begin{itemize}
@@ -357,6 +417,7 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
     \item\texttt{Procedure fixerNbPoints(E/S c: Chemin, E nombre\_points: NaturelNonNul)}
 \end{itemize}
 
+\vspace{1.1em}
 
 \textbf{Fonctions et procédures du TAD File}
 \begin{itemize}
@@ -368,15 +429,16 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
 
     \item\texttt{Procedure enfiler(E/S f: File, E etat: EtatDuDijkstra)}
     
-    \item\texttt{Procedure defiler(E/S f: File)}
+    \item\texttt{Fonction defiler(f: File): EtatDuDijkstra}
     
     \item\texttt{Procedure liberer\_file(E f: File)}
 \end{itemize}
 
+\vspace{1.1em}
 
 \textbf{Fonctions et procédures du graphe et de Dijkstra}
 \begin{itemize}
-    \item\texttt{Procedure recuperationInfoFichier(E fileNameVille: ChaineDeCaractères, S l, nb\_liaisons, nbCasesObligatoires, caseInitRObot: NaturelNonNul, tabCasesObligatoires: tableau[1..MAX\_CASES\_OBLIGATOIRES], tabPourGraphe[NB\_POINTS\_MAX][2], orientationInitRobot: tDirection): File}
+    \item\texttt{Procedure recuperationInfoFichier(E fileNameVille: ChaineDeCaractères, S l, nb\_liaisons, nbCasesObligatoires, caseInitRObot: NaturelNonNul, tabCasesObligatoires: tableau[1..MAX\_CASES\_OBLIGATOIRES], tabPourGraphe[NB\_POINTS\_MAX][2], \\orientationInitRobot: tDirection): File}
 
     \item\texttt{Fonction creationGrapheVille(tabLiasonsVille: tableau[1..NB\_POINTS\_MAX][2] de NaturelNonNul, nbLiaisons: NaturelNonNul) : G\_Graphe}
     
@@ -386,7 +448,26 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
     
     \item\texttt{Procedure permutation(E arr: tableau[3] de NaturelNonNul, S permutations[6][3])}
     
-    \item\texttt{Procedure liberer\_file(E f: File)}
+    \item\texttt{Fonction chemin\_autorise(c: Chemin): }
+    
+    \item\texttt{Fonction verifier\_jonction\_segment(segment1, segment2: Chemin): Naturel}
+    
+    \item\texttt{Fonction resoudre\_chemin\_plus\_court(g: G\_Graphe, depart, longueur\_ville: NaturelNonNul, directionInitialeRobot: tDirection, point\_obligatoires: tableau[3] de NaturelNonNul)}
+\end{itemize}
+
+\vspace{1.1em}
+
+\textbf{Fonctions et procédures du fichier d'ordres}
+\begin{itemize}
+
+    \item\texttt{Fonction ordreDuChangementDeDirection(direction, nlleDirection: tDirection)}
+    
+    \item\texttt{Procedure determinerOrdre(E/S robot: Robot, E caseSuivanteRobot, largeurCircuit: NaturelNonNul, S ordre1, ordre2: Ordre)}
+    
+    \item\texttt{Procedure determinerOrdres(E c: Chemin, grapheVille: G\_Graphe, robot: Robot, largeurCircuit: NaturelNonNul, S tabOrdres: tableau[NB\_POINTS\_MAX] d'Ordre)}
+    
+    \item\texttt{Procedure creationFichierOrdres(E grapheVille: G\_graphe, plusCourtChemin: Chemin, largeurCircuit: NaturelNonNul, directionInitRobot: tDirection)}
+    
 \end{itemize}
 
 
@@ -439,13 +520,399 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
     \item \textbf{elemnts} : tableau[1..MAX\_FILE] de EtatDuDijkstra
     \item \textbf{debut} : NaturelNonNul
     \item \textbf{fin} : NaturelNonNul
-\end{itemize} 
+\end{itemize}
+
+
+
+\begin{algorithm}[htbp]
+\caption{resoudreCheminPlusCourt}
+\SetKw{KwIn}{Entrée}
+\SetKw{KwOut}{Sortie}
+\SetKw{KwPre}{Précondition}
+\SetKw{KwRet}{Retourner}
+\SetKwBlock{KwCod}{Début}{Fin}
+\SetKw{KwTo}{à}
+\SetKwProg{Fn}{}{}{}
+
+\KwIn{
+    $g$ : Graphe (G\_Graphe*)\; \\
+    $point\_obligatoires$ : tableau[3] de NNN\; \\
+    $depart$ : NNN\; \\
+    $longueur\_ville$ : NNN\; \\
+    $directionInitialeRobot$ : tDirection\;
+}
+\KwOut{$solution$ : Solution \;}
+
+\KwCod{
+    $solution \gets \{0\}$\; \\
+    $solution.chemin\_complet.nb\_points \gets 0$\; \\
+    $meilleure\_distance \gets 99999$\; \\
+    $point\_cles[0] \gets depart$\; \\
+    \Pour{$i \gets 1$ \KwTo $3$}{
+        $point\_cles[i] \gets point\_obligatoires[i-1]$\;
+    }
+    $indices\_classement \gets [1, 2, 3]$\; \\
+    $permutations \gets \text{permutation}(indices\_classement)$\;
+    \Pour{$p \gets 0$ \KwTo $5$}{
+        $parcours \gets [0, permutations[p][0], permutations[p][1], permutations[p][2], 0]$\; \\
+        $distance\_totale \gets 0$\; \\
+        $estValide \gets 1$\; \\
+        $segments \gets \text{tableau de 4 Chemin}$\;
+
+        \Pour{$i \gets 0$ \KwTo $3$}{
+            $index\_debut \gets parcours[i]$\; \\
+            $index\_fin \gets parcours[i+1]$\; \\
+            $sommet\_depart \gets point\_cles[index\_debut]$\; \\
+            $sommet\_arrivee \gets point\_cles[index\_fin]$\;
+
+            \eSi{$i > 0$}{
+                $sommets\_a\_eviter \gets segments[i-1].points[segments[i-1].nb\_points - 2]$\;
+            }{
+                \eSi{$directionInitialeRobot = SUD$}{
+                    $sommets\_a\_eviter \gets depart - longueur\_ville$\;
+                }
+                \eSi{$directionInitialeRobot = NORD$}{
+                    $sommets\_a\_eviter \gets depart + longueur\_ville$\;
+                }
+                \eSi{$directionInitialeRobot = EST$}{
+                    $sommets\_a\_eviter \gets depart - 1$\;
+                }
+                \Sinon{
+                    $sommets\_a\_eviter \gets depart + 1$\;
+                }
+            }
+
+            $segments[i] \gets \text{dijkstra\_avec\_exclusions}(g, sommet\_depart, sommet\_arrivee, sommets\_a\_eviter, 1)$\;
+
+            \Si{$segments[i].nb\_points = 0$}{
+                $estValide \gets 0$\; \\
+                \textbf{interrompre}\;
+            }
+
+            \Si{$\lnot \text{chemin\_autorise}(segments[i])$}{
+                $estValide \gets 0$\; \\
+                \textbf{interrompre}\;
+            }
+
+            $distance\_totale \gets distance\_totale + (segments[i].nb\_points - 1)$\;
+        }
+
+        \Si{$estValide$}{
+            \Pour{$i \gets 0$ \KwTo $2$}{
+                \Si{$\lnot \text{verifier\_jonction\_segments}(segments[i], segments[i+1])$}{
+                    $estValide \gets 0$\; \\
+                    \textbf{interrompre}\;
+                }
+            }
+        }
+
+        \Si{$\lnot estValide$}{
+            \textbf{passer à l'itération suivante}\;
+        }
+
+        \Si{$distance\_totale < meilleure\_distance$}{
+            $meilleure\_distance \gets distance\_totale$\;
+
+            \Pour{$i \gets 0$ \KwTo $2$}{
+                $solution.ordre[i] \gets point\_cles[permutations[p][i]]$\;
+            }
+
+            $index \gets 0$\;
+
+            \Pour{$i \gets 0$ \KwTo $3$}{
+                $debut \gets (i = 0) ? 0 : 1$\;
+
+                \Pour{$j \gets debut$ \KwTo $segments[i].nb\_points - 1$}{
+                    \Si{$index < NB\_POINTS\_MAX$}{
+                        $solution.chemin\_complet.points[index] \gets segments[i].points[j]$\; \\
+                        $index \gets index + 1$\;
+                    }
+                }
+            }
+
+            $solution.chemin\_complet.nb\_points \gets index$\;
+        }
+    }
+
+    \KwRet{$solution$}\;
+}
+\end{algorithm}
+
+
+
+\begin{algorithm}[htbp]
+\caption{dijkstra\_avec\_exclusion}
+\SetKwInOut{Entree}{Entrée}
+\SetKwInOut{Sortie}{Sortie}
+\SetKwBlock{Debut}{Début}{}
+\SetKw{KwRet}{Retourner}
+
+\Entree{$g : G\_Graphe*$, $depart : $, $arrivee : $, \\
+\hspace{2.5mm} $sommets\_a\_eviter : $ NNN*, $nb\_a\_eviter : $ tableau[1.. NB\_POINTS\_MAX] de NNN}
+\Sortie{$resultat : Chemin$}
+
+\Debut{
+    $resultat : Chemin$\;
+    $resultat$ \gets $\{0\}$\;
+    $points\_visites : $ tableau$[NB\_POINTS\_MAX][NB\_POINTS\_MAX] de NNN $\;
+    
+    $i: NNN$\;
+    
+    $j: NNN$\;
+    
+    \Pour{$i$ \gets $1$ \KwTo $NB\_POINTS\_MAX$}{
+        \Pour{$j$ \gets $1$ \KwTo $NB\_POINTS\_MAX$}{
+            $points\_visites[i][j]$ \gets $0$\;
+        }
+    }
+    
+    $file : File$\;
+    
+    $file$ \gets allouer$(sizeof(File))$\;
+    
+    initialisation\_file$(file)$\;
+    
+    $initial : EtatDuDijkstra$\;
+    
+    $initial.point\_actuel$ \gets $depart$\;
+    
+    $initial.point\_precedent$ \gets $0$\;
+    
+    $initial.chemin.points[0]$ \gets $depart$\;
+    
+    $initial.chemin.nb\_points$ \gets 1\;
+    
+    enfiler$(file, initial)$\;
+    
+    $points\_visites[depart][0]$ \gets $1$\;
+    
+    \Tq{la file n'est pas vide}{
+        $etat : EtatDuDijkstra$\;
+        
+        $etat \gets$ defiler$(file)$\;
+        \Si{$etat.point\_actuel$ = $arrivee$}{
+            $resultat.nb\_points \gets etat.chemin.nb\_points$\;
+            
+            \Pour{$i \gets 1$ \KwTo $etat.chemin.nb\_points$}{
+                $resultat.points[i] \gets etat.chemin.points[i]$\;
+            }
+            
+            liberer\_file$(file)$\;
+            \KwRet $resultat$\;
+            
+        }
+        
+        $voisins : LCL\_Liste$\;
+        
+        $voisins \gets $G\_obtenirSommetsAdjacents$(g, etat.point\_actuel)$\;
+        
+        \Pour{$i \gets 1$ \KwTo LCL\_longueur$(voisins)$}{
+        
+            $voisin : NNN$\;
+            
+            $voisin \gets $ LCL\_element$(voisins, i)$\;
+            
+            \Si{$voisin$ = $etat.point\_precedent$}{
+                \Continue\;
+            }
+            
+            $est\_a\_eviter : 0$\;
+            
+            \tct($k : NNN$\;)
+            
+            \Pour{$k \gets 1$ \KwTo $nb\_a\_eviter$}{
+                \Si{$voisin$ = $sommet\_a\_eviter[k]$}{
+                    $est\_a\_eviter \gets 1$\;
+                    \Break
+                }
+                
+            }
+            
+            \Si{$est\_a\_eviter$}{
+                \Continue
+            }
+            
+            $deja\_dans\_chemin \gets 0$\;
+            \Si {$voisin$ <> $arrivee$}{
+                \Pour{$k \gets 1$ \KwTo $etat.chemin.nb\_points$}{
+                    \Si {$etat.chemin.points[k]$ = $voisin$}{
+                        $deja\_dans\_chemin = 1$\;
+                        \Break\;
+                    }
+                }
+            }
+            
+            \Si{$deja\_dans\_chemin$}{
+                \Continue\;
+            }
+            
+            $index\_precedent : NNN$
+            
+            \Si{$etat.point\_actuel$ = $-1$}{
+                $index\_precedent \gets 0$\;
+            }
+            \Sinon{
+                $index\_precedent \gets etat.point\_actuel\;$
+            }
+            
+            \Si{$points\_visites[voisin][index\_precedent]$ = $1$}{
+                \Continue\;
+            }
+            
+            $points\_visites[voisin][index\_precedent]$ \gets $1$\;
+            
+            $nouvel\_etat : EtatDuDijkstra$\;
+            
+            $nouvel_etat.point_actuel$ \gets $voisin$\;
+            
+            $nouvel_etat.point_precedent$ \gets $etat.point_actuel$\;
+            
+            $nouvel_etat.chemin.nb_points$ \gets $etat.chemin.nb_points + 1$\;
+            
+            \Pour{$j$ \gets $1$ \KwTo $etat.chemin.nb\_points$}{
+                $nouvel\_etat.chemin.points[j] $ \gets $etat.chemin.points[j]$\;
+            }
+            
+            $nouvel\_etat.chemin.points[etat.chemin.nb\–points]$ \gets $voisin$\;
+            
+            enfiler$(file, nouvel\_etat)$\;
+        }
+        
+        LCL_vider$(voisins)$\;
+        
+    }
+    
+    liberer\_file$(file)$\;
+    
+    \Retour{$resultat$}\;
+}
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+\caption{determinerOrdres}
+\SetKwInOut{Entree}{Entrée}
+\SetKwInOut{Sortie}{Sortie}
+\SetKwBlock{Debut}{Début}{}
+\SetKw{KwRet}{Retourner}
+
+\Entree{ $c:$ Chemin, $grapheVille: $ Graphe , $robot: $ Robot, $largeurCircuit: $ NNN}
+\Sortie{$tabOrdre :$ Tableau[1..NB\_POINTS\_MAX] d'ordre}
+\textbf{Déclaration} $j, nbCaseChemin: $ NNN, $ordre1, ordre2: $ Ordre, \\ \hspace{2.5mm} $sommetsAdjacents: $ LCL\_Liste,\\
+\hspace{2.5mm} $plusCourtChemin: $ Tableau[1..NB\_POINT\_MAX] de NNN \\ \hspace{2.5mm} 
+\Debut{
+    obtenirChemin$(c, plusCourtChemin)$\;
+    
+    $nbCaseChemin$ \gets obtenirNbPoints$(c)$\;
+    
+    $j$ \gets 0\;
+
+    \Pour{$i \gets  0$ \KwTo  $nbCaseChemin$ - 1} {
+    
+        $sommetsAdjacents$ \gets G_obtenirSommetsAdjacents$(grapheVille, $getCaseRobot$(robot))$\;
+        
+        determinerOrdre$(robot, plusCourtChemin[i + 1], largeurCircuit, ordre1, ordre2)$\;
+        
+        
+        \Si{$ordre1$ == NO} {
+        
+            \Si{$j$ >= 1 et $tabOrdres[j-1]$ == AV et LCL\_longueur(sommetsAdjacents) > 2} {
+            
+                $tabOrdres[j]$ \gets $ordre2$\;
+                
+                $j$ \gets $j$ + 1\;
+                
+            }
+            
+            \SinonSi{$j == 0$} {
+            
+                $tabOrdres[j]$ \gets $ordre2$\;
+                
+                $j$ \gets $j$ + 1\;
+                
+            }
+            
+        }
+        
+        \Sinon{
+        
+            $tabOrdres[j]$ \gets $ordre1$\;
+            
+            $j$ \gets $j$ + 1\;
+            
+            $tabOrdres[j]$ \gets $ordre2$\;
+            
+            $j$ \gets $j$ + 1 \;
+            
+        }
+        
+    }
+    
+    $tabOrdres[j]$ \gets NO \; 
+    
+    \Retour{$tabOrdre$}\;
+    
+}
+
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+\caption{determinerOrdre}
+\SetKwInOut{Entree}{Entrée}
+\SetKwInOut{Sortie}{Sortie}
+\SetKwBlock{Debut}{Début}{}
+\SetKw{KwRet}{Retourner}
+
+\Entree{
+    $robot : Robot$, \\
+    $caseSuivanteRobot : Naturel$, \\
+    $largeurCircuit : Naturel$
+}
+\Sortie{
+    $ordre1 : Ordre$, \\
+    $ordre2 : Ordre$
+}
+
+\textbf{Déclaration} \\
+$caseInitRobot : Naturel$, \\
+$dirRobot : Direction$, \\
+$diff : Naturel$, \\
+$nlleDirection : Direction$ \\
+
+\Debut{
+    $caseInitRobot \gets getCaseRobot(robot)$\;
+    $dirRobot \gets getDirection(robot)$\;
+    $diff \gets caseSuivanteRobot - caseInitRobot$\;
+    $nlleDirection : Direction$\;
+
+    \Si{$diff = 1$}{
+        $nlleDirection \gets EST$\;
+    }
+    \SinonSi{$diff = -1$}{
+        $nlleDirection \gets OUEST$\;
+    }
+    \SinonSi{$diff = largeurCircuit$}{
+        $nlleDirection \gets SUD$\;
+    }
+    \SinonSi{$diff = -largeurCircuit$}{
+        $nlleDirection \gets NORD$\;
+    }
+    \Sinon{
+        $nlleDirection \gets dirRobot$\;
+    }
+
+    $ordre1 \gets ordreDuChangementDeDirection(dirRobot, nlleDirection)$\;
+    $setDirection(robot, nlleDirection)$\;
+    $ordre2 \gets AV$\;
+    $setCaseRobot(robot, caseSuivanteRobot)$\;
+}
+\end{algorithm}
+
 \subsubsection{Code C}
 
 \subsection{Conclusion}
 \subsubsection{Répartition du travail}
 
-\begin{table}[h!]
+\begin{table}[htbp]
 \centering
 \renewcommand{\arraystretch}{1.5}
 \small
@@ -454,8 +921,8 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
 \textbf{Tâches} & \textbf{Jahnis} & \textbf{Mathieu} & \textbf{Alioune} & \textbf{Ylann} & \textbf{Ilan} & \textbf{Neil}\\ \hline
 Construction du robot & X & X & X & X & X & X \\ \hline
 Fonctions moteur &  & X & X &  & X &  \\ \hline
-Fonctions capteurs & X &  &  &  &  & X \\ \hline
-Fonctions LCD &  &  & X & X &  &  \\ \hline
+Fonctions capteurs & X & X &  &  &  & X \\ \hline
+Fonctions LCD &  & X & X & X &  &  \\ \hline
 Tests unitaires électronique & X & X &  &  & X &  \\ \hline
 Débogage électronique &  & X &  &  & X & \\ \hline
 Fonctions liées à la determination du plus court chemin & X &  &  &  &  &  \\ \hline
@@ -463,12 +930,45 @@ Fonctions liées à la création du graphe &  &  &  &  &  & X \\ \hline
 Tests unitaires algorithme & X &  &  &  &  & X \\ \hline
 Débogage algorithme & X &  &  &  &  & X \\ \hline
 Mise en place du makefile et bashrc &  &  &  & X &  & X \\ \hline
-Rédation du rapport & X &  &  &  &  &  \\ \hline
+Rédation du rapport & X & X & X & X & X & X \\ \hline
 \end{tabularx}
 \caption{Répartition des tâches}
 \end{table}
 
 \subsubsection{Conclusion du projet}
+
+\subsection{Bibliographie}
+\begin{thebibliography}{9}
+
+\bibitem{tcs34725}
+Adafruit, \textit{TCS34725 Color Sensor Datasheet}.  
+\url{https://cdn-shop.adafruit.com/datasheets/TCS34725.pdf}
+
+\bibitem{tcrt5000}
+Powertech, \textit{Capteur de suivi de ligne infrarouge TCRT5000}.  
+\url{https://powertech-dz.org/product/capteur-de-suivi-de-ligne-infrarouge-tcrt5000-ir-1-4-5-8-canaux/}
+
+\bibitem{l293d}
+Texas Instruments, \textit{L293D Motor Driver Datasheet}.  
+\url{https://moodle.insa-rouen.fr/pluginfile.php/191118/mod_resource/content/3/l293d.pdf}
+
+\bibitem{lcd1602}
+Adafruit, \textit{LCD1602 Datasheet}.  
+\url{https://cdn-shop.adafruit.com/datasheets/TC1602A-01T.pdf}
+
+\bibitem{buzzer}
+Valeurs moyennes issues de plusieurs sources en ligne (absence de documentation officielle).
+
+\bibitem{pcf8574}
+Philips, \textit{PCF8574 I/O Expander Datasheet}.  
+\url{https://www.alldatasheet.fr/datasheet-pdf/view/424340/PHILIPS/PCF8574T.html}
+
+\bibitem{raspberrypi}
+Raspberry Pi Foundation, \textit{Raspberry Pi 4 Datasheet}.  
+\url{https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-datasheet.pdf}
+
+\end{thebibliography}
+
 
 \end{document}
 
