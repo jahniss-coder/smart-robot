@@ -1,33 +1,42 @@
 #!/bin/bash
 
-# Vérifier que un fichier est fourni en entrée
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <fichier.txt>"
+# Repertoires programmes
+ALGO_DIR="Partie_Algo"
+ROBOT_DIR="Partie_Electronique"
+
+# Path executables
+EXEC_ALGO="$ALGO_DIR/bin/main"
+EXEC_ROBOT="$ROBOT_DIR/bin/main_robot"
+
+# Fichier entre labyrinthe
+fichier_entree="$1"
+
+if [ $# -lt 1 ]; then
+    echo "Utilisation: $0 <fichier_ville.txt>"
     exit 1
 fi
-
-input_file="$1"
-
-# Vérifier que le fichier existe
-if [ ! -f "$input_file" ]; then
-    echo "Erreur: Le fichier '$input_file' n'existe pas"
-    exit 1
+if [ ! -f "$fichier_entree" ]; then
+    echo "Erreur le fichier de la ville : ${fichier_entree} n'existe pas."
+    exit -1
 fi
 
-# Chemins vers les exécutables
-algo_main="./Partie\ Algo/main"
-elec_main="./Partie\ Electronique/main"
-
-# Vérifier que les exécutables existent
-if [ ! -x "$algo_main" ]; then
-    echo "Erreur: $algo_main n'existe pas ou n'est pas exécutable"
-    exit 1
+# Compilation des programmes si pas disponibles
+if [ ! -f "$EXEC_ALGO" ]; then
+    make all -C "$ALGO_DIR"
 fi
 
-if [ ! -x "$elec_main" ]; then
-    echo "Erreur: $elec_main n'existe pas ou n'est pas exécutable"
-    exit 1
+if [ ! -f "$EXEC_ROBOT" ]; then
+    make all -C "$ROBOT_DIR"
 fi
 
-# Exécuter Partie Algo avec le fichier en entrée, puis passer le résultat à Partie Elec
-"$algo_main" < "$input_file" | "$elec_main" 
+echo "Resolution du plus court chemin..."
+debut=$(date +%s%3N)
+
+./$EXEC_ALGO $fichier_entree | ./$EXEC_ROBOT
+
+fin=$(date +%s%3N)
+
+secondes=$(( ($fin - $debut) / 1000))
+millisecondes=$(( ($fin - $debut) % 1000))
+
+echo "Temps d'exécution: ${secondes}.$(printf "%.3d" $millisecondes) secondes"
