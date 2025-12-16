@@ -9,6 +9,10 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{array}    % Pour un meilleur contrôle des tableaux
+
+\lstset{inputencoding=utf8, extendedchars=true}
 
 \lstset{
     basicstyle=\ttfamily\small,
@@ -94,7 +98,26 @@ afficher chaque intersection qu'il croise, ainsi que chaque action qu'il réalis
     \centering
     \includegraphics[width=\textwidth]{schema_electrique.jpg}
     \caption{Schéma électrique du robot autonome}
+
+    % Légende des couleurs (plus discrète)
+    \vspace{8pt}
+    \small
+    \fcolorbox{black!10}{white}{\begin{minipage}{0.7\textwidth}
+        \small
+        \textbf{Légende des couleurs} \vspace{4pt}
+        \begin{tabular}{@{}m{1.2cm} m{4.5cm}@{}}
+            \textcolor{red!60}{\rule{1cm}{0.15cm}} & Fil d'alimentation (3.3V ou 5V) \\
+            \textcolor{black!80}{\rule{1cm}{0.15cm}} & Fil de masse (GND) \\
+            \textcolor{green!60}{\rule{1cm}{0.15cm}} & Communication I2C (SDA et SCL) \\
+            \textcolor{orange!60}{\rule{1cm}{0.15cm}} & GPIO des capteurs \\
+            \textcolor{brown!60}{\rule{1cm}{0.15cm}} & Écran LCD \\
+            \textcolor{pink!60}{\rule{1cm}{0.15cm}} & Fil de commande moteurs \\
+            \textcolor{violet!60}{\rule{1cm}{0.15cm}} & Fil moteur shield \\
+        \end{tabular}
+    \end{minipage}}
+    \label{fig:schema}
 \end{figure}
+
 
 \subsubsection{Choix techniques}
 \subsubsection{Estimation du robot}
@@ -202,12 +225,193 @@ Les principaux problèmes à resoudres sont:
     \item génerer un fichier \textbf{.txt} contenant les ordres que le robot doit effectuer
 \end{itemize}
 
+\paragraph{1. Types} \mbox{} \\[5pt] 
+\textbf{Type Direction}
+Ce type permet d'associer une direction(Sud, Nord, Ouest, Est) au robot et permet donc de faciliter l'interdiction des demi-tours quant à la direction actuelle du robot.\\
+
+\textbf{Type Ordre}
+Ce type est une énumération qui permet de donner au robot les actions qu'il peut effectuer tout au long du parcours (Avancer, Tourner Droite, Tourner Gauche, Ne Rien Faire).
+
+\textbf{Type Robot}
+Ce type sera défini sous forme d'une structure permettant de contenir la case actuelle ou se trouve le robot, ainsi que sa direction.
+
+\textbf{Type Chemin}
+Ce type permettra de contenir l'ensemble des points par lequel le robot doit passer pour réaliser le chemin le plus court.
+
+\textbf{Type EtatDuDijkstra}
+Ce type sera représenté par une structure permettant de renseigner le point actuel ou l'on se trouve,
+le point depuis lequel on arrive (point précédent) ainsi que le chemin pour parvenir jusqu'au point actuel.
+
+\textbf{Type Solution}
+Ce type sera utilisé lors de la résolution du chemin le plus court, regroupant alors l'ordre dans lequel nous allons passer par les points obligatoires ainsi que le chemin complet des points par lesquels nous allons passer.
+
+\textbf{Type File}
+Le dernier type que nous avons décidé d'implémenter est une structure File qui stockera les différents états du Dijkstra que l'on pourra obtenir grâce aux indice de début et fin de la file.
+
+Pour ce qui est du Graphe, nous utilisons les TAD déjà implémentés de Monsieur Delestre utilisant de la même manière les TAD ListeChaineeListe ainsi que tableHachage.
+
+\paragraph{2. TAD} \mbox{} \\[5pt] 
+\paragraph{TAD tDirection} \
+\noindent\textbf{Nom} : tDirection
+
+\noindent\textbf{Utilise} :
+\noindent\textbf{Opérations} :
+\begin{itemize}
+    \item \textbf{directionOuest} : tDirection $\rightarrow$ tDirection
+    \item \textbf{directionEst} : tDirection $\rightarrow$ tDirection
+\end{itemize}
+
+
+\paragraph{TAD Robot} \
+
+\noindent\textbf{Nom} : Robot
+
+\noindent\textbf{Utilise} :
+\begin{itemize}
+    \item tDirection
+    \item NaturelNonNul
+\end{itemize}
+\noindent\textbf{Opérations} :
+\begin{itemize}
+    \item \textbf{setDirection} : tDirection $\times$ Robot $\rightarrow$ Robot
+    \item \textbf{getDirection} : Robot $\rightarrow$ tDirection
+    \item \textbf{getCaseRobot} : Robot $\rightarrow$ NaturelNonNul
+    \item \textbf{setCaseRobot} : Robot $\times$ NaturelNonNul $\rightarrow$ Robot
+\end{itemize}
+
+\paragraph{TAD Chemin} \
+
+\noindent\textbf{Nom} : Chemin
+
+\noindent\textbf{Utilise} :
+\begin{itemize}
+    \item NaturelNonNul
+\end{itemize}
+\noindent\textbf{Opérations} :
+\begin{itemize}
+    \item \textbf{obtenirChemin} : Chemin $\rightarrow$ tableau[1.. NB\_POINTS\_MAX] de NaturelNonNul 
+    \item \textbf{obtenirNbPoints} : Chemin $\rightarrow$ NaturelNonNul
+    \item \textbf{fixerNbPoints} : Chemin $\times$ NaturelNonNul $\rightarrow$ Chemin
+\end{itemize}
+
+\paragraph{TAD File} \
+
+\noindent\textbf{Nom} : File
+
+\noindent\textbf{Utilise} :
+\begin{itemize}
+    \item EtatDuDijkstra
+    \item Naturel
+\end{itemize}
+\noindent\textbf{Opérations} :
+\begin{itemize}
+    \item \textbf{initialisation_file} :$\rightarrow$ File 
+    \item \textbf{estVideFile} : File $\rightarrow$ Naturel
+    \item \textbf{estPleineFile} :  File $\rightarrow$ Naturel
+    \item \textbf{enfiler} : File $\times$ EtatDuDijkstra $\rightarrow$ File
+    \item \textbf{defiler} : File $\rightarrow$ File
+    \item \textbf{liberer\_file} : File $\rightarrow$
+\end{itemize}
+\noindent\textbf{Préconditions} :
+enfiler$(f, pDij)$ : non estPleineFile$(f)$
+
+\noindent\textbf{Préconditions} :
+defiler$(f)$ : non estVideFile$(f)$
+
+\paragraph{3. Analyse descendante}\mbox{} \\[5pt] 
+Une fois avoir pré-défini les types et structure que nous souhaitions mettre en place, nous avons étudié les algorithmes de parcours afin de choisir le plus adapté.
+Souhaitantt représenter la ville sous forme de graphe, nous avions le choix entre deux algorithmes bien précis:
+\begin{itemize}
+    \item \textbf{Dijkstra} : un algorithme efficace pour trouver le plus court chemin dans un graphe pondéré.
+    \item \textbf{A*} : une version améliorée de Dijkstra, utilisant une heuristique pour optimiser la recherche.
+\end{itemize}
+Étant donné la petite taille du labyrinthe, nous avons opté pour un Dijkstra dont les distances entre sommets des graphes seraient tous égaux à un.
+
 \subsubsection{Conception préliminaire}
+
+\paragraph{1. Types}\mbox{} \\[5pt] 
+\noindent\textbf{Type tDirection} = \{NORD, SUD, EST, OUEST \}
+\medskip
+
+\noindent\textbf{Type Ordre} = \{AV, TG, TD, NO \}
+\medskip
+
+\noindent\textbf{Type Robot} = structure
+\medskip
+\noindent\textbf{Champs} :
+\begin{itemize}
+    \item \textbf{caseRobot} : Naturel Non Nul
+    \item \textbf{direction} : tDirection
+\end{itemize} 
+
+\noindent\textbf{Type Chemin} = structure
+\medskip
+\noindent\textbf{Champs} :
+\begin{itemize}
+    \item \textbf{points} tableau[1..NB\_POINTS\_MAX] de NaturelNonNul
+    \item \textbf{direction} : tDirection
+\end{itemize} 
+
+\noindent\textbf{Type EtatDuDijkstra} = structure
+\medskip
+\noindent\textbf{Champs} :
+\begin{itemize}
+    \item \textbf{point\_actuel} : NaturelNonNul
+    \item \textbf{point\_precedent} : NaturelNonNul
+    \item \textbf{chemin} : Chemin
+\end{itemize} 
+
+\noindent\textbf{Type Solution} = structure
+\medskip
+\noindent\textbf{Champs} :
+\begin{itemize}
+    \item \textbf{ordre} : tableau[1..3] de NaturelNonNul
+    \item \textbf{chemin\_complet} : Chemin
+\end{itemize} 
+
+\noindent\textbf{Type file} = structure
+\medskip
+\noindent\textbf{Champs} :
+\begin{itemize}
+    \item \textbf{elemnts} : tableau[1..MAX\_FILE] de EtatDuDijkstra
+    \item \textbf{debut} : NaturelNonNul
+    \item \textbf{fin} : NaturelNonNul
+\end{itemize} 
+
+\paragraph{2. Signatures des fonctions}\mbox{} \\[5pt] 
+Dans cette sous partie, nous établirons les signatures de toutes les fonctions et procédures utilisées dans la partie algorithme du projet.
+Toutefois, pour la partie conception détaillée, nous ne présenterons que les algorithmes non triviaux et essentiels à notre résolution du problème principal: Trouver le chemin le plus court.
+
+
 \subsubsection{Conception détaillée}
 \subsubsection{Code C}
 
 \subsection{Conclusion}
 \subsubsection{Répartition du travail}
+
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\small
+\begin{tabularx}{\textwidth}{|X|c|c|c|c|c|c|}
+\hline
+\textbf{Tâches} & \textbf{Jahnis} & \textbf{Mathieu} & \textbf{Alioune} & \textbf{Ylann} & \textbf{Ilan} & \textbf{Neil}\\ \hline
+Construction du robot & X & X & X & X & X & X \\ \hline
+Fonctions moteur &  & X & X &  & X &  \\ \hline
+Fonctions capteurs & X &  &  &  &  & X \\ \hline
+Fonctions LCD &  &  & X & X &  &  \\ \hline
+Tests unitaires électronique & X & X &  &  & X &  \\ \hline
+Débogage électronique &  & X &  &  & X & \\ \hline
+Fonctions liées à la determination du plus court chemin & X &  &  &  &  &  \\ \hline
+Fonctions liées à la création du graphe &  &  &  &  &  & X \\ \hline
+Tests unitaires algorithme & X &  &  &  &  & X \\ \hline
+Débogage algorithme & X &  &  &  &  & X \\ \hline
+Mise en place du makefile et bashrc &  &  &  & X &  & X \\ \hline
+Rédation du rapport & X &  &  &  &  &  \\ \hline
+\end{tabularx}
+\caption{Répartition des tâches}
+\end{table}
+
 \subsubsection{Conclusion du projet}
 
 \end{document}
