@@ -11,6 +11,8 @@
 \usepackage{hyperref}
 \usepackage{tabularx}
 \usepackage{array}
+\usepackage{float}
+
 
 \usepackage[french,ruled,lined,linesnumbered,algochapter]{algorithm2e}
 
@@ -147,6 +149,34 @@ En effet, la Raspberry ne fournirait que 3.3V ou au maximum 5V pour les moteurs 
 
 \textbf{Fonctionnement}
 
+Un moteur shield contient 2 canaux moteurs (moteur 1, moteur 2) ainsi que 6 broches de contrôle:
+\begin{itemize}
+    \item Enable1: permet de régler la vitesse du moteur 1
+    \item Enable2: permet de régler la vitesse du moteur 2
+    \item IN1, IN2: permettent de contrôler le sens du moteur 1
+    \item IN2, IN3: permettent de contrôler le sens du moteur 2
+\end{itemize}
+Afin de contrôler correctement du moteur, il est important de savoir comment fonctionnent ces différentes broches. 
+Tout d'abord, pour contrôler la vitesse d'un moteur, nous avons besoin du PWM (Pulse Width Modulation) qui permet de simuler une tension variable à partir d'un signal (HIGH ou LOW). 
+Lorsque l'on met cette valeur à HIGH(1), le moteur est activé à pleine vitesse. 
+Inversement, lorsque l'on met cette valeur à LOW(0), le moteur est désactivé.
+Enfin, en ce qui concerne les broches permettant de contrôler le sens du moteur, celles-ci fonctionnent comme suit:
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\small
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{IN1} & \textbf{ IN2} & \textbf{Action}  \\ \hline
+0 & 0 & rotation dans le sens 1\\ \hline
+0 & 1 & rotation dans le sens 2\\ \hline
+1 & 0 & arrêt \\ \hline
+1 & 1 & frein \\ \hline
+\end{tabular}
+\caption{Fonctionnement des broches}
+\end{table}
+
 \subsubsection{Ecran LCD}
 \textbf{Rôle}
 
@@ -218,6 +248,12 @@ Tout d'abord, nous avons discuté du meilleur emplacment pour les capteurs, esse
 Après plusieurs propositions, nous avons finalement décidé de positionner deux capteurs proches l'un de l'autre en avant pour pouvoir suivre correctement la ligne noire et alors détecter par la même occasion lorsque le robot dévie.
 De plus, nous avons choisi de placer deux capteurs sur les cotés, un capteur sur le côté droit, ainsi qu'un capteur sur le côté gauche afin de détecter les intersections et virages.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{megatron.JPG}
+    \caption{smart robot personnalisé}
+    \label{fig:monimage}
+\end{figure}
 
 
 \subsubsection{Estimation du robot}
@@ -225,7 +261,7 @@ De plus, nous avons choisi de placer deux capteurs sur les cotés, un capteur su
 
 Pour estimer les différentes valeurs de puissances consommées par notre robot nous sommes allée chercher les valeurs dans les datasheets associés au composants sur leurs différents site de vente ou sur le site du producteur, si un datasheet de composant n'est pas disponible ou trouvable alors nous prenons alors une valeurs moyennes des produits similaires que nous trouvons.  
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \renewcommand{\arraystretch}{1.5}
 \small
@@ -524,7 +560,10 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
 
 
 
-\begin{algorithm}[htbp]
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\SetAlgoNlRelativeSize{0}
+\SetNlSty{textbf}{}{}
 \caption{resoudreCheminPlusCourt}
 \SetKw{KwIn}{Entrée}
 \SetKw{KwOut}{Sortie}
@@ -532,16 +571,10 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
 \SetKw{KwRet}{Retourner}
 \SetKwBlock{KwCod}{Début}{Fin}
 \SetKw{KwTo}{à}
-\SetKwProg{Fn}{}{}{}
+\SetKwFor{KwPour}{Pour}{faire}
 
-\KwIn{
-    $g$ : Graphe (G\_Graphe*)\; \\
-    $point\_obligatoires$ : tableau[3] de NNN\; \\
-    $depart$ : NNN\; \\
-    $longueur\_ville$ : NNN\; \\
-    $directionInitialeRobot$ : tDirection\;
-}
-\KwOut{$solution$ : Solution \;}
+\KwIn{$g$ : Graphe (G\_Graphe), $point\_obligatoires$ : tableau[3] de NNN, $depart$ : NNN, $longueur\_ville$ : NNN, $directionInitialeRobot$ : tDirection}\;
+\KwOut{$solution$ : Solution}\;
 
 \KwCod{
     $solution \gets \{0\}$\; \\
@@ -640,7 +673,7 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
 
 
 
-\begin{algorithm}[htbp]
+\begin{algorithm}[H]
 \caption{dijkstra\_avec\_exclusion}
 \SetKwInOut{Entree}{Entrée}
 \SetKwInOut{Sortie}{Sortie}
@@ -788,7 +821,7 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
 }
 \end{algorithm}
 
-\begin{algorithm}[htbp]
+\begin{algorithm}[H]
 \caption{determinerOrdres}
 \SetKwInOut{Entree}{Entrée}
 \SetKwInOut{Sortie}{Sortie}
@@ -855,7 +888,7 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
 
 \end{algorithm}
 
-\begin{algorithm}[htbp]
+\begin{algorithm}[H]
 \caption{determinerOrdre}
 \SetKwInOut{Entree}{Entrée}
 \SetKwInOut{Sortie}{Sortie}
@@ -912,7 +945,7 @@ $nlleDirection : Direction$ \\
 \subsection{Conclusion}
 \subsubsection{Répartition du travail}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \renewcommand{\arraystretch}{1.5}
 \small
@@ -920,8 +953,8 @@ $nlleDirection : Direction$ \\
 \hline
 \textbf{Tâches} & \textbf{Jahnis} & \textbf{Mathieu} & \textbf{Alioune} & \textbf{Ylann} & \textbf{Ilan} & \textbf{Neil}\\ \hline
 Construction du robot & X & X & X & X & X & X \\ \hline
-Fonctions moteur &  & X & X &  & X &  \\ \hline
-Fonctions capteurs & X & X &  &  &  & X \\ \hline
+Fonctions moteur & X & X & X &  & X &  \\ \hline
+Fonctions capteurs &  & X &  &  &  & X \\ \hline
 Fonctions LCD &  & X & X & X &  &  \\ \hline
 Tests unitaires électronique & X & X &  &  & X &  \\ \hline
 Débogage électronique &  & X &  &  & X & \\ \hline
@@ -936,6 +969,26 @@ Rédation du rapport & X & X & X & X & X & X \\ \hline
 \end{table}
 
 \subsubsection{Conclusion du projet}
+
+En conclusion, ce projet nous a permis de mettre nos connaissances en pratique afin de développer un robot autonome capable se déplacer selon un parcours donné.
+Les choix des composants ainsi que le choix de l'algorithme pour trouver le plus court chemin nous a permis d'atteindre un résultat plutôt satisfaisant en terminant deuxième du classement lors de la soutenance.
+Pendant le projet, nous avons fait face à de nombreux défis et de nombreuses difficultés comme la gestion du capteur RGB pour la detection des pastilles des couleurs.
+Toutefois, nous avons su nous communiqué et nous entraider pour surmonter ces difficultés et améliorer du mieux que l'on pouvait notre robot.
+Un point très important que nous souhaitons évoquer: les différences entre la théorie et la réalité. 
+Effectivement, nous avions dès le début défini le nombre de composant que nous souhaitions utilisés ainsi que la manière dont nous souhaitions réaliser les choses.
+Néanmoins, nous avons été obligés de faire de nombreux ajustements après plusieurs tests, tant dans la partie éléctrique du robot, que dans la partie résolution du parcours.
+Finalement, ce projet nous a appris à travailler sur plusieurs aspects différents d'un même prochet en répartissant le travail selon les préférences et forces de chacun.
+L'utilisation de Git a d'ailleurs été indispensable pour coodroner ce projet efficacement.
+Au terme de cette experience, nous avons pu nous préparer aux attentes des entreprises et ce, malgré le delais assez court. 
+Elle nous a permis de découvrir des méthodes de travail efficace et d'appliquer concrètement nos compétences théoriques.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{team_megatron.JPG}
+    \caption{Groupe 15 du PI-smart robot}
+    \label{fig:monimage}
+\end{figure}
 
 \subsection{Bibliographie}
 \begin{thebibliography}{9}
