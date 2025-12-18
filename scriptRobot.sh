@@ -22,10 +22,12 @@ fi
 
 # Compilation des programmes si pas disponibles
 if [ ! -f "$EXEC_ALGO" ]; then
+    make clean "$ALGO_DIR"
     make all -C "$ALGO_DIR"
 fi
 
 if [ ! -f "$EXEC_ROBOT" ]; then
+    make clean "$ROBOT_DIR"
     make all -C "$ROBOT_DIR"
 fi
 
@@ -40,8 +42,3 @@ secondes=$(( ($fin - $debut) / 1000))
 millisecondes=$(( ($fin - $debut) % 1000))
 
 echo "Temps d'exécution: ${secondes}.$(printf "%.3d" $millisecondes) secondes"
-
-cd $ALGO_DIR 
-make clean
-cd ../$ROBOT_DIR 
-make clean
