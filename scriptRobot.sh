@@ -40,3 +40,8 @@ secondes=$(( ($fin - $debut) / 1000))
 millisecondes=$(( ($fin - $debut) % 1000))
 
 echo "Temps d'exécution: ${secondes}.$(printf "%.3d" $millisecondes) secondes"
+
+cd $ALGO_DIR 
+make clean
+cd ../$ROBOT_DIR 
+make clean
