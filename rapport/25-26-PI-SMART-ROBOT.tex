@@ -585,10 +585,11 @@ Toutefois, pour la partie conception détaillée, nous ne présenterons que les 
     \item\texttt{Fonction estPleineFile(f: File) : naturel}    
     \newline
     \item\texttt{Procedure enfiler(E/S f: File, E etat: EtatDuDijkstra)}
+    \item \textbf{préconditions: non estPleineFile(f)}
     % Ajouter précondition
     \newline
     \item\texttt{Fonction defiler(f: File): EtatDuDijkstra}
-    % Ajouter précondition
+    \item \textbf{préconditions: non estVideFile(f)}
     \newline
     \item\texttt{Procedure liberer\_file(E f: File)}
 \end{itemize}
