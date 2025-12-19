@@ -1,6 +1,8 @@
-#include "capteurs.h"
+#include "../include/capteurs.h"
 #include <lcd.h>
 #include <wiringPi.h>
+
+int lcdHandle;
 
 int initialisation_globale() {
   wiringPiSetupGpio();
@@ -93,18 +95,51 @@ int detecterPastille(int file) {
     return -1;
   } else {
     // Reconstitution des valeurs sur 16 bits
-    int c = (buffer[1] << 8) | buffer[0];
+    // int c = (buffer[1] << 8) | buffer[0];
     int r = (buffer[3] << 8) | buffer[2];
     int g = (buffer[5] << 8) | buffer[4];
     int b = (buffer[7] << 8) | buffer[6];
 
-    if (g > 100 && g > r) {
-      return 1; // rouge
-    } else if (r > 100 && r > g + b) {
-      return 2; // vert
-    } else {
-      return 0; // indetermine
+    // Conversion en flottants pour la précision des divisions
+    // On utilise 'c' (Clear) ou la somme (r+g+b) comme diviseur
+    float total = (float)(r + g + b);
+
+    // Éviter la division par zéro si capteur dans le noir
+    if (total < 50)
+      return 0;
+
+    // Calcul des pourcentages de chaque couleur
+    float p_r = r / total;
+    float p_g = g / total;
+    float p_b = b / total;
+
+    // LOGIQUE AMÉLIORÉE
+    // ----------------
+
+    // DÉTECTION ROUGE
+    // Le rouge doit être dominant, MAIS il faut aussi que le rouge soit
+    // nettement supérieur au vert (ce qui élimine le bois/jaune/orange)
+    // Seuil typique : Rouge > 40% du total ET Rouge est 2x plus fort que le
+    // vert
+    // if (p_r > 0.4 && p_r > (p_g * 1.4)) {
+    //   // if (p_r > 0.4) {
+    //   return 2; // Rouge confirmé
+    // }
+    if (r > 1.4 * g && r > 1.4 * b) {
+      return 2;
     }
+
+    // DÉTECTION VERT
+    // Le vert est souvent moins "puissant" que le rouge sur ces capteurs.
+    // On cherche une dominance simple.
+    else if (p_g > 0.4 && p_g > p_r && p_g > p_b) {
+      return 1; // Vert confirmé
+    }
+    // else if (g > 1.2 * r && g > 1.2 * b) {
+    //   return 1;
+    // }
+
+    return 0; // Indéterminé (ou bois)
   }
 }
 

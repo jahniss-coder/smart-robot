@@ -19,13 +19,13 @@ qui inclut :
 #include "configuration_GPIO.h"
 
 /** @brief Vitesse maximale (100%) **/
-#define VITESSE_MAX 90
+#define VITESSE_MAX 100
 
 /** @brief Vitesse moyenne **/
 #define VITESSE_MOYENNE 70
 
 /** @brief Vitesse virage **/
-#define VITESSE_VIRAGE 50
+#define VITESSE_VIRAGE 65
 
 /** @brief Vitesse minimale **/
 #define VITESSE_MIN 35

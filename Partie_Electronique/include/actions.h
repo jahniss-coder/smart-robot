@@ -1,9 +1,12 @@
 #ifndef __ACTION__
 #define __ACTION__
 
+#include <stdbool.h>
 #define NB_POINTS_MAX 200
 
 typedef enum { AVANCER, TOURNER_GAUCHE, TOURNER_DROITE } manoeuvre_type;
+
+extern bool FinPossible;
 
 // extern int type_couleur;
 // extern int type_virage;
@@ -39,14 +42,14 @@ void faireUnVirageADroite();
 char **retourneTableauDOrdre(char *cheminFichier, int nbLigneFichier);
 
 /**
-   @brief retourne le tableau avec les ordres de directions depuis l'entrée standard
-   @param nbLigne le nombre d'élément du tableau 
+   @brief retourne le tableau avec les ordres de directions
+   @param nbLigne nombres de ligne dans le fichier renvoyé
    @return un tableau contenant les instructions que doit suivre le robot
 **/
-char **lireOrdreDepuisStdin(int *nbLignes)
+char **lireOrdreDepuisStdin(int *nbLignes);
 
 /**
-   @brief controle le robot suivant les ordres de l'entré standard
+   @brief controle le robot suivant les ordres du fichier
    @note permet au robot de suivre les instructions placées dans un fichier
 texte
 **/

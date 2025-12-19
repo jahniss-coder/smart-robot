@@ -1,4 +1,4 @@
-#include "moteur.h"
+#include "../include/moteur.h"
 #include <stdio.h>
 #include <wiringPi.h>
 
@@ -6,9 +6,10 @@ int calcul_PWM(int vitesse) { return (vitesse * 1024) / 100; }
 
 void moteurs_avancer() {
   int pwmSpeed = calcul_PWM(VITESSE_MAX);
+  int pwmSpeed2 = calcul_PWM(VITESSE_MAX - 7);
 
   pwmWrite(MOTEUR_G_PWM, pwmSpeed);
-  pwmWrite(MOTEUR_D_PWM, pwmSpeed);
+  pwmWrite(MOTEUR_D_PWM, pwmSpeed2);
 
   digitalWrite(MOTEUR_G_IN1, HIGH);
   digitalWrite(MOTEUR_D_IN3, HIGH);
@@ -78,7 +79,7 @@ void tournerGaucheSansArret() {
   digitalWrite(MOTEUR_D_IN4, LOW);
 
   // Application de la vitesse pour tourner
-  int pwmSpeedLeft = calcul_PWM(VITESSE_VIRAGE);
+  int pwmSpeedLeft = calcul_PWM(VITESSE_VIRAGE - 5);
   int pwmSpeedRight = calcul_PWM(VITESSE_MAX);
 
   pwmWrite(MOTEUR_G_PWM, pwmSpeedLeft);
@@ -95,7 +96,7 @@ void tournerDroiteSansArret() {
 
   // Application de la vitesse pour tourner
   int pwmSpeedLeft = calcul_PWM(VITESSE_MAX);
-  int pwmSpeedRight = calcul_PWM(VITESSE_VIRAGE);
+  int pwmSpeedRight = calcul_PWM(VITESSE_VIRAGE - 5);
 
   pwmWrite(MOTEUR_G_PWM, pwmSpeedLeft);
   pwmWrite(MOTEUR_D_PWM, pwmSpeedRight);

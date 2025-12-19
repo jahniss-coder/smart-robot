@@ -1,7 +1,7 @@
-#include "affichage.h"
-#include "action.h"
-#include "buzzer.h"
-#include "configuration_GPIO.h"
+#include "../include/affichage.h"
+#include "../include/actions.h"
+#include "../include/buzzer.h"
+#include "../include/configuration_GPIO.h"
 
 // Global lcd handle:
 static int lcdHandle;
@@ -16,7 +16,6 @@ pthread_cond_t queue_cond = PTHREAD_COND_INITIALIZER;
 
 void initLcd() {
   int i;
-  int count;
 
   wiringPiSetup();
 
@@ -100,19 +99,14 @@ void afficherVirage(int type) {
 
 void afficherCouleur(int couleur) {
   lcdPosition(lcdHandle, 0, 1);
+  printf("couleur: %d\n", couleur);
   switch (couleur) {
   case 1:
-
     lcdPrintf(lcdHandle, "PASTILLE VERT ");
     buzzerPastille(BUZZER);
     break;
   case 2:
     lcdPrintf(lcdHandle, "PASTILLE ROUGE");
-    buzzerPastille(BUZZER);
-    break;
-  case 3:
-    lcdPrintf(lcdHandle, "PASTILLE BLEU");
-    buzzerPastille(BUZZER);
     break;
   default:
     break;
@@ -123,21 +117,32 @@ void push_queue_affichage(message_type msg) {
   pthread_mutex_lock(&queue_mutex); // on empêche de lire/ecriture plus
 
   if (queue_count < QUEUE_SIZE) {
-    queue[queue_end] = msg; // on ajoute le message à la fin de la file
 
-    queue_end = (queue_end + 1) %
-                QUEUE_SIZE; // quand on arrive à la fin on revient au début
-    queue_count++;
+    if (queue[queue_end].type != msg.type ||
+        (queue[queue_end].type == msg.type &&
+         queue[queue_end].data.manoeuvre != msg.data.manoeuvre)) {
 
-    pthread_cond_signal(
-        &queue_cond); // on dit au thread d'affichage que y a un truc à afficher
+      if (msg.type == AFFICHER_COULEUR) {
+        queue[queue_start] = msg;
+      } else {
+        queue[queue_end] = msg; // on ajoute le message à la fin de la file
+      }
+
+      queue_end = (queue_end + 1) %
+                  QUEUE_SIZE; // quand on arrive à la fin on revient au début
+      queue_count++;
+
+      pthread_cond_signal(&queue_cond); // on dit au thread d'affichage que y a
+                                        // un truc à afficher
+    }
   }
 
   pthread_mutex_unlock(&queue_mutex); // on redonne accès à la lecture/ecriture
+
+  // afficherContenuFile();
 }
 
 void *affichage_thread(void *arg) {
-  pthread_t tid;
 
   message_type msg;
 
@@ -185,4 +190,77 @@ void *affichage_thread(void *arg) {
   }
 
   return NULL;
+}
+
+void afficherContenuFile(void) {
+  // 1. On verrouille pour avoir une "photo" stable de la file
+  pthread_mutex_lock(&queue_mutex);
+
+  printf("\n=== DEBUG FILE (Taille: %d/%d) ===\n", queue_count, QUEUE_SIZE);
+
+  if (queue_count == 0) {
+    printf(">> La file est vide.\n");
+  } else {
+    // 2. On parcourt les éléments logiques de 0 à count
+    for (int i = 0; i < queue_count; i++) {
+      // Calcul de l'index réel dans le tableau circulaire
+      int real_index = (queue_start + i) % QUEUE_SIZE;
+      message_type msg = queue[real_index];
+
+      printf("[%d] ", i); // Position dans la file d'attente
+
+      switch (msg.type) {
+      case AFFICHER_COULEUR:
+        printf("COULEUR      : %d ", msg.data.couleur);
+        if (msg.data.couleur == 1)
+          printf("(Vert)");
+        else if (msg.data.couleur == 2)
+          printf("(Rouge)");
+        break;
+
+      case AFFICHER_MANOEUVRE:
+        printf("MANOEUVRE    : ");
+        switch (msg.data.manoeuvre) {
+        case AVANCER:
+          printf("Avancer");
+          break;
+        case TOURNER_GAUCHE:
+          printf("Gauche");
+          break;
+        case TOURNER_DROITE:
+          printf("Droite");
+          break;
+        default:
+          printf("%d (Autre)", msg.data.manoeuvre);
+          break;
+        }
+        break;
+
+      case AFFICHER_VIRAGE:
+        printf("VIRAGE       : %d ", msg.data.virage);
+        if (msg.data.virage == 1)
+          printf("(Gauche)");
+        else if (msg.data.virage == 2)
+          printf("(Droite)");
+        break;
+
+      case AFFICHER_INTERSECTION:
+        printf("INTERSECTION : %d", msg.data.intersection);
+        break;
+
+      case ARRET:
+        printf("SIGNAL ARRET");
+        break;
+
+      default:
+        printf("TYPE INCONNU (%d)", msg.type);
+        break;
+      }
+      printf("\n");
+    }
+  }
+  printf("==================================\n");
+
+  // 3. On déverrouille pour laisser les autres threads travailler
+  pthread_mutex_unlock(&queue_mutex);
 }

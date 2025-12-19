@@ -28,7 +28,7 @@
 #define AF_DB7 (AF_BASE + 7)
 
 // Variable globale interne pour garder la poignée (handle) de l'écran
-static int lcdHandle;
+extern int lcdHandle;
 
 // Nécessaire pour le I2C
 #define I2C_BUS "/dev/i2c-1"

@@ -1,7 +1,7 @@
 #ifndef __AFFICHAGE__
 #define __AFFICHAGE__
 
-#include "action.h"
+#include "actions.h"
 #include <lcd.h>
 #include <pcf8574.h>
 #include <wiringPi.h>
@@ -58,4 +58,5 @@ void afficherCouleur(int);
 void push_queue_affichage(message_type msg);
 void *affichage_thread(void *arg);
 
+void afficherContenuFile(void);
 #endif

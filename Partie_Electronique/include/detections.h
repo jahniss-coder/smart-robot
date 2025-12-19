@@ -20,7 +20,7 @@ void suivreLigne(int gpioAG, int gpioAD, int *g, int *d);
 
 // Vérifie si les deux capteurs avant ont retrouvé la ligne
 // bool aRetrouveLigne(int gpioAG, int gpioAD);
-bool aRetrouveLigneGauche(int gpioAG);
-bool aRetrouveLigneDroit(int gpioAD);
+bool aRetrouveLigneGauche(int gpioAG, int gpioAD);
+bool aRetrouveLigneDroit(int gpioAD, int gpioAG );
 
 #endif

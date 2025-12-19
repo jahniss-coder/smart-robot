@@ -1,10 +1,12 @@
-#include "action.h"
-#include "affichage.h"
-#include "capteurs.h"
-#include "configuration_GPIO.h"
-#include "detections.h"
-#include "moteur.h"
+#include "../include/actions.h"
+#include "../include/affichage.h"
+#include "../include/capteurs.h"
+#include "../include/configuration_GPIO.h"
+#include "../include/detections.h"
+#include "../include/moteur.h"
 #include <string.h>
+
+bool FinPossible = false;
 
 void avancer(int file) {
   int g, d, type_intersection, type_virage, type_couleur;
@@ -12,6 +14,7 @@ void avancer(int file) {
   message_type msgManoeuvre;
   message_type msgVirage;
   message_type msgIntersection;
+  delay(200);
   if (getSensor(SUIVEUR_Centre_D)) {
     d = 1;
   } else {
@@ -30,6 +33,12 @@ void avancer(int file) {
   type_virage = detecterVirage(SUIVEUR_Gauche, SUIVEUR_Droit, SUIVEUR_Centre_G,
                                SUIVEUR_Centre_D);
   while (type_intersection == 0 && !type_virage) {
+
+    if (FinPossible && detecterPastille(file) == 2) {
+      printf("fin -> ROUGE\n");
+      moteurs_arreter();
+      return;
+    } // detecte la pastille rouge
     suivreLigne(SUIVEUR_Centre_G, SUIVEUR_Centre_D, &g, &d);
     type_couleur = detecterPastille(file);
     if (type_couleur != 0) {
@@ -64,13 +73,16 @@ void faireUnVirageAGauche() {
   message_type msgManoeuvre;
 
   tournerGauche();
-  delay(100);
-  while (!aRetrouveLigneDroit(SUIVEUR_Centre_D)) {
+  delay(750);
+  while (!aRetrouveLigneDroit(SUIVEUR_Centre_D, SUIVEUR_Centre_G)) {
 
     msgManoeuvre.data.manoeuvre = TOURNER_GAUCHE;
     msgManoeuvre.type = AFFICHER_MANOEUVRE;
     push_queue_affichage(msgManoeuvre);
   }
+  tournerGauche();
+  delay(25);
+
   moteurs_avancer();
 }
 
@@ -78,13 +90,16 @@ void faireUnVirageADroite() {
   message_type msgManoeuvre;
 
   tournerDroite();
-  delay(100);
-  while (!aRetrouveLigneGauche(SUIVEUR_Centre_G)) {
+  delay(750);
+  while (!aRetrouveLigneGauche(SUIVEUR_Centre_G, SUIVEUR_Centre_D)) {
 
     msgManoeuvre.data.manoeuvre = TOURNER_DROITE;
     msgManoeuvre.type = AFFICHER_MANOEUVRE;
     push_queue_affichage(msgManoeuvre);
   }
+  tournerGauche();
+  delay(75);
+
   moteurs_avancer();
 }
 
@@ -121,37 +136,37 @@ char **retourneTableauDOrdre(char *cheminFichier, int nbLigneFichier) {
 }
 
 char **lireOrdreDepuisStdin(int *nbLignes) {
-    char **tableau = NULL;
-    char ligne[TAILLE_LIGNE_MAX];
-    int capacite = 0;
+  char **tableau = NULL;
+  char ligne[NB_POINTS_MAX];
+  int capacite = 0;
 
-    while (fgets(ligne, TAILLE_LIGNE_MAX, stdin) != NULL) {
-        // Supprimer le saut de ligne si présent
-        ligne[strcspn(ligne, "\n")] = '\0';
+  while (fgets(ligne, NB_POINTS_MAX, stdin) != NULL) {
+    // Supprimer le saut de ligne si présent
+    ligne[strcspn(ligne, "\n")] = '\0';
 
-        if (capacite == 0) {
-            tableau = malloc(sizeof(char *));
-            capacite = 1;
-        } else {
-            tableau = realloc(tableau, (capacite + 1) * sizeof(char *));
-            capacite++;
-        }
-        tableau[capacite - 1] = strdup(ligne);
+    if (capacite == 0) {
+      tableau = malloc(sizeof(char *));
+      capacite = 1;
+    } else {
+      tableau = realloc(tableau, (capacite + 1) * sizeof(char *));
+      capacite++;
     }
+    tableau[capacite - 1] = strdup(ligne);
+  }
 
-    *nbLignes = capacite;
-    return tableau;
+  return tableau;
 }
 
 void controlerRobotDepuisOrdre() {
   int nbLignes = 0;
-  char **tableau = lireOrdreDepuisStdin(nbLigneFichier);
+  char **tableau = lireOrdreDepuisStdin(&nbLignes);
   int fileCapteur = color_initialisation();
 
   int indice = 0;
 
-  while (/*tableau[indice] != NULL*/ tableau[indice] != '.') {
+  while (/*tableau[indice] != NULL*/ *tableau[indice] != '.') {
     delay(80);
+
     if (strcmp(tableau[indice], "AV") == 0) {
       printf("avancer\n");
       avancer(fileCapteur);
@@ -163,13 +178,23 @@ void controlerRobotDepuisOrdre() {
       faireUnVirageADroite();
     }
     indice++;
+
+    if (indice > 2) {
+      FinPossible = true;
+    }
+
+    if (FinPossible && detecterPastille(fileCapteur) == 2) {
+      printf("fin -> ROUGE\n");
+      moteurs_arreter();
+      return;
+    } // detecte la pastille rouge
   }
 
   moteurs_arreter();
 
   // Libérer le tableau
   for (int i = 0; i < nbLignes; i++) {
-      free(tableau[i]);
+    free(tableau[i]);
   }
   free(tableau);
 
