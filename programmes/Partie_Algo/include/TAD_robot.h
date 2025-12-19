@@ -1,8 +1,17 @@
+/**
+ * @file TAD_robot.c
+ * @brief Fichier de création du TAD_robot documenté avec doxygen
+ * @author Delacroix-Henrion Mathieu, Diallo Alioune, Malherbe Ylann, Mathieu Ilan, Olivier Neil, Schetrit Jahnis
+ * @date 2025-12
+ */
+
 #ifndef __TAD_ROBOT__
 #define __TAD_ROBOT__
 
+/** @brief Enumération des directions du robot */
 typedef enum { NORD, SUD, EST, OUEST } tDirection;
 
+/** @brief Structure du robot */
 typedef struct {
   unsigned int caseRobot;
   tDirection direction;

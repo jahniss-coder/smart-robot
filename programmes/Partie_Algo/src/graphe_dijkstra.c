@@ -1,3 +1,10 @@
+/**
+ * @file graphe_dijkstra.c
+ * @brief Implémentation des fonctions pour la création du graphe et la résolution du plus court chemin
+ * @author Delacroix-Henrion Mathieu, Diallo Alioune, Malherbe Ylann, Mathieu Ilan, Olivier Neil, Schetrit Jahnis
+ * @date 2025-12
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "graphe_dijkstra.h"
@@ -8,12 +15,10 @@
 
 
 /*
-    @brief L'objectif ici est de concevoir l'alogrithme permettant de créer le graphe à partir du fichier de description de la ville.
+    @brief L'objectif ici est de concevoir l'algorithme permettant de créer le graphe à partir du fichier de description de la ville.
     @param  FILE fichierVille
-    @return Graphe cricuit
+    @return Graphe circuit
 */
-
-
 void recuperationInfoFichier(const char* fileNameVille, unsigned int* l, unsigned int tabPourGraphe[NB_POINTS_MAX][2],
     unsigned int tabCaseObligatoires[MAX_CASES_OBLIGATOIRES], unsigned int* nbLiaisons, unsigned int* nbCasesObligatoires, 
     unsigned int* caseInitRobot, tDirection* orientationInitRobot) {
@@ -78,6 +83,13 @@ void recuperationInfoFichier(const char* fileNameVille, unsigned int* l, unsigne
     } while (endChar != '.');
 }
 
+
+/**
+ * @brief Algorithme de creation du graphe à partir d'un tableau de liaison
+ * @param tabLiaisonsVille Tableau des liaisons entre les points de la ville
+ * @param nbLiaisons Nombre de liaisons dans la ville
+ * @return Graphe non orienté de la ville avec les distances toutes égales à 1.
+ */
 G_Graphe creationGrapheVille(unsigned int tabLiaisonsVille[NB_POINTS_MAX][2], unsigned int nbLiaisons) {
     // Graphe non orienté, non étiqueté, non valué
     G_Graphe g = G_graphe(false, NULL, NULL, NULL, NULL, NULL, NULL);
@@ -110,6 +122,16 @@ G_Graphe creationGrapheVille(unsigned int tabLiaisonsVille[NB_POINTS_MAX][2], un
     return g;
 }
 
+
+/**
+ * @brief Algorithme de Dijkstra modifié pour éviter certains points
+ * @param g Pointeur vers le graphe
+ * @param depart Indice du sommet de départ
+ * @param arrivee Indice du sommet d'arrivée
+ * @param sommets_a_eviter Tableau des indices des sommets à éviter
+ * @param nb_a_eviter Nombre de sommets à éviter
+ * @return Le chemin le plus court entre le sommet de départ et le sommet d'arrivée en évitant les sommets spécifiés
+ */
 Chemin dijkstra_avec_exclusions(G_Graphe* g, unsigned int depart, unsigned int arrivee,
                                  unsigned int* sommets_a_eviter, unsigned int nb_a_eviter) {
     Chemin resultat = {0};
@@ -210,10 +232,25 @@ Chemin dijkstra_avec_exclusions(G_Graphe* g, unsigned int depart, unsigned int a
     return resultat;
 }
 
+
+/**
+ * @brief Algorithme de Dijkstra pour trouver le chemin le plus court entre deux sommets
+ * @param g Pointeur vers le graphe
+ * @param depart Indice du sommet de départ
+ * @param arrivee Indice du sommet d'arrivée
+ * @return Le chemin le plus court entre le sommet de départ et le sommet d'arrivée
+ */
 Chemin dijkstra(G_Graphe* g, unsigned int depart, unsigned int arrivee) {
     return dijkstra_avec_exclusions(g, depart, arrivee, NULL, 0);
 }
 
+
+
+/**
+ * @brief Génère toutes les permutations des indices donnés
+ * @param indices Tableau des indices à permuter
+ * @param permutations Tableau pour stocker les permutations générées
+ */
 void permutation(unsigned int arr[3], unsigned int permutations[6][3]) {
     unsigned int perm[6][3] = {
         {0, 1, 2}, {0, 2, 1},
@@ -228,6 +265,11 @@ void permutation(unsigned int arr[3], unsigned int permutations[6][3]) {
     }
 }
 
+/**
+ * @brief Vérifie si un chemin est autorisé (ne passe pas par des sommets interdits)
+ * @param c Le chemin à vérifier
+ * @return 1 si le chemin est autorisé, 0 sinon
+ */
 int chemin_autorise(Chemin c) {
     for (unsigned int i = 0; i < c.nb_points - 2; i++) {
         if (c.points[i] == c.points[i + 2]) {
@@ -237,6 +279,11 @@ int chemin_autorise(Chemin c) {
     return 1;
 }
 
+/**
+ * @brief Vérifie si un chemin est autorisé (ne passe pas par des sommets interdits)
+ * @param c Le chemin à vérifier
+ * @return 1 si le chemin est autorisé, 0 sinon
+ */
 int verifier_jonction_segments(Chemin segment1, Chemin segment2) {
     if (segment1.nb_points >= 2 && segment2.nb_points >= 2) {
         unsigned int avant_dernier_seg1 = segment1.points[segment1.nb_points - 2];
@@ -249,6 +296,14 @@ int verifier_jonction_segments(Chemin segment1, Chemin segment2) {
     return 1;
 }
 
+/**
+ * @brief Résout le problème du chemin le plus court en passant par des points obligatoires
+ * @param g Pointeur vers le graphe
+ * @param point_obligatoires Tableau des indices des points obligatoires à visiter
+ * @param depart Indice du sommet de départ
+ * @param longueur_ville Longueur (largeur) de la ville (utilisée pour les calculs)
+ * @return La solution contenant l'ordre des points visités et le chemin complet
+ */
 Solution resoudre_chemin_plus_court(G_Graphe* g, unsigned int point_obligatoires[3], 
                                      unsigned int depart, unsigned int longueur_ville, tDirection directionInitialeRobot) {
     Solution solution = {0};

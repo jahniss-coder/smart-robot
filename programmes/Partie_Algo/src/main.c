@@ -1,10 +1,23 @@
+/**
+ * @file main.c
+ * @brief Programme principal pour la résolution du plus court chemin dans un labyrinthe
+ * @author Delacroix-Henrion Mathieu, Diallo Alioune, Malherbe Ylann, Mathieu Ilan, Olivier Neil, Schetrit Jahnis
+ * @date 2025-12
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "creationFichierOrdres.h"
 #include "graphe_dijkstra.h"
 
-#define BIN_DIR "bin/"
+#define BIN_DIR "bin/" /**< @brief Répertoire de sortie pour les exécutables */
 
+/**
+ * @brief Fonction principale du programme
+ * @param argc Nombre d'arguments en ligne de commande
+ * @param argv Tableau des arguments en ligne de commande
+ * @return 0 en cas de succès, 1 en cas d'erreur
+ */
 int main(int argc, char ** argv) {
     if (argc < 2) {
         printf("Utilisation: %s <fichier_entre_labyrinthe>\n", argv[0]);
