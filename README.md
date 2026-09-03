@@ -10,13 +10,13 @@ L'objectif du projet est de permettre au robot de parcourir un itinéraire en pa
 
 Le robot doit notamment :
 
-suivre une ligne tracée au sol ;
-détecter les intersections et effectuer les changements de direction ;
-détecter les pastilles colorées présentes sur le parcours ;
-identifier leur couleur ;
-afficher les informations sur un écran LCD ;
-émettre un signal sonore lors de la détection d'une pastille ;
-revenir à son point de départ et s'arrêter sur la pastille rouge.
+- suivre une ligne tracée au sol 
+- détecter les intersections et effectuer les changements de direction 
+- détecter les pastilles colorées présentes sur le parcours 
+- identifier leur couleur 
+- afficher les informations sur un écran LCD 
+- émettre un signal sonore lors de la détection d'une pastille 
+- revenir à son point de départ et s'arrêter sur la pastille rouge.
 
 Le projet combine électronique, algorithmique et programmation en C.
 
@@ -32,14 +32,14 @@ Le programme teste les différentes permutations des trois points obligatoires a
 
 Le robot est basé sur une Raspberry Pi 4 et intègre notamment :
 
-Raspberry Pi 4;
-capteurs infrarouges de suivi de ligne;
-capteur de couleur TCS34725;
-moteurs et motor drivers L293D;
-écran LCD1602 avec interface I2C;
-buzzer;
-batterie externe pour la Raspberry Pi;
-alimentation séparée pour les moteurs;
+- Raspberry Pi 4
+- capteurs infrarouges de suivi de ligne
+- capteur de couleur TCS34725
+- moteurs et motor drivers L293D
+- écran LCD1602 avec interface I2C
+- buzzer
+- batterie externe pour la Raspberry Pi
+- alimentation séparée pour les moteurs
 
 Les différents composants ont d'abord été testés individuellement avant leur intégration au robot afin de faciliter leur calibration et d'identifier les éventuels composants défectueux.
 
@@ -50,31 +50,32 @@ Plusieurs périphériques utilisent les GPIO de la Raspberry Pi.
 L'écran LCD et le capteur RGB utilisent notamment le protocole I2C, permettant de limiter le nombre de connexions nécessaires.
 
 ## Technologies
-C;
-Raspberry Pi;
-Git / GitHub;
-I2C;
-PWM;
-Algorithmique des graphes;
-Algorithme de Dijkstra;
+- C
+- Raspberry Pi
+- Git / GitHub
+- I2C
+- PWM
+- Algorithmique des graphes
+- Algorithme de Dijkstra
 
 ## Organisation du projet
-.;
-├── programmes/     ;     
-  ├── Partie_Algo/  ;    
-    ├── src/          # Code source;
-    ├── include/      # Fichiers d'en-tête;
-    ├── tests/        # Tests;
-    ├── bin/         # Fichier d'instruction de la soutenance;
-  ├── Partie_Electronique /        # Tests;
-    ├── src/          # Code source;
-    ├── include/      # Fichiers d'en-tête;
-    ├── tests/        # Tests;
-    ├── bin/        ;
-├── rapport/   ;
-├── README.md;
-└── .gitignore;
-
+```
+.
+├── programmes/        
+  ├── Partie_Algo/    
+    ├── src/          # Code source
+    ├── include/      # Fichiers d'en-tête
+    ├── tests/        # Tests
+    ├── bin/         # Fichier d'instruction de la soutenance
+  ├── Partie_Electronique /        # Tests
+    ├── src/          # Code source
+    ├── include/      # Fichiers d'en-tête
+    ├── tests/        # Tests
+    ├── bin/        
+├── rapport/   
+├── README.md
+└── .gitignore
+```
 
 ## Difficultés rencontrées
 
@@ -94,7 +95,9 @@ Projet réalisé par :
 - Jahnis Schetrit
 
 INSA Rouen Normandie — Département Informatique
+
 Projet Intégratif — Smart Robot
+
 ITI3 — 2025-2026
 
 ## Documentation
