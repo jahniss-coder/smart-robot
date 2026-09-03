@@ -70,7 +70,7 @@ L'écran LCD et le capteur RGB utilisent notamment le protocole I2C, permettant 
   ├── Partie_Electronique /        # Tests
     ├── src/          # Code source
     ├── include/      # Fichiers d'en-tête
-    ├── tests/        # Tests
+    ├── lib/        # Bibliothèque et documentation
     ├── bin/        
 ├── rapport/   
 ├── README.md
