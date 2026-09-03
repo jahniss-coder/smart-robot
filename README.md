@@ -32,14 +32,14 @@ Le programme teste les différentes permutations des trois points obligatoires a
 
 Le robot est basé sur une Raspberry Pi 4 et intègre notamment :
 
-Raspberry Pi 4
-capteurs infrarouges de suivi de ligne
-capteur de couleur TCS34725
-moteurs et motor drivers L293D
-écran LCD1602 avec interface I2C
-buzzer
-batterie externe pour la Raspberry Pi
-alimentation séparée pour les moteurs
+Raspberry Pi 4;
+capteurs infrarouges de suivi de ligne;
+capteur de couleur TCS34725;
+moteurs et motor drivers L293D;
+écran LCD1602 avec interface I2C;
+buzzer;
+batterie externe pour la Raspberry Pi;
+alimentation séparée pour les moteurs;
 
 Les différents composants ont d'abord été testés individuellement avant leur intégration au robot afin de faciliter leur calibration et d'identifier les éventuels composants défectueux.
 
@@ -50,30 +50,30 @@ Plusieurs périphériques utilisent les GPIO de la Raspberry Pi.
 L'écran LCD et le capteur RGB utilisent notamment le protocole I2C, permettant de limiter le nombre de connexions nécessaires.
 
 ## Technologies
-C
-Raspberry Pi
-Git / GitHub
-I2C
-PWM
-Algorithmique des graphes
-Algorithme de Dijkstra
+C;
+Raspberry Pi;
+Git / GitHub;
+I2C;
+PWM;
+Algorithmique des graphes;
+Algorithme de Dijkstra;
 
 ## Organisation du projet
-.
-├── programmes/          
-  ├── Partie_Algo/      
-    ├── src/          # Code source
-    ├── include/      # Fichiers d'en-tête
-    ├── tests/        # Tests
-    ├── bin/         # Fichier d'instruction de la soutenance
-  ├── Partie_Electronique /        # Tests
-    ├── src/          # Code source
-    ├── include/      # Fichiers d'en-tête
-    ├── tests/        # Tests
-    ├── bin/        
-├── rapport/   
-├── README.md
-└── .gitignore
+.;
+├── programmes/     ;     
+  ├── Partie_Algo/  ;    
+    ├── src/          # Code source;
+    ├── include/      # Fichiers d'en-tête;
+    ├── tests/        # Tests;
+    ├── bin/         # Fichier d'instruction de la soutenance;
+  ├── Partie_Electronique /        # Tests;
+    ├── src/          # Code source;
+    ├── include/      # Fichiers d'en-tête;
+    ├── tests/        # Tests;
+    ├── bin/        ;
+├── rapport/   ;
+├── README.md;
+└── .gitignore;
 
 
 ## Difficultés rencontrées
@@ -86,12 +86,12 @@ La détection des pastilles colorées s'est notamment révélée sensible aux co
 
 Projet réalisé par :
 
-Mathieu Delacroix-Henrion
-Alioune Diallo
-Ylann Malherbe
-Ilan Mathieu
-Neil Olivier
-Jahnis Schetrit
+- Mathieu Delacroix-Henrion
+- Alioune Diallo
+- Ylann Malherbe
+- Ilan Mathieu
+- Neil Olivier
+- Jahnis Schetrit
 
 INSA Rouen Normandie — Département Informatique
 Projet Intégratif — Smart Robot
