@@ -1,13 +1,21 @@
-# ignore tous les .o
+# Fichiers objets
 *.o
 
-# ignore le fichier DS Store de Mac
-*.DS_Store
+# Fichier DS Store de Mac
+.DS_Store
 
-# ignore les fichiers de compilation du compte rendu latex
+# Fichiers de compilation LaTeX
 *.log
 *.aux
 *.toc
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
 
-# ignore les lib 
+# Fichiers de bibliothèques
 *.a
+
+# Fichiers source LaTeX et styles du rapport
+rapport/*.tex
+rapport/*.sty
